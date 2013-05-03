@@ -7,7 +7,6 @@ SUBDIRS = \
 	libcerror \
 	libcdata \
 	libclocale \
-	libcmulti \
 	libcnotify \
 	libcsplit \
 	libuna \

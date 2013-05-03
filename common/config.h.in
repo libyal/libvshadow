@@ -165,12 +165,6 @@
 /* Define to 1 if you have the <libclocale.h> header file. */
 #undef HAVE_LIBCLOCALE_H
 
-/* Define to 1 if you have the `cmulti' library (-lcmulti). */
-#undef HAVE_LIBCMULTI
-
-/* Define to 1 if you have the <libcmulti.h> header file. */
-#undef HAVE_LIBCMULTI_H
-
 /* Define to 1 if you have the `cnotify' library (-lcnotify). */
 #undef HAVE_LIBCNOTIFY
 
@@ -254,9 +248,6 @@
 
 /* Define to 1 if the local version of libclocale is used. */
 #undef HAVE_LOCAL_LIBCLOCALE
-
-/* Define to 1 if the local version of libcmulti is used. */
-#undef HAVE_LOCAL_LIBCMULTI
 
 /* Define to 1 if the local version of libcnotify is used. */
 #undef HAVE_LOCAL_LIBCNOTIFY
