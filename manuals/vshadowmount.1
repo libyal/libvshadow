@@ -1,0 +1,62 @@
+.Dd March 31, 2013
+.Dt vshadowmount
+.Os libvshadow
+.Sh NAME
+.Nm vshadowmount
+.Nd mounts a Windows NT Volume Shadow Snapshot (VSS) volume
+.Sh SYNOPSIS
+.Nm vshadowmount
+.Op Fl o Ar offset
+.Op Fl X Ar extended_options
+.Op Fl hvV
+.Va Ar source
+.Sh DESCRIPTION
+.Nm vshadowmount
+is a utility to mount a Windows NT Volume Shadow Snapshot (VSS) volume
+.Pp
+.Nm vshadowmount
+is part of the
+.Nm libvshadow
+package.
+.Nm libvshadow
+is a library to access the Windows NT Volume Shadow Snapshot (VSS) format
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h
+shows this help
+.It Fl o Ar offset
+specify the volume offset
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.It Fl X Ar extended_options
+extended options to pass to sub system
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# vshadowmount /dev/sda1
+vshadowmount 20130113
+
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libvshadow/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2011-2013, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+.Xr vshadowinfo 1

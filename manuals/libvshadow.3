@@ -1,0 +1,129 @@
+.Dd May 3, 2013
+.Dt libvshadow 3
+.Os libvshadow
+.Sh NAME
+.Nm libvshadow.h
+.Nd Library to access the Windows NT Volume Shadow Snapshot (VSS) format
+.Sh LIBRARY
+.Lb libvshadow
+.Sh SYNOPSIS
+.In libvshadow.h
+.Pp
+Support functions
+.Ft const char *
+.Fn libvshadow_get_version "void"
+.Ft int
+.Fn libvshadow_check_file_signature "const char *filename, libvshadow_error_t **error"
+.Pp
+Available when compiled with wide character string support:
+.Ft int
+.Fn libvshadow_check_file_signature_wide "const wchar_t *filename, libvshadow_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft int
+.Fn libvshadow_check_file_signature_file_io_handle "libbfio_handle_t *bfio_handle, libvshadow_error_t **error"
+.Pp
+Notify functions
+.Ft void
+.Fn libvshadow_notify_set_verbose "int verbose"
+.Ft int
+.Fn libvshadow_notify_set_stream "FILE *stream, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_notify_stream_open "const char *filename, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_notify_stream_close "libvshadow_error_t **error"
+.Pp
+Error functions
+.Ft void 
+.Fn libvshadow_error_free "libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_error_fprint "libvshadow_error_t *error, FILE *stream"
+.Ft int
+.Fn libvshadow_error_sprint "libvshadow_error_t *error, char *string, size_t size"
+.Ft int 
+.Fn libvshadow_error_backtrace_fprint "libvshadow_error_t *error, FILE *stream"
+.Ft int
+.Fn libvshadow_error_backtrace_sprint "libvshadow_error_t *error, char *string, size_t size"
+.Pp
+Volume functions
+.Ft int
+.Fn libvshadow_volume_initialize "libvshadow_volume_t **volume, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_free "libvshadow_volume_t **volume, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_open "libvshadow_volume_t *volume, const char *filename, int access_flags, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_close "libvshadow_volume_t *volume, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_get_size "libvshadow_volume_t *volume, size64_t *size, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_get_number_of_stores "libvshadow_volume_t *volume, int *number_of_stores, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_get_store "libvshadow_volume_t *volume, int store_index, libvshadow_store_t **store, libvshadow_error_t **error"
+.Pp
+Available when compiled with wide character string support:
+.Ft int
+.Fn libvshadow_volume_open_wide "libvshadow_volume_t *volume, const wchar_t *filename, int access_flags, libvshadow_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft int
+.Fn libvshadow_volume_open_file_io_handle "libvshadow_volume_t *volume, libbfio_handle_t *file_io_handle, int access_flags, libvshadow_error_t **error"
+.Pp
+Store functions
+.Ft int
+.Fn libvshadow_store_free "libvshadow_store_t **store, libvshadow_error_t **error"
+.Ft ssize_t
+.Fn libvshadow_store_read_buffer "libvshadow_store_t *store, void *buffer, size_t buffer_size, libvshadow_error_t **error"
+.Ft ssize_t
+.Fn libvshadow_store_read_random "libvshadow_store_t *store, void *buffer, size_t buffer_size, off64_t offset, libvshadow_error_t **error"
+.Ft off64_t
+.Fn libvshadow_store_seek_offset "libvshadow_store_t *store, off64_t offset, int whence, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_offset "libvshadow_store_t *store, off64_t *offset, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_size "libvshadow_store_t *store, size64_t *size, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_volume_size "libvshadow_store_t *store, size64_t *volume_size, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_identifier "libvshadow_store_t *store, uint8_t *guid, size_t size, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_creation_time "libvshadow_store_t *store, uint64_t *filetime, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_copy_identifier "libvshadow_store_t *store, uint8_t *guid, size_t size, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_copy_set_identifier "libvshadow_store_t *store, uint8_t *guid, size_t size, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_attribute_flags "libvshadow_store_t *store, uint32_t *attribute_flags, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_number_of_blocks "libvshadow_store_t *store, int *number_of_blocks, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_get_block_by_index "libvshadow_store_t *store, int block_index, libvshadow_block_t **block, libvshadow_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft ssize_t
+.Fn libvshadow_store_read_buffer_from_file_io_handle "libvshadow_store_t *store, libbfio_handle_t *file_io_handle, void *buffer, size_t buffer_size, libvshadow_error_t **error"
+.Pp
+Block functions
+.Ft int
+.Fn libvshadow_block_free "libvshadow_block_t **block, libvshadow_error_t **error"
+.Sh DESCRIPTION
+The
+.Fn libvshadow_get_version
+function is used to retrieve the library version.
+.Sh RETURN VALUES
+Most of the functions return NULL or -1 on error, dependent on the return type. For the actual return values refer to libvshadow.h
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh NOTES
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libvshadow/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2011-2013, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+the libvshadow.h include file

@@ -1,0 +1,76 @@
+.Dd March 31, 2013
+.Dt vshadowinfo
+.Os libvshadow
+.Sh NAME
+.Nm vshadowinfo
+.Nd determines information about a Windows NT Volume Shadow Snapshot (VSS) volume
+.Sh SYNOPSIS
+.Nm vshadowinfo
+.Op Fl ahvV
+.Va Ar source
+.Sh DESCRIPTION
+.Nm vshadowinfo
+is a utility to determine information about a Windows NT Volume Shadow Snapshot (VSS) volume
+.Pp
+.Nm vshadowinfo
+is part of the
+.Nm libvshadow
+package.
+.Nm libvshadow
+is a library to access the Windows NT Volume Shadow Snapshot (VSS) format
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl a
+shows allocation information
+.It Fl h
+shows this help
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# vshadowinfo /dev/sda1
+vshadowinfo 20130130
+
+Volume Shadow Snapshot information:
+	Number of stores:	2
+
+Store: 1
+	Identifier		: 93db9c47-bb19-4004-836d-c3c835550b9a
+	Shadow copy set ID	: 8bc68d0b-9df4-49e0-be4b-725dceaaefc8
+	Creation time		: May 19, 2012 14:20:35.765721000 UTC
+	Shadow copy ID		: 04057e11-d2d5-4d9c-8914-aeba832e467b
+	Volume size		: 30002905088 bytes
+	Attribute flags		: 0x00420009
+
+Store: 2
+	Identifier		: 93db9c47-bb19-4004-836d-c3c835550b9a
+	Shadow copy set ID	: 90e19848-7436-4309-8899-4bbecf05a566
+	Creation time		: May 19, 2012 16:13:58.750469800 UTC
+	Shadow copy ID		: 6db2bc5e-9b95-4ed1-a493-091ee7d2e5e6
+	Volume size		: 30002905088 bytes
+	Attribute flags		: 0x00420009
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libvshadow/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2011-2013, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+.Xr bdemount 1

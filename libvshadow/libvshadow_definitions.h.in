@@ -1,0 +1,115 @@
+/*
+ * The internal definitions
+ *
+ * Copyright (C) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ *
+ * Refer to AUTHORS for acknowledgements.
+ *
+ * This software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#if !defined( _LIBVSHADOW_INTERNAL_DEFINITIONS_H )
+#define _LIBVSHADOW_INTERNAL_DEFINITIONS_H
+
+#include <common.h>
+#include <byte_stream.h>
+
+#define LIBVSHADOW_ENDIAN_BIG						_BYTE_STREAM_ENDIAN_BIG
+#define LIBVSHADOW_ENDIAN_LITTLE					_BYTE_STREAM_ENDIAN_LITTLE
+
+/* Define HAVE_LOCAL_LIBVSHADOW for local use of libvshadow
+ */
+#if !defined( HAVE_LOCAL_LIBVSHADOW )
+#include <libvshadow/definitions.h>
+
+/* The definitions in <libvshadow/definitions.h> are copied here
+ * for local use of libvshadow
+ */
+#else
+#define LIBVSHADOW_VERSION						@VERSION@
+
+/* The version string
+ */
+#define LIBVSHADOW_VERSION_STRING					"@VERSION@"
+
+/* The file access
+ * bit 1        set to 1 for read access
+ * bit 2        set to 1 for write access
+ * bit 3-8      not used
+ */
+enum LIBVSHADOW_ACCESS_FLAGS
+{
+	LIBVSHADOW_ACCESS_FLAG_READ					= 0x01,
+/* Reserved: not supported yet */
+	LIBVSHADOW_ACCESS_FLAG_WRITE					= 0x02
+};
+
+/* The file access macros
+ */
+#define LIBVSHADOW_OPEN_READ						( LIBVSHADOW_ACCESS_FLAG_READ )
+/* Reserved: not supported yet */
+#define LIBVSHADOW_OPEN_WRITE						( LIBVSHADOW_ACCESS_FLAG_WRITE )
+/* Reserved: not supported yet */
+#define LIBVSHADOW_OPEN_READ_WRITE					( LIBVSHADOW_ACCESS_FLAG_READ | LIBVSHADOW_ACCESS_FLAG_WRITE )
+
+/* The block flags
+ */
+enum LIBVSHADOW_BLOCK_FLAGS
+{
+	LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER				= 0x00000001UL,
+	LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY				= 0x00000002UL,
+	LIBVSHADOW_BLOCK_FLAG_NOT_USED					= 0x00000004UL
+};
+
+#endif
+
+/* The record types
+ */
+enum LIBVSHADOW_RECORD_TYPES
+{
+	LIBVSHADOW_RECORD_TYPE_VOLUME_HEADER				= 0x01,
+	LIBVSHADOW_RECORD_TYPE_CATALOG					= 0x02,
+	LIBVSHADOW_RECORD_TYPE_STORE_INDEX				= 0x03,
+	LIBVSHADOW_RECORD_TYPE_STORE_HEADER				= 0x04,
+	LIBVSHADOW_RECORD_TYPE_STORE_BLOCK_RANGE			= 0x05,
+	LIBVSHADOW_RECORD_TYPE_STORE_BITMAP				= 0x06,
+};
+
+/* TODO make local definitions ?
+	VSS_VOLSNAP_ATTR_PERSISTENT					= 0x00000001,
+	VSS_VOLSNAP_ATTR_NO_AUTORECOVERY				= 0x00000002,
+	VSS_VOLSNAP_ATTR_CLIENT_ACCESSIBLE				= 0x00000004,
+	VSS_VOLSNAP_ATTR_NO_AUTO_RELEASE				= 0x00000008,
+	VSS_VOLSNAP_ATTR_NO_WRITERS					= 0x00000010,
+	VSS_VOLSNAP_ATTR_TRANSPORTABLE					= 0x00000020,
+	VSS_VOLSNAP_ATTR_NOT_SURFACED					= 0x00000040,
+	VSS_VOLSNAP_ATTR_NOT_TRANSACTED					= 0x00000080,
+	VSS_VOLSNAP_ATTR_HARDWARE_ASSISTED				= 0x00010000,
+	VSS_VOLSNAP_ATTR_DIFFERENTIAL					= 0x00020000,
+	VSS_VOLSNAP_ATTR_PLEX						= 0x00040000,
+	VSS_VOLSNAP_ATTR_IMPORTED					= 0x00080000,
+	VSS_VOLSNAP_ATTR_EXPOSED_LOCALLY				= 0x00100000,
+	VSS_VOLSNAP_ATTR_EXPOSED_REMOTELY				= 0x00200000,
+	VSS_VOLSNAP_ATTR_AUTORECOVER					= 0x00400000,
+	VSS_VOLSNAP_ATTR_ROLLBACK_RECOVERY				= 0x00800000,
+	VSS_VOLSNAP_ATTR_DELAYED_POSTSNAPSHOT				= 0x01000000,
+	VSS_VOLSNAP_ATTR_TXF_RECOVERY					= 0x02000000
+*/
+
+/* The B-tree node split threshold
+ */
+#define LIBVSHADOW_BLOCK_DESCRIPTORS_TREE_MAXIMUM_NUMBER_OF_SUB_NODES	257
+
+#endif
+

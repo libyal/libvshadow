@@ -1,0 +1,458 @@
+TODO
+* vshadowinfo is it reading the full store without -a ?
+* pyvshadow
+  - work on store
+* remove hard coded 0x4000 block size
+  - use or pass io handle block size instead
+* add tests
+  - create test image
+  - create test plan
+  - test and add ignore overlay when reading from next store
+* beta
+  - fix open issues
+
+* store: fix read without having to call open
+* add libfdata and libfcache for caching ?
+
+API:
+* allow access to block list
+  - finish and expose libvshadow_store_get_block()
+  - split block list and run-time btree
+* get operating machine string
+* get service machine string
+* get size
+* is open
+* finish store close function
+
+Error tollerance:
+* add support for catalog entry 3 defined before 2
+
+Format:
+* how are multiple copies per set stored?
+* the store file can be fragmented
+  - block range list defines the fragments ?
+* what about trailing volume data that windows is hiding 0x1000 bytes in size ?
+  also seen in BDE, so likely something of NTFS
+
+Tools:
+* vshadowexport
+  - create tool to export a VSS volume ?
+* vshadowinfo
+  - print attribute flags description
+* vshadowmount
+  - dokan fix volume size hints
+
+20130503
+* added store read from file IO handle function
+* vshadowmount small changes
+
+20130501
+* worked on vshadowmount Dokan support
+
+20130417
+* bug fix in dependencies
+
+20130416
+* code clean up
+
+20130413
+* updated dependencies
+* updates and bug fixes in pyvshadow
+
+20130412
+* updated README files
+* updated dependencies
+* added tests directory
+
+20130331
+* updated dependencies
+* code clean up
+* pyvshadow updates
+* vshadowtools now detect if there is a VSS signature first and bail out with
+  a different error if not
+
+20130304
+* added PackageMaker files
+
+20130217
+* updated include/types.h
+
+20130205
+* fixed typo in vhsadowmount
+
+20130131
+* worked on pyvshadow
+
+20130130
+* worked on exposing block descriptors via vshadowinfo
+* worked on pyvshadow
+
+20130129
+* worked on exposing block descriptors via API
+* worked on pyvshadow
+
+20130128
+* worked on exposing block descriptors via API
+
+20130127
+* worked on exposing block descriptors via API
+* removed LIBVSHADOW_STORE_FLAG_IO_HANDLE_MANAGED flags
+
+20130125
+* worked on exposing block descriptors via API
+
+20130113
+* 2013 update
+* updated dependencies
+* updated msvscpp files
+* added vshadowmount.1 man page
+
+20121122
+* pyvshadow: code clean up
+
+20121118
+* pyvshadow: switched to memory_allocate and memory_free to
+  PyMem_Malloc and PyMem_Free
+
+20121107
+* updates msvscpp 2010 build
+
+20121104
+* pyvshadow: fixes for 32-bit build
+
+20121103
+* fix in spec file
+* updated dependencies
+
+20121102
+* pyvshadow: fix for Mac OS X build
+* updated msvscpp files
+
+20121017
+* code clean up
+
+20121016
+* pyvshadow: bug fixes
+  - Missing Py_None increment reference
+  - added increment/decrement reference of volume object in store
+
+20121012
+* pyvshadow: added creation time as integer function
+
+20121011
+* minor changes
+
+20121010
+* made get store more restrictive
+
+20121009
+* added store get size function for python binding
+
+20121008
+* updated dpkg and spec files
+
+20121007
+* added store get offset function
+* worked on Python bindings
+* fix for dpkg files docs
+
+20121006
+* worked on Python bindings
+
+20120922
+* small changes
+
+20120921
+* improved dealing with NTFS backup header for volume size detection
+
+20120915
+* improved catalog entry handling
+* changes for libcdata
+* worked on man pages
+* worked on removing hard coded block size
+* code clean up
+* worked on support for catalog size corruption issue
+
+20120914
+* improved catalog entry handling
+* added -X option to vshadowmount to pass options to fuse layer
+
+20120912
+* vshadowmount: replaced EBADFD by EIO for OSX
+
+20120911
+* fixed bug regarding missing block size correction
+
+20120905
+* updated libbfio
+
+20120904
+* code clean up
+
+20120903
+* changed overlay handling
+* code clean up
+
+20120902
+* replaced data types by libcdata
+
+20120901
+* split off block list and block tree usage of block descriptors
+  - block tree can override info in block descriptors while block list should not
+* moved overlays from array to single block descriptor
+* removed metadata offset list
+
+20120831
+* fixes and improvements in block tree
+* changed initial bitmap to current bitmap
+* code clean up
+
+20120830
+* fixes and improvements in btree
+
+20120829
+* fixes in btree
+* added more debug info
+
+20120828
+* added more debug info
+
+20120826
+* code clean up
+* initial version of msvscpp files
+
+20120825
+* improvement to handling not in-use blocks
+
+20120824
+* added support to handle duplicate reverse block tree blocks
+* volume size is now determined from store descriptors in catalog
+* code clean up
+
+20120823
+* worked on multi snapshot handling
+
+20120822
+* worked on block descriptors
+* code clean up
+
+20120821
+* worked on block descriptors
+
+20120820
+* applied updates
+* code clean
+
+20120721
+* added libcsplit
+* applied updates
+* switched library order in tools
+
+20120603
+* worked on block behavior
+
+20120528
+* worked on block behavior
+* bug fix in mount handle
+
+20120527
+* worked on block behavior
+
+20120526
+* worked on block behavior
+
+20120525
+* worked on block behavior
+
+20120524
+* worked on block behavior
+* re-introduced block wrap
+
+20120523
+* worked on block behavior
+
+20120522
+* worked on block behavior
+
+20120520
+* worked on block behavior
+
+20120519
+* worked on initial and previous bitmap
+
+20120517
+* worked on initial bitmap
+* optimized reading bitmap
+* fixed memory leaks
+* worked on windows 8 support
+
+20120515
+* added support for volume without shadows
+
+20120513
+* fixed mingw build - linking of libbfio
+
+20120511
+* updated dependencies
+* added fuse destroy function
+
+20120415
+* updated dependencies
+* added debug of attribute flags
+* changed debug info to print less zero byte data
+
+20120225
+* 2012 update
+
+20111218
+* updated libcstring, libsystem
+
+20111213
+* worked on initial bitmap
+* worked on block descriptor handling
+
+20111212
+* worked on initial bitmap
+
+20111211
+* worked on initial bitmap
+
+20111210
+* worked on initial bitmap
+
+20111204
+* worked on reverse block tree
+
+20111128
+* changes to block descriptor handling
+* bug fix in reading block list
+
+20111125
+* changes to block descriptor handling
+
+20111123
+* changes to block descriptor handling
+
+20111120
+* code clean up
+* updated btree type, offset list
+* added libvshadow_codepage.h
+* added offset support to vshadowinfo
+
+20111117
+* updated array type, list type, tree type
+* updated libcstring, libsystem, libfdatetime, libfguid
+
+20111102
+* updated m4 files
+* updated libcstring, libsystem, libuna, libbfio, libfdatetime
+
+20111030
+* updated configure.ac and m4 files
+* updated tree type
+
+20111021
+* updated configure.ac and m4 files
+* updated spec and pc file
+* updated common, libsystem, libuna, libbfio, libfdatetime
+
+20110918
+* updated configure, libuna
+
+20110830
+* updated configure
+
+20110828
+* worked on store is open
+* updated libbfio
+
+20110824
+* updated configure, common, array_type, libsystem, libuna, libbfio,
+  libfdatetime,
+* added vshadowmount
+* refactored vshadowinfo
+
+20110511
+* worked on block descriptor order
+
+20110510
+* fix in debug output
+
+20110508
+* updated libcstring
+* added support for operating and service machine string
+
+20110501
+* worked on block descriptor order
+* found new block descriptor flag 0x00000040 on Vista volume
+
+20110426
+* worked on block descriptor order
+
+20110425
+* worked on block descriptor order
+
+20110420
+* worked on block descriptor order
+
+20110418
+* worked on block descriptor flags
+
+20110417
+* refactored read of store block
+
+20110406
+* worked on support for overlapping stores
+
+20110405
+* worked on block descriptor flag 0x00000001
+
+20110404
+* added support for overlapping stores
+
+20110403
+* worked on handling overlapping block ranges
+
+20110401
+* worked on block tree
+* worked on handling overlapping block ranges
+
+20110331
+* worked on block tree
+
+20110330
+* applied patch for store index removal
+* worked on block tree
+
+20110323
+* updated configure.ac, libcstring, libsystem, libuna, libbfio,
+* added support for block flags 0x01
+* removed offset list
+
+20110316
+* worked on initial version
+
+20110315
+* worked on initial version
+
+20110314
+* worked on initial version
+
+20110313
+* worked on initial version
+
+20110312
+* worked on initial version
+
+20110311
+* worked on initial version
+
+20110310
+* worked on initial version
+
+20110309
+* worked on initial version
+
+20110308
+* initial version
+

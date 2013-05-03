@@ -1,0 +1,36 @@
+Source: libvshadow
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <joachim.metz@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.3
+Homepage: http://code.google.com/p/libvshadow/
+
+Package: libvshadow
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
+ libvshadow is a library to access the Windows NT Volume Shadow Snapshot (VSS) format.
+
+Package: libvshadow-dev
+Section: libdevel
+Architecture: any
+Depends: libvshadow (= ${Source-Version})
+Description: Header files and libraries for developing applications for libvshadow
+ Header files and libraries for developing applications for libvshadow.
+
+Package: libvshadow-tools
+Section: utils
+Architecture: any
+Depends: libvshadow (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading Windows NT Volume Shadow Snapshots (VSS)
+ Several tools for reading Windows NT Volume Shadow Snapshots (VSS).
+
+Package: libvshadow-python
+Section: python
+Architecture: any
+Depends: libvshadow (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Description: Python bindings for libvshadow
+ Python bindings for libvshadow.
+
