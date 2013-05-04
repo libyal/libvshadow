@@ -1,5 +1,4 @@
 TODO
-* vshadowinfo is it reading the full store without -a ?
 * pyvshadow
   - work on store
 * remove hard coded 0x4000 block size
@@ -11,7 +10,6 @@ TODO
 * beta
   - fix open issues
 
-* store: fix read without having to call open
 * add libfdata and libfcache for caching ?
 
 API:
@@ -41,6 +39,14 @@ Tools:
   - print attribute flags description
 * vshadowmount
   - dokan fix volume size hints
+
+20130504
+* added libcthreads
+* worked on multi-threading support
+* changes to read block descriptors on demand improves vshadowinfo preformance
+* worked on tests
+* fixes for multiple open/close on the same volume object
+* fixed issue in read buffer due to recent changes
 
 20130503
 * added store read from file IO handle function

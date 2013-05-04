@@ -218,7 +218,7 @@ ssize_t libvshadow_store_read_buffer(
 		      buffer_size,
 		      error );
 
-	if( read_count != (ssize_t) buffer_size )
+	if( read_count == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -282,6 +282,10 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 		 function );
 
 		return( -1 );
+	}
+	if( buffer_size == 0 )
+	{
+		return( 0 );
 	}
 	if( (size64_t) internal_store->current_offset >= internal_store->internal_volume->size )
 	{
@@ -382,7 +386,7 @@ ssize_t libvshadow_store_read_random(
 	              buffer_size,
 	              error );
 
-	if( read_count <= -1 )
+	if( read_count == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1041,20 +1045,9 @@ int libvshadow_store_get_number_of_blocks(
 
 		return( -1 );
 	}
-	if( store_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
-	if( libcdata_list_get_number_of_elements(
-	     store_descriptor->block_descriptors_list,
+	if( libvshadow_store_descriptor_get_number_of_blocks(
+	     store_descriptor,
+	     internal_store->file_io_handle,
 	     number_of_blocks,
 	     error ) != 1 )
 	{
@@ -1062,8 +1055,9 @@ int libvshadow_store_get_number_of_blocks(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of block descriptors.",
-		 function );
+		 "%s: unable to retrieve number of blocks store descriptor: %d.",
+		 function,
+		 internal_store->store_descriptor_index );
 
 		return( -1 );
 	}
@@ -1135,19 +1129,21 @@ int libvshadow_store_get_block_by_index(
 
 		return( -1 );
 	}
-	if( libcdata_list_get_value_by_index(
-	     store_descriptor->block_descriptors_list,
+	if( libvshadow_store_descriptor_get_block_descriptor_by_index(
+	     store_descriptor,
+	     internal_store->file_io_handle,
 	     block_index,
-	     (intptr_t **) &block_descriptor,
+	     &block_descriptor,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve block descriptor: %d.",
+		 "%s: unable to retrieve block descriptor: %d from store descriptor: %d.",
 		 function,
-		 block_index );
+		 block_index,
+		 internal_store->store_descriptor_index );
 
 		return( -1 );
 	}

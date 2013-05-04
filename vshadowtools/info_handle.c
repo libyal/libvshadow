@@ -900,23 +900,23 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
-	if( libvshadow_store_get_number_of_blocks(
-	     store,
-	     &number_of_blocks,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store: %d number of blocks.",
-		 function,
-		 store_index );
-
-		goto on_error;
-	}
 	if( info_handle->show_allocation_information != 0 )
 	{
+		if( libvshadow_store_get_number_of_blocks(
+		     store,
+		     &number_of_blocks,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve store: %d number of blocks.",
+			 function,
+			 store_index );
+
+			goto on_error;
+		}
 		fprintf(
 		 info_handle->notify_stream,
 		 "\tNumber of blocks\t: %d\n",

@@ -3,6 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -12,7 +13,8 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBFGUID_CPPFLAGS@
+	@LIBFGUID_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@
 
 lib_LTLIBRARIES = libvshadow.la
 
@@ -34,6 +36,7 @@ libvshadow_la_SOURCES = \
 	libvshadow_libclocale.h \
 	libvshadow_libcnotify.h \
 	libvshadow_libcstring.h \
+	libvshadow_libcthreads.h \
 	libvshadow_libfdata.h \
 	libvshadow_libfdatetime.h \
 	libvshadow_libfguid.h \
@@ -53,6 +56,7 @@ libvshadow_la_SOURCES = \
 libvshadow_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
@@ -62,7 +66,8 @@ libvshadow_la_LIBADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
-	@LIBFGUID_LIBADD@
+	@LIBFGUID_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 libvshadow_la_LDFLAGS = -no-undefined -version-info 1:0:0
 

@@ -107,6 +107,11 @@ stamp-h1
 /macosx/libvshadow.pmdoc/04share.xml
 /macosx/libvshadow.pmdoc/05python.xml
 /macosx/libvshadow.pmdoc/index.xml
+/tests/input
+/tests/tmp
+/tests/vshadow_test_open_close
+/tests/vshadow_test_read
+/tests/vshadow_test_seek
 
 # Local library dependencies specific files
 /libbfio
@@ -117,6 +122,7 @@ stamp-h1
 /libcnotify
 /libcpath
 /libcsplit
+/libcthreads
 /libfdatetime
 /libfguid
 /libuna

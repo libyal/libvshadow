@@ -712,6 +712,20 @@ int libvshadow_volume_close(
 	internal_volume->file_io_handle                    = NULL;
 	internal_volume->file_io_handle_created_in_library = 0;
 
+	if( libcdata_array_empty(
+	     internal_volume->store_descriptors_array,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_store_descriptor_free,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to empty store descriptors array.",
+		 function );
+
+		result = -1;
+	}
 	return( result );
 }
 
@@ -876,21 +890,6 @@ int libvshadow_volume_open_read(
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_READ_FAILED,
 				 "%s: unable to read store: %d header.",
-				 function,
-				 store_descriptor->index );
-
-				return( -1 );
-			}
-			if( libvshadow_store_descriptor_read_block_descriptors(
-			     store_descriptor,
-			     internal_volume->file_io_handle,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read store: %d block descriptors.",
 				 function,
 				 store_descriptor->index );
 

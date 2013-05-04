@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libvshadow_block_descriptor.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
@@ -131,6 +132,10 @@ struct libvshadow_store_descriptor
 	/* The index
 	 */
 	int index;
+
+	/* Value to indicate the block descriptors have been read
+	 */
+	uint8_t block_descriptors_read;
 };
 
 int libvshadow_store_descriptor_initialize(
@@ -231,6 +236,19 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
 int libvshadow_store_descriptor_get_attribute_flags(
      libvshadow_store_descriptor_t *store_descriptor,
      uint32_t *attribute_flags,
+     libcerror_error_t **error );
+
+int libvshadow_store_descriptor_get_number_of_blocks(
+     libvshadow_store_descriptor_t *store_descriptor,
+     libbfio_handle_t *file_io_handle,
+     int *number_of_blocks,
+     libcerror_error_t **error );
+
+int libvshadow_store_descriptor_get_block_descriptor_by_index(
+     libvshadow_store_descriptor_t *store_descriptor,
+     libbfio_handle_t *file_io_handle,
+     int block_index,
+     libvshadow_block_descriptor_t **block_descriptor,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

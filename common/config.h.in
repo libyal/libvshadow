@@ -195,6 +195,12 @@
 /* Define to 1 if you have the <libcsystem.h> header file. */
 #undef HAVE_LIBCSYSTEM_H
 
+/* Define to 1 if you have the `cthreads' library (-lcthreads). */
+#undef HAVE_LIBCTHREADS
+
+/* Define to 1 if you have the <libcthreads.h> header file. */
+#undef HAVE_LIBCTHREADS_H
+
 /* Define to 1 if you have the `fdatetime' library (-lfdatetime). */
 #undef HAVE_LIBFDATETIME
 
@@ -264,6 +270,9 @@
 /* Define to 1 if the local version of libcsystem is used. */
 #undef HAVE_LOCAL_LIBCSYSTEM
 
+/* Define to 1 if the local version of libcthreads is used. */
+#undef HAVE_LOCAL_LIBCTHREADS
+
 /* Define to 1 if the local version of libfdatetime is used. */
 #undef HAVE_LOCAL_LIBFDATETIME
 
@@ -320,6 +329,12 @@
 
 /* Define to 1 whether printf supports the conversion specifier "%zd". */
 #undef HAVE_PRINTF_ZD
+
+/* Define to 1 if you have the 'pthread' library (-lpthread). */
+#undef HAVE_PTHREAD
+
+/* Define to 1 if you have the <pthread.h> header file. */
+#undef HAVE_PTHREAD_H
 
 /* Define to 1 if you have Python */
 #undef HAVE_PYTHON

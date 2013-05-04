@@ -1263,7 +1263,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 	store_header_data_offset += 2;
 
-	if( ( store_header_data_offset + store_descriptor->operating_machine_string_size ) > (size_t) 0x4000 )
+	if( ( store_header_data_offset + store_descriptor->operating_machine_string_size ) > store_block->data_size )
 	{
 		libcerror_error_set(
 		 error,
@@ -1394,7 +1394,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 	store_header_data_offset += 2;
 
-	if( ( store_header_data_offset + store_descriptor->service_machine_string_size ) > (size_t) 0x4000 )
+	if( ( store_header_data_offset + store_descriptor->service_machine_string_size ) > store_block->data_size )
 	{
 		libcerror_error_set(
 		 error,
@@ -1522,14 +1522,14 @@ int libvshadow_store_descriptor_read_store_header(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( store_header_data_offset < (size_t) 0x4000 )
+		if( store_header_data_offset < store_block->data_size )
 		{
 			libcnotify_printf(
 			 "%s: trailing data:\n",
 			 function );
 			libcnotify_print_data(
 			 &( store_header_data[ store_header_data_offset ] ),
-			 (size_t) 0x4000 - store_header_data_offset,
+			 store_block->data_size - store_header_data_offset,
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
 	}
@@ -1664,7 +1664,7 @@ int libvshadow_store_descriptor_read_store_bitmap(
 	*next_offset = store_block->next_offset;
 
 	block_data = &( store_block->data[ sizeof( vshadow_store_block_header_t ) ] );
-	block_size = 0x4000 - sizeof( vshadow_store_block_header_t );
+	block_size = (uint16_t) ( store_block->data_size - sizeof( vshadow_store_block_header_t ) );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1891,7 +1891,7 @@ int libvshadow_store_descriptor_read_store_block_list(
 	*next_offset = store_block->next_offset;
 
 	block_data = &( store_block->data[ sizeof( vshadow_store_block_header_t ) ] );
-	block_size = 0x4000 - sizeof( vshadow_store_block_header_t );
+	block_size = (uint16_t) ( store_block->data_size - sizeof( vshadow_store_block_header_t ) );
 
 	while( block_size >= sizeof( vshadow_store_block_list_entry_t ) )
 	{
@@ -2097,7 +2097,7 @@ int libvshadow_store_descriptor_read_store_block_range_list(
 	*next_offset = store_block->next_offset;
 
 	block_data = &( store_block->data[ sizeof( vshadow_store_block_header_t ) ] );
-	block_size = 0x4000 - sizeof( vshadow_store_block_header_t );
+	block_size = (uint16_t) ( store_block->data_size - sizeof( vshadow_store_block_header_t ) );
 
 	while( block_size >= sizeof( vshadow_store_block_list_entry_t ) )
 	{
@@ -2302,6 +2302,8 @@ int libvshadow_store_descriptor_read_block_descriptors(
 			return( -1 );
 		}
 	}
+	store_descriptor->block_descriptors_read = 1;
+
 	return( 1 );
 }
 
@@ -2365,6 +2367,23 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 
 		return( -1 );
 	}
+	if( store_descriptor->block_descriptors_read == 0 )
+	{
+		if( libvshadow_store_descriptor_read_block_descriptors(
+		     store_descriptor,
+		     file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read block descriptors.",
+			 function );
+
+			return( -1 );
+		}
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -2377,7 +2396,7 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 #endif
 	while( buffer_size > 0 )
 	{
-		block_offset = offset;
+		block_offset          = offset;
 		relative_block_offset = (uint32_t) (offset % 0x4000);
 		block_size            = 0x4000 - relative_block_offset;
 
@@ -3212,6 +3231,121 @@ int libvshadow_store_descriptor_get_attribute_flags(
 	}
 	*attribute_flags = store_descriptor->attribute_flags;
 
+	return( 1 );
+}
+
+/* Retrieves the number of blocks
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_store_descriptor_get_number_of_blocks(
+     libvshadow_store_descriptor_t *store_descriptor,
+     libbfio_handle_t *file_io_handle,
+     int *number_of_blocks,
+     libcerror_error_t **error )
+{
+	static char *function = "libvshadow_store_descriptor_get_number_of_blocks";
+
+	if( store_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( store_descriptor->block_descriptors_read == 0 )
+	{
+		if( libvshadow_store_descriptor_read_block_descriptors(
+		     store_descriptor,
+		     file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read block descriptors.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libcdata_list_get_number_of_elements(
+	     store_descriptor->block_descriptors_list,
+	     number_of_blocks,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of block descriptors.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific block descriptor
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_store_descriptor_get_block_descriptor_by_index(
+     libvshadow_store_descriptor_t *store_descriptor,
+     libbfio_handle_t *file_io_handle,
+     int block_index,
+     libvshadow_block_descriptor_t **block_descriptor,
+     libcerror_error_t **error )
+{
+	static char *function = "libvshadow_store_descriptor_get_block_descriptor_by_index";
+
+	if( store_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( store_descriptor->block_descriptors_read == 0 )
+	{
+		if( libvshadow_store_descriptor_read_block_descriptors(
+		     store_descriptor,
+		     file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read block descriptors.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libcdata_list_get_value_by_index(
+	     store_descriptor->block_descriptors_list,
+	     block_index,
+	     (intptr_t **) block_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve block descriptor: %d.",
+		 function,
+		 block_index );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 

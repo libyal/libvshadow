@@ -9,11 +9,14 @@ MSVSCPP_FILES = \
 	libcsplit/libcsplit.vcproj \
 	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
+	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
 	libfguid/libfguid.vcproj \
 	libuna/libuna.vcproj \
 	libvshadow_dll/libvshadow_dll.vcproj \
 	pyvshadow/pyvshadow.vcproj \
+	vshadow_test_read/vshadow_test_read.vcproj \
+	vshadow_test_seek/vshadow_test_seek.vcproj \
 	vshadowinfo/vshadowinfo.vcproj \
 	vshadowmount/vshadowmount.vcproj \
 	libvshadow.sln

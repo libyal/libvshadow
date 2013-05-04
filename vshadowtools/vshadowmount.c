@@ -861,7 +861,7 @@ int __stdcall vshadowmount_dokan_CreateFile(
 	else
 	{
 		if( ( path_length <= vshadowmount_dokan_path_prefix_length )
-		 || ( path_length > ( vshadowmount_fuse_path_prefix_length + 3 ) )
+		 || ( path_length > ( vshadowmount_dokan_path_prefix_length + 3 ) )
 		 || ( libcstring_wide_string_compare(
 		       path,
 		       vshadowmount_dokan_path_prefix,
