@@ -43,6 +43,7 @@ Tools:
 20130505
 * added libvshadow_volume_get_store_identifier function
 * worked on multi-threading support
+* slight improvement of error tolerability of catalog parsing
 
 20130504
 * added libcthreads

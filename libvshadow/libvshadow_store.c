@@ -294,6 +294,7 @@ ssize_t libvshadow_store_read_buffer(
 }
 
 /* Reads (store) data at the current offset into a buffer using a Basic File IO (bfio) handle
+ * This function is not multi-thread safe acquire write lock before call
  * Returns the number of bytes read or -1 on error
  */
 ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
@@ -576,6 +577,7 @@ on_error:
 }
 
 /* Seeks a certain offset of the (store) data
+ * This function is not multi-thread safe acquire write lock before call
  * Returns the offset if seek is successful or -1 on error
  */
 off64_t libvshadow_internal_store_seek_offset(
