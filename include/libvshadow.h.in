@@ -278,6 +278,17 @@ int libvshadow_volume_get_store(
      libvshadow_store_t **store,
      libvshadow_error_t **error );
 
+/* Retrieves a specific store identifier
+ * Returns 1 if successful or -1 on error
+ */
+LIBVSHADOW_EXTERN \
+int libvshadow_volume_get_store_identifier(
+     libvshadow_volume_t *volume,
+     int store_index,
+     uint8_t *guid,
+     size_t size,
+     libvshadow_error_t **error );
+
 /* -------------------------------------------------------------------------
  * Store functions
  * ------------------------------------------------------------------------- */

@@ -1178,24 +1178,24 @@ int libvshadow_io_handle_read_catalog(
 
 						goto on_error;
 					}
-/* TODO find last store decriptor */
 				}
-				if( last_store_descriptor == NULL )
+/* TODO look for the last store decriptor ? */
+				if( last_store_descriptor != NULL )
 				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: missing last store descriptor.",
-					 function );
-
-					goto on_error;
+					last_store_descriptor->store_block_list_offset       = store_descriptor->store_block_list_offset;
+					last_store_descriptor->store_header_offset           = store_descriptor->store_header_offset;
+					last_store_descriptor->store_block_range_list_offset = store_descriptor->store_block_range_list_offset;
+					last_store_descriptor->store_bitmap_offset           = store_descriptor->store_bitmap_offset;
+					last_store_descriptor->store_previous_bitmap_offset  = store_descriptor->store_previous_bitmap_offset;
 				}
-				last_store_descriptor->store_block_list_offset       = store_descriptor->store_block_list_offset;
-				last_store_descriptor->store_header_offset           = store_descriptor->store_header_offset;
-				last_store_descriptor->store_block_range_list_offset = store_descriptor->store_block_range_list_offset;
-				last_store_descriptor->store_bitmap_offset           = store_descriptor->store_bitmap_offset;
-				last_store_descriptor->store_previous_bitmap_offset  = store_descriptor->store_previous_bitmap_offset;
+#if defined( HAVE_DEBUG_OUTPUT )
+				else
+				{
+					libcnotify_printf(
+					 "%s: missing last store descriptor.\n",
+					 function );
+				}
+#endif
 			}
 			catalog_block_offset += (size_t) 128;
 			catalog_block_size   -= (size_t) 128;

@@ -132,6 +132,21 @@ int libvshadow_store_initialize(
 
 		return( -1 );
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_initialize(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to intialize read/write lock.",
+		 function );
+
+		goto on_error;
+	}
+#endif
 	internal_store->file_io_handle         = file_io_handle;
 	internal_store->io_handle              = io_handle;
 	internal_store->internal_volume        = internal_volume;
@@ -179,6 +194,21 @@ int libvshadow_store_free(
 
 		/* The file_io_handle, io_handle and internal_volume references are freed elsewhere
 		 */
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_free(
+		     &( internal_store->read_write_lock ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free read/write lock.",
+			 function );
+
+			result = -1;
+		}
+#endif
 		memory_free(
 		 internal_store );
 	}
@@ -211,8 +241,23 @@ ssize_t libvshadow_store_read_buffer(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-	read_count = libvshadow_store_read_buffer_from_file_io_handle(
-		      store,
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	read_count = libvshadow_internal_store_read_buffer_from_file_io_handle(
+		      internal_store,
 		      internal_store->file_io_handle,
 		      buffer,
 		      buffer_size,
@@ -228,27 +273,41 @@ ssize_t libvshadow_store_read_buffer(
 		 function,
 		 internal_store->store_descriptor_index );
 
+		read_count = -1;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
 		return( -1 );
 	}
+#endif
 	return( read_count );
 }
 
 /* Reads (store) data at the current offset into a buffer using a Basic File IO (bfio) handle
  * Returns the number of bytes read or -1 on error
  */
-ssize_t libvshadow_store_read_buffer_from_file_io_handle(
-         libvshadow_store_t *store,
+ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
+         libvshadow_internal_store_t *internal_store,
          libbfio_handle_t *file_io_handle,
          void *buffer,
          size_t buffer_size,
          libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
 	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_read_buffer_from_file_io_handle";
+	static char *function                           = "libvshadow_internal_store_read_buffer_from_file_io_handle";
 	ssize_t read_count                              = 0;
 
-	if( store == NULL )
+	if( internal_store == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -259,8 +318,6 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 
 		return( -1 );
 	}
-	internal_store = (libvshadow_internal_store_t *) store;
-
 	if( internal_store->internal_volume == NULL )
 	{
 		libcerror_error_set(
@@ -337,6 +394,85 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 	return( read_count );
 }
 
+/* Reads (store) data at the current offset into a buffer using a Basic File IO (bfio) handle
+ * Returns the number of bytes read or -1 on error
+ */
+ssize_t libvshadow_store_read_buffer_from_file_io_handle(
+         libvshadow_store_t *store,
+         libbfio_handle_t *file_io_handle,
+         void *buffer,
+         size_t buffer_size,
+         libcerror_error_t **error )
+{
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_read_buffer_from_file_io_handle";
+	ssize_t read_count                          = 0;
+
+	if( store == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store.",
+		 function );
+
+		return( -1 );
+	}
+	internal_store = (libvshadow_internal_store_t *) store;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	read_count = libvshadow_internal_store_read_buffer_from_file_io_handle(
+		      internal_store,
+		      file_io_handle,
+		      buffer,
+		      buffer_size,
+		      error );
+
+	if( read_count == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read buffer from store descriptor: %d.",
+		 function,
+		 internal_store->store_descriptor_index );
+
+		read_count = -1;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( read_count );
+}
+
 /* Reads (store) data at a specific offset
  * Returns the number of bytes read or -1 on error
  */
@@ -364,11 +500,26 @@ ssize_t libvshadow_store_read_random(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-	if( libvshadow_store_seek_offset(
-	     store,
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( libvshadow_internal_store_seek_offset(
+	     internal_store,
 	     offset,
 	     SEEK_SET,
-	     error ) == -1 )
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -377,14 +528,14 @@ ssize_t libvshadow_store_read_random(
 		 "%s: unable to seek offset.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	read_count = libvshadow_store_read_buffer_from_file_io_handle(
-		      store,
+	read_count = libvshadow_internal_store_read_buffer_from_file_io_handle(
+		      internal_store,
 		      internal_store->file_io_handle,
-	              buffer,
-	              buffer_size,
-	              error );
+		      buffer,
+		      buffer_size,
+		      error );
 
 	if( read_count == -1 )
 	{
@@ -396,24 +547,46 @@ ssize_t libvshadow_store_read_random(
 		 function,
 		 internal_store->store_descriptor_index );
 
+		goto on_error;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
 		return( -1 );
 	}
+#endif
 	return( read_count );
+
+on_error:
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	libcthreads_read_write_lock_release_for_write(
+	 &( internal_store->read_write_lock ),
+	 NULL );
+#endif
+	return( -1 );
 }
 
 /* Seeks a certain offset of the (store) data
  * Returns the offset if seek is successful or -1 on error
  */
-off64_t libvshadow_store_seek_offset(
-         libvshadow_store_t *store,
+off64_t libvshadow_internal_store_seek_offset(
+         libvshadow_internal_store_t *internal_store,
          off64_t offset,
          int whence,
          libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store = NULL;
-	static char *function                       = "libvshadow_store_seek_offset";
+	static char *function = "libvshadow_internal_store_seek_offset";
 
-	if( store == NULL )
+	if( internal_store == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -424,8 +597,6 @@ off64_t libvshadow_store_seek_offset(
 
 		return( -1 );
 	}
-	internal_store = (libvshadow_internal_store_t *) store;
-
 	if( internal_store->internal_volume == NULL )
 	{
 		libcerror_error_set(
@@ -471,6 +642,81 @@ off64_t libvshadow_store_seek_offset(
 	}
 	internal_store->current_offset = offset;
 
+	return( offset );
+}
+
+/* Seeks a certain offset of the (store) data
+ * Returns the offset if seek is successful or -1 on error
+ */
+off64_t libvshadow_store_seek_offset(
+         libvshadow_store_t *store,
+         off64_t offset,
+         int whence,
+         libcerror_error_t **error )
+{
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_seek_offset";
+
+	if( store == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store.",
+		 function );
+
+		return( -1 );
+	}
+	internal_store = (libvshadow_internal_store_t *) store;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	offset = libvshadow_internal_store_seek_offset(
+	          internal_store,
+	          offset,
+	          whence,
+	          error );
+
+	if( offset == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek offset.",
+		 function );
+
+		offset = -1;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( offset );
 }
 
@@ -520,8 +766,38 @@ int libvshadow_store_get_offset(
 
 		return( -1 );
 	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*offset = internal_store->current_offset;
 
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     &( internal_store->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 

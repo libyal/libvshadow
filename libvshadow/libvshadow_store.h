@@ -28,6 +28,7 @@
 #include "libvshadow_extern.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcerror.h"
+#include "libvshadow_libcthreads.h"
 #include "libvshadow_types.h"
 #include "libvshadow_volume.h"
 
@@ -58,6 +59,12 @@ struct libvshadow_internal_store
 	/* The current offset
 	 */
 	off64_t current_offset;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	/* The read/write lock
+	 */
+	libcthreads_read_write_lock_t *read_write_lock;
+#endif
 };
 
 int libvshadow_store_initialize(
@@ -80,6 +87,13 @@ ssize_t libvshadow_store_read_buffer(
          size_t buffer_size,
          libcerror_error_t **error );
 
+ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
+         libvshadow_internal_store_t *internal_store,
+         libbfio_handle_t *file_io_handle,
+         void *buffer,
+         size_t buffer_size,
+         libcerror_error_t **error );
+
 LIBVSHADOW_EXTERN \
 ssize_t libvshadow_store_read_buffer_from_file_io_handle(
          libvshadow_store_t *store,
@@ -94,6 +108,12 @@ ssize_t libvshadow_store_read_random(
          void *buffer,
          size_t buffer_size,
          off64_t offset,
+         libcerror_error_t **error );
+
+off64_t libvshadow_internal_store_seek_offset(
+         libvshadow_internal_store_t *internal_store,
+         off64_t offset,
+         int whence,
          libcerror_error_t **error );
 
 LIBVSHADOW_EXTERN \

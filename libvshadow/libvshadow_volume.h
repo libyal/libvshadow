@@ -30,6 +30,7 @@
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
+#include "libvshadow_libcthreads.h"
 #include "libvshadow_types.h"
 
 #if defined( __cplusplus )
@@ -59,6 +60,16 @@ struct libvshadow_internal_volume
 	/* Value to indicate if the file IO handle was created inside the library
 	 */
 	uint8_t file_io_handle_created_in_library;
+
+	/* Value to indicate if the file IO handle was opened inside the library
+	 */
+	uint8_t file_io_handle_opened_in_library;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	/* The read/write lock
+	 */
+	libcthreads_read_write_lock_t *read_write_lock;
+#endif
 };
 
 LIBVSHADOW_EXTERN \
@@ -106,6 +117,7 @@ int libvshadow_volume_close(
 
 int libvshadow_volume_open_read(
      libvshadow_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
 LIBVSHADOW_EXTERN \
@@ -125,6 +137,14 @@ int libvshadow_volume_get_store(
      libvshadow_volume_t *volume,
      int store_index,
      libvshadow_store_t **store,
+     libcerror_error_t **error );
+
+LIBVSHADOW_EXTERN \
+int libvshadow_volume_get_store_identifier(
+     libvshadow_volume_t *volume,
+     int store_index,
+     uint8_t *guid,
+     size_t size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

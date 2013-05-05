@@ -40,6 +40,10 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20130505
+* added libvshadow_volume_get_store_identifier function
+* worked on multi-threading support
+
 20130504
 * added libcthreads
 * worked on multi-threading support

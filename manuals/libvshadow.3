@@ -1,4 +1,4 @@
-.Dd May 3, 2013
+.Dd May 5, 2013
 .Dt libvshadow 3
 .Os libvshadow
 .Sh NAME
@@ -60,6 +60,8 @@ Volume functions
 .Fn libvshadow_volume_get_number_of_stores "libvshadow_volume_t *volume, int *number_of_stores, libvshadow_error_t **error"
 .Ft int
 .Fn libvshadow_volume_get_store "libvshadow_volume_t *volume, int store_index, libvshadow_store_t **store, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_volume_get_store_identifier "libvshadow_volume_t *volume, int store_index, uint8_t *guid, size_t size, libcerror_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
