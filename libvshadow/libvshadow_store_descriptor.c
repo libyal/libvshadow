@@ -34,6 +34,7 @@
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
 #include "libvshadow_libcstring.h"
+#include "libvshadow_libcthreads.h"
 #include "libvshadow_libfdatetime.h"
 #include "libvshadow_libfguid.h"
 #include "libvshadow_libuna.h"
@@ -174,14 +175,14 @@ int libvshadow_store_descriptor_initialize(
 
 		goto on_error;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_initialize(
 	     &( ( *store_descriptor )->read_write_lock ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to intialize read/write lock.",
 		 function );
@@ -253,14 +254,14 @@ int libvshadow_store_descriptor_free(
 	}
 	if( *store_descriptor != NULL )
 	{
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 		if( libcthreads_read_write_lock_free(
 		     &( ( *store_descriptor )->read_write_lock ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free read/write lock.",
 			 function );
@@ -525,14 +526,14 @@ int libvshadow_store_descriptor_read_catalog_entry(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_write(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for writing.",
 		 function );
@@ -954,14 +955,14 @@ int libvshadow_store_descriptor_read_catalog_entry(
 		}
 #endif
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_write(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for writing.",
 		 function );
@@ -986,9 +987,9 @@ on_error:
 		 NULL );
 	}
 #endif
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	libcthreads_read_write_lock_release_for_write(
-	 &( store_descriptor->read_write_lock ),
+	 store_descriptor->read_write_lock,
 	 NULL );
 #endif
 	return( -1 );
@@ -1028,14 +1029,14 @@ int libvshadow_store_descriptor_read_store_header(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_write(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for writing.",
 		 function );
@@ -1634,14 +1635,14 @@ int libvshadow_store_descriptor_read_store_header(
 		 "\n" );
 	}
 #endif
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_write(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for writing.",
 		 function );
@@ -1658,9 +1659,9 @@ on_error:
 		 &store_block,
 		 NULL );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	libcthreads_read_write_lock_release_for_write(
-	 &( store_descriptor->read_write_lock ),
+	 store_descriptor->read_write_lock,
 	 NULL );
 #endif
 	return( -1 );
@@ -2315,14 +2316,14 @@ int libvshadow_store_descriptor_read_block_descriptors(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_write(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for writing.",
 		 function );
@@ -2424,14 +2425,14 @@ int libvshadow_store_descriptor_read_block_descriptors(
 		}
 		store_descriptor->block_descriptors_read = 1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_write(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for writing.",
 		 function );
@@ -2442,9 +2443,9 @@ int libvshadow_store_descriptor_read_block_descriptors(
 	return( 1 );
 
 on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	libcthreads_read_write_lock_release_for_write(
-	 &( store_descriptor->read_write_lock ),
+	 store_descriptor->read_write_lock,
 	 NULL );
 #endif
 	return( -1 );
@@ -2526,14 +2527,14 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3094,14 +3095,14 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 		}
 #endif
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3112,9 +3113,9 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 	return( (ssize_t) buffer_offset );
 
 on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	libcthreads_read_write_lock_release_for_read(
-	 &( store_descriptor->read_write_lock ),
+	 store_descriptor->read_write_lock,
 	 NULL );
 #endif
 	return( -1 );
@@ -3152,14 +3153,14 @@ int libvshadow_store_descriptor_get_volume_size(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3169,14 +3170,14 @@ int libvshadow_store_descriptor_get_volume_size(
 #endif
 	*volume_size = store_descriptor->volume_size;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3232,14 +3233,14 @@ int libvshadow_store_descriptor_get_identifier(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3261,14 +3262,14 @@ int libvshadow_store_descriptor_get_identifier(
 
 		result = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3311,14 +3312,14 @@ int libvshadow_store_descriptor_get_creation_time(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3328,14 +3329,14 @@ int libvshadow_store_descriptor_get_creation_time(
 #endif
 	*filetime = store_descriptor->creation_time;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3391,14 +3392,14 @@ int libvshadow_store_descriptor_get_copy_identifier(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3420,14 +3421,14 @@ int libvshadow_store_descriptor_get_copy_identifier(
 
 		result = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3483,14 +3484,14 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3512,14 +3513,14 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
 
 		result = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3562,14 +3563,14 @@ int libvshadow_store_descriptor_get_attribute_flags(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3579,14 +3580,14 @@ int libvshadow_store_descriptor_get_attribute_flags(
 #endif
 	*attribute_flags = store_descriptor->attribute_flags;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3636,14 +3637,14 @@ int libvshadow_store_descriptor_get_number_of_blocks(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3665,14 +3666,14 @@ int libvshadow_store_descriptor_get_number_of_blocks(
 
 		result = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );
@@ -3723,14 +3724,14 @@ int libvshadow_store_descriptor_get_block_descriptor_by_index(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_grab_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to grab read/write lock for reading.",
 		 function );
@@ -3754,14 +3755,14 @@ int libvshadow_store_descriptor_get_block_descriptor_by_index(
 
 		result = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	if( libcthreads_read_write_lock_release_for_read(
-	     &( store_descriptor->read_write_lock ),
+	     store_descriptor->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to release read/write lock for reading.",
 		 function );

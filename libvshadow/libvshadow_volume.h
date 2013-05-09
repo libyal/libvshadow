@@ -65,7 +65,7 @@ struct libvshadow_internal_volume
 	 */
 	uint8_t file_io_handle_opened_in_library;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	/* The read/write lock
 	 */
 	libcthreads_read_write_lock_t *read_write_lock;

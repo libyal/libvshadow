@@ -29,6 +29,7 @@
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
+#include "libvshadow_libcthreads.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -137,7 +138,7 @@ struct libvshadow_store_descriptor
 	 */
 	uint8_t block_descriptors_read;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( HAVE_LOCAL_LIBVSHADOW )
 	/* The read/write lock
 	 */
 	libcthreads_read_write_lock_t *read_write_lock;

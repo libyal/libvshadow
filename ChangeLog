@@ -4,12 +4,14 @@ TODO
 * remove hard coded 0x4000 block size
   - use or pass io handle block size instead
 * add tests
+  - read random
   - create test image
   - create test plan
   - test and add ignore overlay when reading from next store
+* multi-threading support
+  - what about abort value?
 * beta
   - fix open issues
-
 * add libfdata and libfcache for caching ?
 
 API:
