@@ -282,7 +282,7 @@ AC_DEFUN([AX_LIBCTHREADS_CHECK_ENABLE],
 
  AS_IF(
   [test "x$ac_cv_enable_multi_threading_support" = xno],
-  [ac_cv_libcthreads="no",
+  [ac_cv_libcthreads="no"
   ac_cv_libcthreads_multi_threading="no"],
   [dnl Check for a shared library version
   AX_LIBCTHREADS_CHECK_LIB
