@@ -1,6 +1,6 @@
 dnl Functions for pthread
 dnl
-dnl Version: 20130503
+dnl Version: 20130509
 
 dnl Function to detect if pthread is available
 AC_DEFUN([AX_PTHREAD_CHECK_LIB],
@@ -27,6 +27,50 @@ AC_DEFUN([AX_PTHREAD_CHECK_LIB],
    [dnl Check for the individual functions
    ac_cv_pthread=pthread
 
+   dnl Thread functions
+   AC_CHECK_LIB(
+    pthread,
+    pthread_create,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_exit,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_join,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+
+   dnl Condition functions
+   AC_CHECK_LIB(
+    pthread,
+    pthread_cond_init,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_cond_destroy,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_cond_broadcast,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_cond_signal,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_cond_wait,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+
    dnl Mutex functions
    AC_CHECK_LIB(
     pthread,
@@ -41,6 +85,11 @@ AC_DEFUN([AX_PTHREAD_CHECK_LIB],
    AC_CHECK_LIB(
     pthread,
     pthread_mutex_lock,
+    [ac_pthread_dummy=yes],
+    [ac_cv_pthread=no])
+   AC_CHECK_LIB(
+    pthread,
+    pthread_mutex_trylock,
     [ac_pthread_dummy=yes],
     [ac_cv_pthread=no])
    AC_CHECK_LIB(
