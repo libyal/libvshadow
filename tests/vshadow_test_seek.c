@@ -80,15 +80,6 @@ int vshadow_test_seek_offset(
 	                 input_whence,
 	                 &error );
 
-	if( result_offset == -1 )
-	{
-		libvshadow_error_backtrace_fprint(
-		 error,
-		 stderr );
-
-		libvshadow_error_free(
-		 &error );
-	}
 	if( result_offset == output_offset )
 	{
 		result = 1;
@@ -109,6 +100,17 @@ int vshadow_test_seek_offset(
 	 stdout,
 	 "\n" );
 
+	if( error != NULL)
+	{
+		if( result != 1 )
+		{
+			libvshadow_error_backtrace_fprint(
+			 error,
+			 stderr );
+		}
+		libvshadow_error_free(
+		 &error );
+	}
 	return( result );
 }
 

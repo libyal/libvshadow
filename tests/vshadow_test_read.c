@@ -43,7 +43,7 @@ int vshadow_test_seek_offset(
      libvshadow_store_t *store,
      off64_t input_offset,
      int input_whence,
-     off64_t output_offset )
+     off64_t expected_offset )
 {
 	libvshadow_error_t *error = NULL;
 	off64_t result_offset     = 0;
@@ -59,25 +59,7 @@ int vshadow_test_seek_offset(
 	                 input_whence,
 	                 &error );
 
-	if( result_offset == -1 )
-	{
-		libvshadow_error_backtrace_fprint(
-		 error,
-		 stderr );
-
-		libvshadow_error_free(
-		 &error );
-	}
-	if( result_offset == -1 )
-	{
-		libvshadow_error_backtrace_fprint(
-		 error,
-		 stderr );
-
-		libvshadow_error_free(
-		 &error );
-	}
-	if( result_offset != output_offset )
+	if( expected_offset != result_offset )
 	{
 		fprintf(
 		 stderr,
@@ -88,6 +70,17 @@ int vshadow_test_seek_offset(
 	{
 		result = 1;
 	}
+	if( error != NULL )
+	{
+		if( result != 1 )
+		{
+			libvshadow_error_backtrace_fprint(
+			 error,
+			 stderr );
+		}
+		libvshadow_error_free(
+		 &error );
+	}
 	return( result );
 }
 
@@ -97,7 +90,7 @@ int vshadow_test_seek_offset(
 int vshadow_test_read_buffer(
      libvshadow_store_t *store,
      size64_t input_size,
-     size64_t output_size )
+     size64_t expected_size )
 {
 	uint8_t buffer[ VSHADOW_TEST_READ_BUFFER_SIZE ];
 
@@ -130,13 +123,6 @@ int vshadow_test_read_buffer(
 
 		if( read_count < 0 )
 		{
-			libvshadow_error_backtrace_fprint(
-			 error,
-			 stderr );
-
-			libvshadow_error_free(
-			 &error );
-
 			break;
 		}
 		remaining_size -= (size64_t) read_count;
@@ -147,16 +133,142 @@ int vshadow_test_read_buffer(
 			break;
 		}
 	}
-	if( output_size == result_size )
-	{
-		result = 1;
-	}
-	else
+	if( expected_size != result_size )
 	{
 		fprintf(
 		 stderr,
 		 "Unexpected read count: %" PRIu64 "\n",
 		 result_size );
+	}
+	else
+	{
+		result = 1;
+	}
+	if( error != NULL )
+	{
+		if( result != 1 )
+		{
+			libvshadow_error_backtrace_fprint(
+			 error,
+			 stderr );
+		}
+		libvshadow_error_free(
+		 &error );
+	}
+	return( result );
+}
+
+/* Tests libvshadow_store_read_random
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int vshadow_test_read_random(
+     libvshadow_store_t *store,
+     off64_t input_offset,
+     size64_t input_size,
+     off64_t expected_offset,
+     size64_t expected_size )
+{
+	uint8_t buffer[ VSHADOW_TEST_READ_BUFFER_SIZE ];
+
+	libvshadow_error_t *error = NULL;
+	off64_t result_offset     = 0;
+	size64_t remaining_size   = 0;
+	size64_t result_size      = 0;
+	size_t read_size          = 0;
+	ssize_t read_count        = 0;
+	int result                = 0;
+
+	if( store == NULL )
+	{
+		return( -1 );
+	}
+	remaining_size = input_size;
+
+	fprintf(
+	 stdout,
+	 "Testing reading random with offset: %" PRIi64 " and size: %" PRIu64 "\t",
+	 input_offset,
+	 input_size );
+
+	while( remaining_size > 0 )
+	{
+		read_size = VSHADOW_TEST_READ_BUFFER_SIZE;
+
+		if( remaining_size < (size64_t) read_size )
+		{
+			read_size = (size_t) remaining_size;
+		}
+		read_count = libvshadow_store_read_random(
+			      store,
+			      buffer,
+			      read_size,
+			      input_offset,
+			      &error );
+
+		if( read_count < 0 )
+		{
+			break;
+		}
+		input_offset   += (size64_t) read_count;
+		remaining_size -= (size64_t) read_count;
+		result_size    += (size64_t) read_count;
+
+		if( read_count != (ssize_t) read_size )
+		{
+			break;
+		}
+	}
+	if( libvshadow_store_get_offset(
+	     store,
+	     &result_offset,
+	     &error ) != 1 )
+	{
+		result = -1;
+	}
+	if( expected_offset != result_offset )
+	{
+		fprintf(
+		 stderr,
+		 "Unexpected offset: %" PRIi64 "\n",
+		 result_offset );
+	}
+	else if( expected_size != result_size )
+	{
+		fprintf(
+		 stderr,
+		 "Unexpected read count: %" PRIu64 "\n",
+		 result_size );
+	}
+	else
+	{
+		result = 1;
+	}
+	if( result == 1 )
+	{
+		fprintf(
+		 stdout,
+		 "(PASS)" );
+	}
+	else
+	{
+		fprintf(
+		 stdout,
+		 "(FAIL)" );
+	}
+	fprintf(
+	 stdout,
+	 "\n" );
+
+	if( error != NULL )
+	{
+		if( result != 1 )
+		{
+			libvshadow_error_backtrace_fprint(
+			 error,
+			 stderr );
+		}
+		libvshadow_error_free(
+		 &error );
 	}
 	return( result );
 }
@@ -164,13 +276,13 @@ int vshadow_test_read_buffer(
 /* Tests reading data at a specific offset
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int vshadow_test_read(
+int vshadow_test_seek_offset_and_read_buffer(
      libvshadow_store_t *store,
      off64_t input_offset,
      int input_whence,
      size64_t input_size,
-     off64_t output_offset,
-     size64_t output_size )
+     off64_t expected_offset,
+     size64_t expected_size )
 {
 	const char *whence_string = NULL;
 	int result                = 0;
@@ -197,7 +309,7 @@ int vshadow_test_read(
 	}
 	fprintf(
 	 stdout,
-	 "Testing reading range with offset: %" PRIi64 ", whence: %s and size: %" PRIu64 "\t",
+	 "Testing reading buffer at offset: %" PRIi64 ", whence: %s and size: %" PRIu64 "\t",
 	 input_offset,
 	 whence_string,
 	 input_size );
@@ -206,7 +318,7 @@ int vshadow_test_read(
 	          store,
 	          input_offset,
 	          input_whence,
-	          output_offset );
+	          expected_offset );
 
 	if( result == 1 )
 	{
@@ -215,10 +327,10 @@ int vshadow_test_read(
 			result = vshadow_test_read_buffer(
 				  store,
 				  input_size,
-				  output_size );
+				  expected_size );
 		}
 	}
-	if( result != 0 )
+	if( result == 1 )
 	{
 		fprintf(
 		 stdout,
@@ -352,7 +464,7 @@ int main( int argc, char * const argv[] )
 	/* Test: offset: 0 size: <volume_size>
 	 * Expected result: offset: 0 size: <volume_size>
 	 */
-	if( vshadow_test_read(
+	if( vshadow_test_seek_offset_and_read_buffer(
 	     store,
 	     0,
 	     SEEK_SET,
@@ -362,14 +474,14 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test read.\n" );
+		 "Unable to test seek offset and read buffer.\n" );
 
 		goto on_error;
 	}
 	/* Test: offset: 0 size: <volume_size>
 	 * Expected result: offset: 0 size: <volume_size>
 	 */
-	if( vshadow_test_read(
+	if( vshadow_test_seek_offset_and_read_buffer(
 	     store,
 	     0,
 	     SEEK_SET,
@@ -379,7 +491,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test read.\n" );
+		 "Unable to test seek offset and read buffer.\n" );
 
 		goto on_error;
 	}
@@ -390,7 +502,7 @@ int main( int argc, char * const argv[] )
 	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
 	 * Expected result: offset: <volume_size / 7> size: <volume_size / 2>
 	 */
-	if( vshadow_test_read(
+	if( vshadow_test_seek_offset_and_read_buffer(
 	     store,
 	     (off64_t) ( volume_size / 7 ),
 	     SEEK_SET,
@@ -400,14 +512,14 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test read.\n" );
+		 "Unable to test seek offset and read buffer.\n" );
 
 		goto on_error;
 	}
 	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
 	 * Expected result: offset: <volume_size / 7> size: <volume_size / 2>
 	 */
-	if( vshadow_test_read(
+	if( vshadow_test_seek_offset_and_read_buffer(
 	     store,
 	     (off64_t) ( volume_size / 7 ),
 	     SEEK_SET,
@@ -417,7 +529,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test read.\n" );
+		 "Unable to test seek offset and read buffer.\n" );
 
 		goto on_error;
 	}
@@ -430,7 +542,7 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <volume_size - 1024> size: 4096
 		 * Expected result: offset: -1 size: <undetermined>
 		 */
-		if( vshadow_test_read(
+		if( vshadow_test_seek_offset_and_read_buffer(
 		     store,
 		     (off64_t) ( volume_size - 1024 ),
 		     SEEK_SET,
@@ -440,14 +552,14 @@ int main( int argc, char * const argv[] )
 		{
 			fprintf(
 			 stderr,
-			 "Unable to test read.\n" );
+			 "Unable to test seek offset and read buffer.\n" );
 
 			goto on_error;
 		}
 		/* Test: offset: <volume_size - 1024> size: 4096
 		 * Expected result: offset: -1 size: <undetermined>
 		 */
-		if( vshadow_test_read(
+		if( vshadow_test_seek_offset_and_read_buffer(
 		     store,
 		     (off64_t) ( volume_size - 1024 ),
 		     SEEK_SET,
@@ -457,7 +569,7 @@ int main( int argc, char * const argv[] )
 		{
 			fprintf(
 			 stderr,
-			 "Unable to test read.\n" );
+			 "Unable to test seek offset and read buffer.\n" );
 
 			goto on_error;
 		}
@@ -467,7 +579,7 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <volume_size - 1024> size: 4096
 		 * Expected result: offset: <volume_size - 1024> size: 1024
 		 */
-		if( vshadow_test_read(
+		if( vshadow_test_seek_offset_and_read_buffer(
 		     store,
 		     (off64_t) ( volume_size - 1024 ),
 		     SEEK_SET,
@@ -484,7 +596,7 @@ int main( int argc, char * const argv[] )
 		/* Test: offset: <volume_size - 1024> size: 4096
 		 * Expected result: offset: <volume_size - 1024> size: 1024
 		 */
-		if( vshadow_test_read(
+		if( vshadow_test_seek_offset_and_read_buffer(
 		     store,
 		     (off64_t) ( volume_size - 1024 ),
 		     SEEK_SET,
@@ -494,10 +606,45 @@ int main( int argc, char * const argv[] )
 		{
 			fprintf(
 			 stderr,
-			 "Unable to test read.\n" );
+			 "Unable to test seek offset and read buffer.\n" );
 
 			goto on_error;
 		}
+	}
+	/* Case 3: test random read
+	 */
+
+	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
+	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
+	 */
+	if( vshadow_test_read_random(
+	     store,
+	     (off64_t) ( volume_size / 7 ),
+	     volume_size / 2,
+	     (off64_t) ( volume_size / 7 ) + ( volume_size / 2 ),
+	     volume_size / 2 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test read random.\n" );
+
+		goto on_error;
+	}
+	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
+	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
+	 */
+	if( vshadow_test_read_random(
+	     store,
+	     (off64_t) ( volume_size / 7 ),
+	     volume_size / 2,
+	     (off64_t) ( volume_size / 7 ) + ( volume_size / 2 ),
+	     volume_size / 2 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test read random.\n" );
+
+		goto on_error;
 	}
 	/* Clean up
 	 */
