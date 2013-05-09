@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _BDETOOLS_LIBBFIO_H )
-#define _BDETOOLS_LIBBFIO_H
+#if !defined( _VSHADOWTOOLS_LIBBFIO_H )
+#define _VSHADOWTOOLS_LIBBFIO_H
 
 #include <common.h>
 
@@ -47,6 +47,10 @@
 #endif
 
 #include <libbfio.h>
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( LIBBFIO_HAVE_MULTI_THREAD_SUPPORT )
+#error Multi-threading support requires libbfio with multi-threading support
+#endif
 
 #else
 #error Missing libbfio.h

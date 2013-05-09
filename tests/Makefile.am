@@ -3,6 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -11,7 +12,8 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
-	@LIBVSHADOW_DLL_IMPORT@
+	@LIBVSHADOW_DLL_IMPORT@ \
+	@PTHREAD_CPPFLAGS@
 
 if HAVE_PYTHON
 TESTS_PYVSHADOW  = \
@@ -55,12 +57,15 @@ vshadow_test_open_close_LDADD = \
 vshadow_test_read_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libcstring.h \
+	vshadow_test_libcthreads.h \
 	vshadow_test_libvshadow.h \
-	vshadow_test_read.c
+	vshadow_test_read.c \
+	vshadow_test_unused.h
 
 vshadow_test_read_LDADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	../libvshadow/libvshadow.la
 
 vshadow_test_seek_SOURCES = \

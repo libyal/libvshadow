@@ -28,7 +28,10 @@
 #include <stdio.h>
 
 #include "vshadow_test_libcstring.h"
+#include "vshadow_test_libcerror.h"
+#include "vshadow_test_libcthreads.h"
 #include "vshadow_test_libvshadow.h"
+#include "vshadow_test_unused.h"
 
 /* Define to make vshadow_test_read generate verbose output
 #define VSHADOW_TEST_READ_VERBOSE
@@ -349,6 +352,451 @@ int vshadow_test_seek_offset_and_read_buffer(
 	return( result );
 }
 
+/* Tests reading data from a store
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int vshadow_test_read_from_store(
+     libvshadow_store_t *store,
+     size64_t volume_size )
+{
+	int result = 0;
+
+	if( store == NULL )
+	{
+		return( -1 );
+	}
+	if( volume_size > (size64_t) INT64_MAX )
+	{
+		fprintf(
+		 stderr,
+		 "Volume size exceeds maximum.\n" );
+
+		return( -1 );
+	}
+	/* Case 0: test full read
+	 */
+
+	/* Test: offset: 0 size: <volume_size>
+	 * Expected result: offset: 0 size: <volume_size>
+	 */
+	result = vshadow_test_seek_offset_and_read_buffer(
+	          store,
+	          0,
+	          SEEK_SET,
+	          volume_size,
+	          0,
+	          volume_size );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset and read buffer.\n" );
+
+		return( result );
+	}
+	/* Test: offset: 0 size: <volume_size>
+	 * Expected result: offset: 0 size: <volume_size>
+	 */
+	result = vshadow_test_seek_offset_and_read_buffer(
+	          store,
+	          0,
+	          SEEK_SET,
+	          volume_size,
+	          0,
+	          volume_size );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset and read buffer.\n" );
+
+		return( result );
+	}
+
+	/* Case 1: test random read
+	 */
+
+	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
+	 * Expected result: offset: <volume_size / 7> size: <volume_size / 2>
+	 */
+	result = vshadow_test_seek_offset_and_read_buffer(
+	          store,
+	          (off64_t) ( volume_size / 7 ),
+	          SEEK_SET,
+	          volume_size / 2,
+	          (off64_t) ( volume_size / 7 ),
+	          volume_size / 2 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset and read buffer.\n" );
+
+		return( result );
+	}
+	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
+	 * Expected result: offset: <volume_size / 7> size: <volume_size / 2>
+	 */
+	result = vshadow_test_seek_offset_and_read_buffer(
+	          store,
+	          (off64_t) ( volume_size / 7 ),
+	          SEEK_SET,
+	          volume_size / 2,
+	          (off64_t) ( volume_size / 7 ),
+	          volume_size / 2 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset and read buffer.\n" );
+
+		return( result );
+	}
+
+	/* Case 2: test read beyond volume size
+	 */
+
+	if( volume_size < 1024 )
+	{
+		/* Test: offset: <volume_size - 1024> size: 4096
+		 * Expected result: offset: -1 size: <undetermined>
+		 */
+		result = vshadow_test_seek_offset_and_read_buffer(
+		          store,
+		          (off64_t) ( volume_size - 1024 ),
+		          SEEK_SET,
+		          4096,
+		          -1,
+		          (size64_t) -1 );
+
+		if( result != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset and read buffer.\n" );
+
+			return( result );
+		}
+		/* Test: offset: <volume_size - 1024> size: 4096
+		 * Expected result: offset: -1 size: <undetermined>
+		 */
+		result = vshadow_test_seek_offset_and_read_buffer(
+		          store,
+		          (off64_t) ( volume_size - 1024 ),
+		          SEEK_SET,
+		          4096,
+		          -1,
+		          (size64_t) -1 );
+
+		if( result != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset and read buffer.\n" );
+
+			return( result );
+		}
+	}
+	else
+	{
+		/* Test: offset: <volume_size - 1024> size: 4096
+		 * Expected result: offset: <volume_size - 1024> size: 1024
+		 */
+		result = vshadow_test_seek_offset_and_read_buffer(
+		          store,
+		          (off64_t) ( volume_size - 1024 ),
+		          SEEK_SET,
+		          4096,
+		          (off64_t) ( volume_size - 1024 ),
+		          1024 );
+
+		if( result != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test read.\n" );
+
+			return( result );
+		}
+		/* Test: offset: <volume_size - 1024> size: 4096
+		 * Expected result: offset: <volume_size - 1024> size: 1024
+		 */
+		result = vshadow_test_seek_offset_and_read_buffer(
+		          store,
+		          (off64_t) ( volume_size - 1024 ),
+		          SEEK_SET,
+		          4096,
+		          (off64_t) ( volume_size - 1024 ),
+		          1024 );
+
+		if( result != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset and read buffer.\n" );
+
+			return( result );
+		}
+	}
+	/* Case 3: test random read
+	 */
+
+	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
+	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
+	 */
+	result = vshadow_test_read_random(
+	          store,
+	          (off64_t) ( volume_size / 7 ),
+	          volume_size / 2,
+	          (off64_t) ( volume_size / 7 ) + ( volume_size / 2 ),
+	          volume_size / 2 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test read random.\n" );
+
+		return( result );
+	}
+	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
+	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
+	 */
+	result = vshadow_test_read_random(
+	          store,
+	          (off64_t) ( volume_size / 7 ),
+	          volume_size / 2,
+	          (off64_t) ( volume_size / 7 ) + ( volume_size / 2 ),
+	          volume_size / 2 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test read random.\n" );
+
+		return( result );
+	}
+	return( 1 );
+}
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+
+/* The thread pool callback function
+ * Returns 1 if successful or -1 on error
+ */
+int vshadow_test_read_callback_function(
+     libvshadow_store_t *store,
+     void *arguments VSHADOW_TEST_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "vshadow_test_read_callback_function";
+	size64_t volume_size     = 0;
+
+	VSHADOW_TEST_UNREFERENCED_PARAMETER( arguments )
+
+	if( store == NULL )
+	{
+		libcerror_error_set(
+		 &error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store.",
+		 function );
+
+		goto on_error;
+	}
+	if( libvshadow_store_get_size(
+	     store,
+	     &volume_size,
+	     &error ) != 1 )
+	{
+		libcerror_error_set(
+		 &error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve volume size.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 stdout,
+	 "Volume size: %" PRIu64 " bytes\n",
+	 volume_size );
+
+	if( vshadow_test_read_from_store(
+	     store,
+	     volume_size ) != 1 )
+	{
+		libcerror_error_set(
+		 &error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read from store.",
+		 function );
+
+		goto on_error;
+	}
+	if( libvshadow_store_free(
+	     &store,
+	     &error ) != 1 )
+	{
+		libcerror_error_set(
+		 &error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free store.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( -1 );
+}
+
+/* Tests reading data from multiple stores at the same time
+ * This test requires multi-threading support
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int vshadow_test_read_from_multiple_stores(
+     libvshadow_volume_t *volume,
+     int number_of_stores )
+{
+	libcerror_error_t *error               = NULL;
+	libcthreads_thread_pool_t *thread_pool = NULL;
+	libvshadow_store_t *store              = NULL;
+	static char *function                  = "vshadow_test_read_from_multiple_stores";
+	int iterator                           = 0;
+	int number_of_iterations               = 4;
+
+	if( volume == NULL )
+	{
+		libcerror_error_set(
+		 &error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		goto on_error;
+	}
+	if( number_of_stores > 1 )
+	{
+		if( libcthreads_thread_pool_create(
+		     &thread_pool,
+		     NULL,
+		     number_of_iterations,
+		     number_of_stores,
+		     (int (*)(intptr_t *, void *)) &vshadow_test_read_callback_function,
+		     NULL,
+		     &error ) != 1 )
+		{
+			libcerror_error_set(
+			 &error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create thread pool.",
+			 function );
+
+			goto on_error;
+		}
+		if( number_of_stores < number_of_iterations )
+		{
+			number_of_iterations = number_of_stores;
+		}
+		for( iterator = 1;
+		     iterator <= number_of_stores;
+		     iterator++ )
+		{
+			if( libvshadow_volume_get_store(
+			     volume,
+			     number_of_stores - iterator,
+			     &store,
+			     &error ) != 1 )
+			{
+				fprintf(
+				 stderr,
+				 "Unable to retrieve store: %d.\n",
+				 number_of_stores - iterator );
+
+				goto on_error;
+			}
+			if( libcthreads_thread_pool_push(
+			     thread_pool,
+			     (intptr_t *) store,
+			     &error ) == -1 )
+			{
+				libcerror_error_set(
+				 &error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to push store: %d onto queue.",
+				 function,
+				 number_of_stores - iterator );
+
+				goto on_error;
+			}
+			store = NULL;
+		}
+		if( libcthreads_thread_pool_join(
+		     &thread_pool,
+		     &error ) != 1 )
+		{
+			libcerror_error_set(
+			 &error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to join thread pool.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
+
+		libcerror_error_free(
+		 &error );
+	}
+	if( store != NULL )
+	{
+		libvshadow_store_free(
+		 &store,
+		 NULL );
+	}
+	if( thread_pool != NULL )
+	{
+		libcthreads_thread_pool_join(
+		 &thread_pool,
+		 NULL );
+	}
+	return( -1 );
+}
+
+#endif
+
 /* The main program
  */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
@@ -421,243 +869,74 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libvshadow_volume_get_store(
+	if( number_of_stores > 0 )
+	{
+		if( libvshadow_volume_get_store(
+		     volume,
+		     number_of_stores - 1,
+		     &store,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to retrieve store: %d.\n",
+			 number_of_stores - 1 );
+
+			goto on_error;
+		}
+		if( libvshadow_volume_get_size(
+		     volume,
+		     &volume_size,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to retrieve volume size.\n" );
+
+			goto on_error;
+		}
+		fprintf(
+		 stdout,
+		 "Volume size: %" PRIu64 " bytes\n",
+		 volume_size );
+
+		if( vshadow_test_read_from_store(
+		     store,
+		     volume_size ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to read from store: %d.\n",
+			 number_of_stores - 1 );
+
+			goto on_error;
+		}
+		if( libvshadow_store_free(
+		     &store,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to free store: %d.\n",
+			 number_of_stores - 1 );
+
+			goto on_error;
+		}
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( vshadow_test_read_from_multiple_stores(
 	     volume,
-	     number_of_stores - 1,
-	     &store,
-	     &error ) != 1 )
+	     number_of_stores ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to retrieve store: %d.\n",
-		 number_of_stores - 1 );
+		 "Unable to read from multiple stores.\n" );
 
 		goto on_error;
 	}
-	if( libvshadow_volume_get_size(
-	     volume,
-	     &volume_size,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to retrieve volume size.\n" );
-
-		goto on_error;
-	}
-	if( volume_size > (size64_t) INT64_MAX )
-	{
-		fprintf(
-		 stderr,
-		 "Media size exceeds maximum.\n" );
-
-		goto on_error;
-	}
-	fprintf(
-	 stdout,
-	 "Media size: %" PRIu64 " bytes\n",
-	 volume_size );
-
-	/* Case 0: test full read
-	 */
-
-	/* Test: offset: 0 size: <volume_size>
-	 * Expected result: offset: 0 size: <volume_size>
-	 */
-	if( vshadow_test_seek_offset_and_read_buffer(
-	     store,
-	     0,
-	     SEEK_SET,
-	     volume_size,
-	     0,
-	     volume_size ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset and read buffer.\n" );
-
-		goto on_error;
-	}
-	/* Test: offset: 0 size: <volume_size>
-	 * Expected result: offset: 0 size: <volume_size>
-	 */
-	if( vshadow_test_seek_offset_and_read_buffer(
-	     store,
-	     0,
-	     SEEK_SET,
-	     volume_size,
-	     0,
-	     volume_size ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset and read buffer.\n" );
-
-		goto on_error;
-	}
-
-	/* Case 1: test random read
-	 */
-
-	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
-	 * Expected result: offset: <volume_size / 7> size: <volume_size / 2>
-	 */
-	if( vshadow_test_seek_offset_and_read_buffer(
-	     store,
-	     (off64_t) ( volume_size / 7 ),
-	     SEEK_SET,
-	     volume_size / 2,
-	     (off64_t) ( volume_size / 7 ),
-	     volume_size / 2 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset and read buffer.\n" );
-
-		goto on_error;
-	}
-	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
-	 * Expected result: offset: <volume_size / 7> size: <volume_size / 2>
-	 */
-	if( vshadow_test_seek_offset_and_read_buffer(
-	     store,
-	     (off64_t) ( volume_size / 7 ),
-	     SEEK_SET,
-	     volume_size / 2,
-	     (off64_t) ( volume_size / 7 ),
-	     volume_size / 2 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset and read buffer.\n" );
-
-		goto on_error;
-	}
-
-	/* Case 2: test read beyond volume size
-	 */
-
-	if( volume_size < 1024 )
-	{
-		/* Test: offset: <volume_size - 1024> size: 4096
-		 * Expected result: offset: -1 size: <undetermined>
-		 */
-		if( vshadow_test_seek_offset_and_read_buffer(
-		     store,
-		     (off64_t) ( volume_size - 1024 ),
-		     SEEK_SET,
-		     4096,
-		     -1,
-		     (size64_t) -1 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset and read buffer.\n" );
-
-			goto on_error;
-		}
-		/* Test: offset: <volume_size - 1024> size: 4096
-		 * Expected result: offset: -1 size: <undetermined>
-		 */
-		if( vshadow_test_seek_offset_and_read_buffer(
-		     store,
-		     (off64_t) ( volume_size - 1024 ),
-		     SEEK_SET,
-		     4096,
-		     -1,
-		     (size64_t) -1 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset and read buffer.\n" );
-
-			goto on_error;
-		}
-	}
-	else
-	{
-		/* Test: offset: <volume_size - 1024> size: 4096
-		 * Expected result: offset: <volume_size - 1024> size: 1024
-		 */
-		if( vshadow_test_seek_offset_and_read_buffer(
-		     store,
-		     (off64_t) ( volume_size - 1024 ),
-		     SEEK_SET,
-		     4096,
-		     (off64_t) ( volume_size - 1024 ),
-		     1024 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test read.\n" );
-
-			goto on_error;
-		}
-		/* Test: offset: <volume_size - 1024> size: 4096
-		 * Expected result: offset: <volume_size - 1024> size: 1024
-		 */
-		if( vshadow_test_seek_offset_and_read_buffer(
-		     store,
-		     (off64_t) ( volume_size - 1024 ),
-		     SEEK_SET,
-		     4096,
-		     (off64_t) ( volume_size - 1024 ),
-		     1024 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset and read buffer.\n" );
-
-			goto on_error;
-		}
-	}
-	/* Case 3: test random read
-	 */
-
-	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
-	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
-	 */
-	if( vshadow_test_read_random(
-	     store,
-	     (off64_t) ( volume_size / 7 ),
-	     volume_size / 2,
-	     (off64_t) ( volume_size / 7 ) + ( volume_size / 2 ),
-	     volume_size / 2 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test read random.\n" );
-
-		goto on_error;
-	}
-	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
-	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
-	 */
-	if( vshadow_test_read_random(
-	     store,
-	     (off64_t) ( volume_size / 7 ),
-	     volume_size / 2,
-	     (off64_t) ( volume_size / 7 ) + ( volume_size / 2 ),
-	     volume_size / 2 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test read random.\n" );
-
-		goto on_error;
-	}
+#endif
 	/* Clean up
 	 */
-	if( libvshadow_store_free(
-	     &store,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to free store.\n" );
-
-		goto on_error;
-	}
 	if( libvshadow_volume_close(
 	     volume,
 	     &error ) != 0 )
