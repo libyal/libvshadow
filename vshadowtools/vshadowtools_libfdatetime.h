@@ -35,7 +35,7 @@
 #include <libfdatetime_filetime.h>
 #include <libfdatetime_types.h>
 
-#elif defined( HAVE_LIBFDATETIME_H )
+#else
 
 /* If libtool DLL support is enabled set LIBFDATETIME_DLL_IMPORT
  * before including libfdatetime.h
@@ -48,8 +48,6 @@
 
 #include <libfdatetime.h>
 
-#else
-#error Missing libfdatetime.h
 #endif
 
 #endif

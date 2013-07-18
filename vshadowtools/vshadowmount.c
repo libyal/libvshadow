@@ -2182,6 +2182,7 @@ int main( int argc, char * const argv[] )
 			 result );
 			break;
 	}
+	return( EXIT_SUCCESS );
 #else
 	fprintf(
 	 stderr,

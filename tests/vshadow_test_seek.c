@@ -214,7 +214,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Media size exceeds maximum.\n" );
+		 "Volume size exceeds maximum.\n" );
 
 		goto on_error;
 	}

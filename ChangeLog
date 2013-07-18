@@ -41,6 +41,10 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20130718
+* remove unnecessary restriction in library include headers
+* updated dependencies
+
 20130509
 * worked on multi-threading support
 

@@ -123,7 +123,7 @@ int vshadow_test_single_open_close_volume(
 		{
 			libcerror_error_backtrace_fprint(
 			 error,
-			 stdout );
+			 stderr );
 		}
 		libcerror_error_free(
 		 &error );
@@ -252,7 +252,7 @@ int vshadow_test_multi_open_close_volume(
 		{
 			libcerror_error_backtrace_fprint(
 			 error,
-			 stdout );
+			 stderr );
 		}
 		libcerror_error_free(
 		 &error );

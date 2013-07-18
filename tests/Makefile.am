@@ -47,7 +47,8 @@ vshadow_test_open_close_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libcstring.h \
 	vshadow_test_libvshadow.h \
-	vshadow_test_open_close.c
+	vshadow_test_open_close.c \
+	vshadow_test_unused.h
 
 vshadow_test_open_close_LDADD = \
 	@LIBCSTRING_LIBADD@ \
@@ -72,7 +73,8 @@ vshadow_test_seek_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libcstring.h \
 	vshadow_test_libvshadow.h \
-	vshadow_test_seek.c
+	vshadow_test_seek.c \
+	vshadow_test_unused.h
 
 vshadow_test_seek_LDADD = \
 	@LIBCSTRING_LIBADD@ \

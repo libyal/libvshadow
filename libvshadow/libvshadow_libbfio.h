@@ -37,7 +37,7 @@
 #include <libbfio_pool.h>
 #include <libbfio_types.h>
 
-#elif defined( HAVE_LIBBFIO_H )
+#else
 
 /* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
  * before including libbfio.h
@@ -52,8 +52,6 @@
 #error Multi-threading support requires libbfio with multi-threading support
 #endif
 
-#else
-#error Missing libbfio.h
 #endif
 
 #endif
