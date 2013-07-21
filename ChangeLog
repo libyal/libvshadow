@@ -43,6 +43,7 @@ Tools:
 
 20130721
 * Changes for stand-alone libbfio build
+* updated msvscpp files
 
 20130718
 * remove unnecessary restriction in library include headers
