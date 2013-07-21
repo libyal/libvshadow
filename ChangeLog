@@ -41,6 +41,9 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20130721
+* Changes for stand-alone libbfio build
+
 20130718
 * remove unnecessary restriction in library include headers
 * updated dependencies
