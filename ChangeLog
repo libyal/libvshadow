@@ -41,6 +41,9 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20130723
+* fixes for 32-bit WINAPI build of pyvshadow in file object glue code
+
 20130721
 * Changes for stand-alone libbfio build
 * updated msvscpp files
