@@ -34,6 +34,7 @@
 #include <libfdata_definitions.h>
 #include <libfdata_list.h>
 #include <libfdata_list_element.h>
+#include <libfdata_range_list.h>
 #include <libfdata_tree.h>
 #include <libfdata_tree_node.h>
 #include <libfdata_types.h>

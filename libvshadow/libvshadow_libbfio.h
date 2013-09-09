@@ -49,7 +49,7 @@
 #include <libbfio.h>
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( LIBBFIO_HAVE_MULTI_THREAD_SUPPORT )
-#error Multi-threading support required libbfio with multi-threading support
+#error Multi-threading support requires libbfio with multi-threading support
 #endif
 
 #endif

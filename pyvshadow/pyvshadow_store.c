@@ -37,6 +37,7 @@
 #include "pyvshadow_python.h"
 #include "pyvshadow_store.h"
 #include "pyvshadow_unused.h"
+#include "pyvshadow_volume.h"
 
 PyMethodDef pyvshadow_store_object_methods[] = {
 
@@ -47,14 +48,14 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read_buffer(size) -> String\n"
 	  "\n"
-	  "Reads a buffer of store data from the file(s)." },
+	  "Reads a buffer of store data." },
 
 	{ "read_random",
 	  (PyCFunction) pyvshadow_store_read_random,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read_random(size, offset) -> String\n"
 	  "\n"
-	  "Reads a buffer of store data at a specific offset from the file(s)." },
+	  "Reads a buffer of store data at a specific offset." },
 
 	{ "seek_offset",
 	  (PyCFunction) pyvshadow_store_seek_offset,
@@ -77,7 +78,7 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read(size) -> String\n"
 	  "\n"
-	  "Reads a buffer of store data from the file(s)." },
+	  "Reads a buffer of store data." },
 
 	{ "seek",
 	  (PyCFunction) pyvshadow_store_seek_offset,
