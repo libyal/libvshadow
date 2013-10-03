@@ -24,13 +24,34 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
+list_contains()
+{
+	LIST=$1;
+	SEARCH=$2;
+
+	for LINE in $LIST;
+	do
+		if test $LINE = $SEARCH;
+		then
+			return ${EXIT_SUCCESS};
+		fi
+	done
+
+	return ${EXIT_FAILURE};
+}
+
 test_read()
 { 
 	echo "Testing read of input:" $*;
 
-	./${VSHADOW_TEST_READ} $*;
+	rm -rf tmp;
+	mkdir tmp;
+
+	${TEST_RUNNER} ./${VSHADOW_TEST_READ} $*;
 
 	RESULT=$?;
+
+	rm -rf tmp;
 
 	echo "";
 
@@ -39,7 +60,7 @@ test_read()
 
 VSHADOW_TEST_READ="vshadow_test_read";
 
-if ! test -x ${VSHADOW_TEST_SEEK};
+if ! test -x ${VSHADOW_TEST_READ};
 then
 	VSHADOW_TEST_READ="vshadow_test_read.exe";
 
@@ -48,6 +69,20 @@ fi
 if ! test -x ${VSHADOW_TEST_READ};
 then
 	echo "Missing executable: ${VSHADOW_TEST_READ}";
+
+	exit ${EXIT_FAILURE};
+fi
+
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+	TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+	echo "Missing test runner: ${TEST_RUNNER}";
 
 	exit ${EXIT_FAILURE};
 fi
@@ -71,19 +106,34 @@ then
 
 	EXIT_RESULT=${EXIT_IGNORE};
 else
+	IGNORELIST="";
+
+	if test -f "input/.libvshadow/ignore";
+	then
+		IGNORELIST=`cat input/.libvshadow/ignore | sed '/^#/d'`;
+	fi
 	for TESTDIR in input/*;
 	do
-		if [ -d "${TESTDIR}" ];
+		if test -d "${TESTDIR}";
 		then
 			DIRNAME=`basename ${TESTDIR}`;
 
-			for TESTFILE in ${TESTDIR}/*;
-			do
-				if ! test_read "${TESTFILE}";
+			if ! list_contains "${IGNORELIST}" "${DIRNAME}";
+			then
+				if test -f "input/.libvshadow/${DIRNAME}/files";
 				then
-					exit ${EXIT_FAILURE};
+					TESTFILES=`cat input/.libvshadow/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+				else
+					TESTFILES=`ls ${TESTDIR}/*`;
 				fi
-			done
+				for TESTFILE in ${TESTFILES};
+				do
+					if ! test_read "${TESTFILE}";
+					then
+						exit ${EXIT_FAILURE};
+					fi
+				done
+			fi
 		fi
 	done
 

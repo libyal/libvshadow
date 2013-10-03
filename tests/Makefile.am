@@ -33,6 +33,7 @@ check_SCRIPTS = \
 	test_pyvshadow_open_close.sh \
 	test_vshadowinfo.sh \
 	test_read.sh \
+	test_runner.sh \
 	test_seek.sh
 
 EXTRA_DIST = \

@@ -41,6 +41,11 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20131003
+* Updated dependencies
+* worked on setup.py, largely for MSI builds
+* updated msvscpp files
+
 20130723
 * fixes for 32-bit WINAPI build of pyvshadow in file object glue code
 

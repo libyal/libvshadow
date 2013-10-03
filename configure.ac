@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libvshadow],
- [20130723],
+ [20131003],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -214,6 +214,7 @@ AC_CONFIG_FILES([macosx/libvshadow.pmdoc/04share.xml])
 AC_CONFIG_FILES([macosx/libvshadow.pmdoc/05python.xml])
 AC_CONFIG_FILES([macosx/libvshadow.pmdoc/index.xml])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
+AC_CONFIG_FILES([pyvshadow/setup.py])
 AC_CONFIG_FILES([libvshadow.pc])
 AC_CONFIG_FILES([libvshadow.spec])
 dnl Have configure write its configuration
