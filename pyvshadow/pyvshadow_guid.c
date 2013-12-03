@@ -23,6 +23,7 @@
 #include <types.h>
 
 #include "pyvshadow.h"
+#include "pyvshadow_error.h"
 #include "pyvshadow_guid.h"
 #include "pyvshadow_libfguid.h"
 #include "pyvshadow_python.h"
@@ -34,7 +35,6 @@ PyObject *pyvshadow_string_new_from_guid(
            const uint8_t *guid_buffer,
            size_t guid_buffer_size )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
 	char guid_string[ 48 ];
 
 	libcerror_error_t *error    = NULL;
@@ -47,24 +47,12 @@ PyObject *pyvshadow_string_new_from_guid(
 	     &guid,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to create GUID.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to create GUID.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to create GUID.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -77,24 +65,12 @@ PyObject *pyvshadow_string_new_from_guid(
 	     LIBFGUID_ENDIAN_LITTLE,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to copy byte stream to GUID.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to copy byte stream to GUID.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to copy byte stream to GUID.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -107,24 +83,12 @@ PyObject *pyvshadow_string_new_from_guid(
 	     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to copy GUID to string.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to copy GUID to string.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to copy GUID to string.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -134,24 +98,12 @@ PyObject *pyvshadow_string_new_from_guid(
 	     &guid,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free GUID.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free GUID.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to free GUID.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 

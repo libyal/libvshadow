@@ -20,8 +20,10 @@ pyvshadow_la_SOURCES = \
 	pyvshadow_block.c pyvshadow_block.h \
 	pyvshadow_blocks.c pyvshadow_blocks.h \
 	pyvshadow_datetime.c pyvshadow_datetime.h \
+	pyvshadow_error.c pyvshadow_error.h \
 	pyvshadow_file_object_io_handle.c pyvshadow_file_object_io_handle.h \
 	pyvshadow_guid.c pyvshadow_guid.h \
+	pyvshadow_integer.c pyvshadow_integer.h \
 	pyvshadow_libbfio.h \
 	pyvshadow_libcerror.h \
 	pyvshadow_libclocale.h \

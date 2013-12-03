@@ -41,6 +41,13 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20131203
+* worked on Python bindings
+  - subtle bug fix where python file-like object returns an int object
+    instead of long object
+  - improved error reporting
+* updated libcerror
+
 20131003
 * Updated dependencies
 * worked on setup.py, largely for MSI builds

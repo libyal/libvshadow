@@ -201,11 +201,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pyvshadow\pyvshadow_error.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pyvshadow\pyvshadow_file_object_io_handle.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\pyvshadow\pyvshadow_guid.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyvshadow\pyvshadow_integer.c"
 				>
 			</File>
 			<File
@@ -243,11 +251,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pyvshadow\pyvshadow_error.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pyvshadow\pyvshadow_file_object_io_handle.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\pyvshadow\pyvshadow_guid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyvshadow\pyvshadow_integer.h"
 				>
 			</File>
 			<File

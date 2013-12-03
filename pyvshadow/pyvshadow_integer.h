@@ -1,5 +1,5 @@
 /*
- * Python bindings for libvshadow (pyvshadow)
+ * Integer functions
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,34 +19,34 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYVSHADOW_H )
-#define _PYVSHADOW_H
+#if !defined( _PYVSHADOW_INTEGER_H )
+#define _PYVSHADOW_INTEGER_H
 
 #include <common.h>
 #include <types.h>
 
+#include "pyvshadow_libcerror.h"
 #include "pyvshadow_python.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-PyObject *pyvshadow_get_version(
-           PyObject *self,
-           PyObject *arguments );
+PyObject *pyvshadow_integer_signed_new_from_64bit(
+           int64_t value_64bit );
 
-PyObject *pyvshadow_check_volume_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
+PyObject *pyvshadow_integer_unsigned_new_from_64bit(
+           uint64_t value_64bit );
 
-PyObject *pyvshadow_check_volume_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
+int pyvshadow_integer_signed_copy_to_64bit(
+     PyObject *integer_object,
+     int64_t *value_64bit,
+     libcerror_error_t **error );
 
-PyMODINIT_FUNC initpyvshadow(
-                void );
+int pyvshadow_integer_unsigned_copy_to_64bit(
+     PyObject *integer_object,
+     uint64_t *value_64bit,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

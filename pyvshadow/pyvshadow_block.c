@@ -27,7 +27,9 @@
 #endif
 
 #include "pyvshadow.h"
+#include "pyvshadow_error.h"
 #include "pyvshadow_block.h"
+#include "pyvshadow_integer.h"
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_libcstring.h"
 #include "pyvshadow_libvshadow.h"
@@ -41,21 +43,21 @@ PyMethodDef pyvshadow_block_object_methods[] = {
 	{ "get_original_offset",
 	  (PyCFunction) pyvshadow_block_get_original_offset,
 	  METH_NOARGS,
-	  "get_original_offset() -> Long\n"
+	  "get_original_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the original offset." },
 
 	{ "get_relative_offset",
 	  (PyCFunction) pyvshadow_block_get_relative_offset,
 	  METH_NOARGS,
-	  "get_relative_offset() -> Long\n"
+	  "get_relative_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the relative offset." },
 
 	{ "get_offset",
 	  (PyCFunction) pyvshadow_block_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Long\n"
+	  "get_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the offset." },
 
@@ -272,8 +274,6 @@ int pyvshadow_block_init(
 void pyvshadow_block_free(
       pyvshadow_block_t *pyvshadow_block )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_block_free";
 
@@ -317,24 +317,12 @@ void pyvshadow_block_free(
 	     &( pyvshadow_block->block ),
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free libvshadow block.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free libvshadow block.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to free libvshadow block.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 	}
@@ -354,9 +342,8 @@ PyObject *pyvshadow_block_get_original_offset(
            pyvshadow_block_t *pyvshadow_block,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_block_get_original_offset";
 	off64_t original_offset  = 0;
 	int result               = 0;
@@ -383,54 +370,21 @@ PyObject *pyvshadow_block_get_original_offset(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve original offset.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve original offset.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve original offset.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( original_offset > (off64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: original offset value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_signed_new_from_64bit(
+	                  (int64_t) original_offset );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) original_offset ) );
-#else
-	if( original_offset > (off64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: original offset value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) original_offset ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the relative offset
@@ -440,9 +394,8 @@ PyObject *pyvshadow_block_get_relative_offset(
            pyvshadow_block_t *pyvshadow_block,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_block_get_relative_offset";
 	off64_t relative_offset  = 0;
 	int result               = 0;
@@ -469,54 +422,21 @@ PyObject *pyvshadow_block_get_relative_offset(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve relative offset.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve relative offset.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve relative offset.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( relative_offset > (off64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: relative offset value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_signed_new_from_64bit(
+	                  (int64_t) relative_offset );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) relative_offset ) );
-#else
-	if( relative_offset > (off64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: relative offset value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) relative_offset ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the offset
@@ -526,9 +446,8 @@ PyObject *pyvshadow_block_get_offset(
            pyvshadow_block_t *pyvshadow_block,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_block_get_offset";
 	off64_t offset           = 0;
 	int result               = 0;
@@ -555,53 +474,20 @@ PyObject *pyvshadow_block_get_offset(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve offset.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve offset.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve offset.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( offset > (off64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: offset value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_signed_new_from_64bit(
+	                  (int64_t) offset );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) offset ) );
-#else
-	if( offset > (off64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: offset value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) offset ) );
-#endif
+	return( integer_object );
 }
 

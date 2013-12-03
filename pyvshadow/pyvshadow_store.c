@@ -30,7 +30,9 @@
 #include "pyvshadow_block.h"
 #include "pyvshadow_blocks.h"
 #include "pyvshadow_datetime.h"
+#include "pyvshadow_error.h"
 #include "pyvshadow_guid.h"
+#include "pyvshadow_integer.h"
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_libcstring.h"
 #include "pyvshadow_libvshadow.h"
@@ -67,7 +69,7 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	{ "get_offset",
 	  (PyCFunction) pyvshadow_store_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Long\n"
+	  "get_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the current offset within the store data." },
 
@@ -90,7 +92,7 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	{ "tell",
 	  (PyCFunction) pyvshadow_store_get_offset,
 	  METH_NOARGS,
-	  "tell() -> Long\n"
+	  "tell() -> Integer\n"
 	  "\n"
 	  "Retrieves the current offset within the store data." },
 
@@ -99,14 +101,14 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	{ "get_size",
 	  (PyCFunction) pyvshadow_store_get_size,
 	  METH_NOARGS,
-	  "get_size() -> Long\n"
+	  "get_size() -> Integer\n"
 	  "\n"
 	  "Retrieves the size of the store data." },
 
 	{ "get_volume_size",
 	  (PyCFunction) pyvshadow_store_get_volume_size,
 	  METH_NOARGS,
-	  "get_volume_size() -> Long\n"
+	  "get_volume_size() -> Integer\n"
 	  "\n"
 	  "Retrieves the size of the volume as stored in the store information." },
 
@@ -127,7 +129,7 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	{ "get_creation_time_as_integer",
 	  (PyCFunction) pyvshadow_store_get_creation_time_as_integer,
 	  METH_NOARGS,
-	  "pyvshadow_store_get_creation_time_as_integer() -> Long\n"
+	  "pyvshadow_store_get_creation_time_as_integer() -> Integer\n"
 	  "\n"
 	  "Returns the creation date and time as a 64-bit integer containing a FILETIME value." },
 
@@ -412,8 +414,6 @@ int pyvshadow_store_init(
 void pyvshadow_store_free(
       pyvshadow_store_t *pyvshadow_store )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_store_free";
 
@@ -457,24 +457,12 @@ void pyvshadow_store_free(
 	     &( pyvshadow_store->store ),
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free libvshadow store.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free libvshadow store.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to free libvshadow store.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 	}
@@ -495,8 +483,6 @@ PyObject *pyvshadow_store_read_buffer(
            PyObject *arguments,
            PyObject *keywords )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error    = NULL;
 	PyObject *result_data       = NULL;
 	static char *function       = "pyvshadow_store_read_buffer";
@@ -559,24 +545,12 @@ PyObject *pyvshadow_store_read_buffer(
 
 	if( read_count != (ssize_t) read_size )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to read data.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to read data.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to read data.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -593,8 +567,6 @@ PyObject *pyvshadow_store_read_random(
            PyObject *arguments,
            PyObject *keywords )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error    = NULL;
 	PyObject *result_data       = NULL;
 	static char *function       = "pyvshadow_store_read_random";
@@ -671,24 +643,12 @@ PyObject *pyvshadow_store_read_random(
 
 	if( read_count != (ssize_t) read_size )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to read data.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to read data.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to read data.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -705,8 +665,6 @@ PyObject *pyvshadow_store_seek_offset(
            PyObject *arguments,
            PyObject *keywords )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error    = NULL;
 	static char *function       = "pyvshadow_store_seek_offset";
 	static char *keyword_list[] = { "offset", "whence", NULL };
@@ -744,24 +702,12 @@ PyObject *pyvshadow_store_seek_offset(
 
  	if( offset == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to seek offset.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to seek offset.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to seek offset.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -780,9 +726,8 @@ PyObject *pyvshadow_store_get_offset(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_store_get_offset";
 	off64_t current_offset   = 0;
 	int result               = 0;
@@ -809,54 +754,21 @@ PyObject *pyvshadow_store_get_offset(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve offset.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve offset.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve offset.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( current_offset > (off64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: offset value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_signed_new_from_64bit(
+	                  (int64_t) current_offset );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) current_offset ) );
-#else
-	if( current_offset > (off64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: offset value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) current_offset ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the size
@@ -866,9 +778,8 @@ PyObject *pyvshadow_store_get_size(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_store_get_size";
 	size64_t size            = 0;
 	int result               = 0;
@@ -895,54 +806,21 @@ PyObject *pyvshadow_store_get_size(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: failed to retrieve size.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: failed to retrieve size.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: failed to retrieve size.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( size > (size64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: size value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_unsigned_new_from_64bit(
+	                  (uint64_t) size );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) size ) );
-#else
-	if( size > (size64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: size value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) size ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the volume size as stored in the store information
@@ -952,9 +830,8 @@ PyObject *pyvshadow_store_get_volume_size(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_store_get_volume_size";
 	size64_t volume_size     = 0;
 	int result               = 0;
@@ -981,54 +858,21 @@ PyObject *pyvshadow_store_get_volume_size(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: failed to retrieve volume size.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: failed to retrieve volume size.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: failed to retrieve volume size.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( volume_size > (size64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: size value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_unsigned_new_from_64bit(
+	                  (uint64_t) volume_size );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) volume_size ) );
-#else
-	if( volume_size > (size64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: size value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) volume_size ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the identifier
@@ -1039,7 +883,6 @@ PyObject *pyvshadow_store_get_identifier(
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
 	uint8_t guid_data[ 16 ];
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
@@ -1069,24 +912,12 @@ PyObject *pyvshadow_store_get_identifier(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve identifier.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve identifier.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve identifier.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1106,8 +937,6 @@ PyObject *pyvshadow_store_get_creation_time(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error   = NULL;
 	PyObject *date_time_object = NULL;
 	static char *function      = "pyvshadow_store_get_creation_time";
@@ -1136,24 +965,12 @@ PyObject *pyvshadow_store_get_creation_time(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve creation time.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve creation time.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve creation time.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1172,9 +989,8 @@ PyObject *pyvshadow_store_get_creation_time_as_integer(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_store_get_creation_time_as_integer";
 	uint64_t filetime        = 0;
 	int result               = 0;
@@ -1201,54 +1017,21 @@ PyObject *pyvshadow_store_get_creation_time_as_integer(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve creation time.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve creation time.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve creation time.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( filetime > (uint64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: filetime value exceeds maximum.",
-		 function );
+	integer_object = pyvshadow_integer_unsigned_new_from_64bit(
+	                  (uint64_t) filetime );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) filetime ) );
-#else
-	if( filetime > (uint64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: filetime value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) filetime ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the copy identifier
@@ -1259,7 +1042,6 @@ PyObject *pyvshadow_store_get_copy_identifier(
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
 	uint8_t guid_data[ 16 ];
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
@@ -1289,24 +1071,12 @@ PyObject *pyvshadow_store_get_copy_identifier(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve copy identifier.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve copy identifier.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve copy identifier.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1327,7 +1097,6 @@ PyObject *pyvshadow_store_get_copy_set_identifier(
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
 	uint8_t guid_data[ 16 ];
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
@@ -1357,24 +1126,12 @@ PyObject *pyvshadow_store_get_copy_set_identifier(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve copy set identifier.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve copy set identifier.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve copy set identifier.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1394,8 +1151,6 @@ PyObject *pyvshadow_store_get_number_of_blocks(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_store_get_number_of_blocks";
 	int number_of_blocks     = 0;
@@ -1423,24 +1178,12 @@ PyObject *pyvshadow_store_get_number_of_blocks(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of blocks.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of blocks.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of blocks.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1571,8 +1314,6 @@ PyObject *pyvshadow_store_get_blocks(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *blocks_object  = NULL;
 	static char *function    = "pyvshadow_store_get_blocks";
@@ -1601,24 +1342,12 @@ PyObject *pyvshadow_store_get_blocks(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of blocks.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of blocks.\n%s",
-			 function,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of blocks.",
+		 function,
+		 error );
+
 		libcerror_error_free(
 		 &error );
 
