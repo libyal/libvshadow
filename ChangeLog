@@ -1,4 +1,5 @@
 TODO
+* add error tolerance for missing NTFS backup volume header
 * pyvshadow
   - work on store
 * remove hard coded 0x4000 block size
@@ -40,6 +41,11 @@ Tools:
   - print attribute flags description
 * vshadowmount
   - dokan fix volume size hints
+
+20131209
+* worked on Python bindings
+  - changed return value check of libvshadow_store_read_buffer to allow for
+    non read size valid read count values
 
 20131203
 * worked on Python bindings

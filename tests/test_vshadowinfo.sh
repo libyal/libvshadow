@@ -49,7 +49,7 @@ test_info()
 	rm -rf tmp;
 	mkdir tmp;
 
-	${TEST_RUNNER} ${VSHADOWINFO} ${INPUT_FILE} | sed '1,2d' > tmp/${BASENAME}.log;
+	${TEST_RUNNER} ${VSHADOWINFO} -a ${INPUT_FILE} | sed '1,2d' > tmp/${BASENAME}.log;
 
 	RESULT=$?;
 

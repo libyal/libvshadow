@@ -543,7 +543,7 @@ PyObject *pyvshadow_store_read_buffer(
 
 	Py_END_ALLOW_THREADS
 
-	if( read_count != (ssize_t) read_size )
+	if( read_count <= -1 )
 	{
 		pyvshadow_error_raise(
 		 PyExc_IOError,
@@ -553,6 +553,20 @@ PyObject *pyvshadow_store_read_buffer(
 
 		libcerror_error_free(
 		 &error );
+
+		Py_DecRef(
+		 (PyObject *) result_data );
+
+		return( NULL );
+	}
+	/* Need to resize the string here in case read_size was not fully read.
+	 */
+	if( _PyString_Resize(
+	     &result_data,
+	     (Py_ssize_t) read_count ) != 0 )
+	{
+		Py_DecRef(
+		 (PyObject *) result_data );
 
 		return( NULL );
 	}
@@ -641,7 +655,7 @@ PyObject *pyvshadow_store_read_random(
 
 	Py_END_ALLOW_THREADS
 
-	if( read_count != (ssize_t) read_size )
+	if( read_count <= -1 )
 	{
 		pyvshadow_error_raise(
 		 PyExc_IOError,
@@ -651,6 +665,20 @@ PyObject *pyvshadow_store_read_random(
 
 		libcerror_error_free(
 		 &error );
+
+		Py_DecRef(
+		 (PyObject *) result_data );
+
+		return( NULL );
+	}
+	/* Need to resize the string here in case read_size was not fully read.
+	 */
+	if( _PyString_Resize(
+	     &result_data,
+	     (Py_ssize_t) read_count ) != 0 )
+	{
+		Py_DecRef(
+		 (PyObject *) result_data );
 
 		return( NULL );
 	}
