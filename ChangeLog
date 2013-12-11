@@ -1,4 +1,5 @@
 TODO
+* fix issue with multi threaded read test
 * add error tolerance for missing NTFS backup volume header
 * pyvshadow
   - work on store
@@ -41,6 +42,9 @@ Tools:
   - print attribute flags description
 * vshadowmount
   - dokan fix volume size hints
+
+20131211
+* worked on Python bindings
 
 20131209
 * worked on Python bindings

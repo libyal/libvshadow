@@ -158,10 +158,10 @@ PyObject *pyvshadow_check_volume_signature(
 	if( result == -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to check volume signature.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -207,10 +207,10 @@ PyObject *pyvshadow_check_volume_signature_file_object(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_MemoryError,
 		 "%s: unable to initialize file IO handle.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -228,10 +228,10 @@ PyObject *pyvshadow_check_volume_signature_file_object(
 	if( result == -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to check volume signature.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -243,10 +243,10 @@ PyObject *pyvshadow_check_volume_signature_file_object(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_MemoryError,
 		 "%s: unable to free file IO handle.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );

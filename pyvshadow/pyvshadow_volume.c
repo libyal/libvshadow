@@ -337,10 +337,10 @@ int pyvshadow_volume_init(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_MemoryError,
 		 "%s: unable to initialize volume.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -406,10 +406,10 @@ void pyvshadow_volume_free(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_MemoryError,
 		 "%s: unable to free libvshadow volume.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -451,10 +451,10 @@ PyObject *pyvshadow_volume_signal_abort(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to signal abort.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -525,10 +525,10 @@ PyObject *pyvshadow_volume_open(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to open volume.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -593,10 +593,10 @@ PyObject *pyvshadow_volume_open_file_object(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_MemoryError,
 		 "%s: unable to initialize file IO handle.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -616,10 +616,10 @@ PyObject *pyvshadow_volume_open_file_object(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to open volume.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -674,10 +674,10 @@ PyObject *pyvshadow_volume_close(
 	if( result != 0 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to close volume.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -725,10 +725,10 @@ PyObject *pyvshadow_volume_get_number_of_stores(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve number of stores.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -746,8 +746,6 @@ PyObject *pyvshadow_volume_get_store_by_index(
            pyvshadow_volume_t *pyvshadow_volume,
            int store_index )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error  = NULL;
 	libvshadow_store_t *store = NULL;
 	PyObject *store_object    = NULL;
@@ -775,26 +773,13 @@ PyObject *pyvshadow_volume_get_store_by_index(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve store: %d.",
-			 function,
-			 store_index );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve store: %d.\n%s",
-			 function,
-			 store_index,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve store: %d.",
+		 function,
+		 store_index );
+
 		libcerror_error_free(
 		 &error );
 
@@ -889,10 +874,10 @@ PyObject *pyvshadow_volume_get_stores(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve number of stores.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );

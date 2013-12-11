@@ -458,10 +458,10 @@ void pyvshadow_store_free(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to free libvshadow store.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -484,7 +484,7 @@ PyObject *pyvshadow_store_read_buffer(
            PyObject *keywords )
 {
 	libcerror_error_t *error    = NULL;
-	PyObject *result_data       = NULL;
+	PyObject *string_object     = NULL;
 	static char *function       = "pyvshadow_store_read_buffer";
 	static char *keyword_list[] = { "size", NULL };
 	ssize_t read_count          = 0;
@@ -528,16 +528,16 @@ PyObject *pyvshadow_store_read_buffer(
 
 		return( NULL );
 	}
-	result_data = PyString_FromStringAndSize(
-	               NULL,
-	               read_size );
+	string_object = PyString_FromStringAndSize(
+	                 NULL,
+	                 read_size );
 
 	Py_BEGIN_ALLOW_THREADS
 
 	read_count = libvshadow_store_read_buffer(
 	              pyvshadow_store->store,
 	              PyString_AsString(
-	               result_data ),
+	               string_object ),
 	              (size_t) read_size,
 	              &error );
 
@@ -546,31 +546,31 @@ PyObject *pyvshadow_store_read_buffer(
 	if( read_count <= -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to read data.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
 
 		Py_DecRef(
-		 (PyObject *) result_data );
+		 (PyObject *) string_object );
 
 		return( NULL );
 	}
 	/* Need to resize the string here in case read_size was not fully read.
 	 */
 	if( _PyString_Resize(
-	     &result_data,
+	     &string_object,
 	     (Py_ssize_t) read_count ) != 0 )
 	{
 		Py_DecRef(
-		 (PyObject *) result_data );
+		 (PyObject *) string_object );
 
 		return( NULL );
 	}
-	return( result_data );
+	return( string_object );
 }
 
 /* Reads (store) data at a specific offset
@@ -582,7 +582,7 @@ PyObject *pyvshadow_store_read_random(
            PyObject *keywords )
 {
 	libcerror_error_t *error    = NULL;
-	PyObject *result_data       = NULL;
+	PyObject *string_object     = NULL;
 	static char *function       = "pyvshadow_store_read_random";
 	static char *keyword_list[] = { "size", "offset", NULL };
 	off64_t read_offset         = 0;
@@ -639,16 +639,16 @@ PyObject *pyvshadow_store_read_random(
 	}
 	/* Make sure the data fits into the memory buffer
 	 */
-	result_data = PyString_FromStringAndSize(
-	               NULL,
-	               read_size );
+	string_object = PyString_FromStringAndSize(
+	                 NULL,
+	                 read_size );
 
 	Py_BEGIN_ALLOW_THREADS
 
 	read_count = libvshadow_store_read_random(
 	              pyvshadow_store->store,
 	              PyString_AsString(
-	               result_data ),
+	               string_object ),
 	              (size_t) read_size,
 	              (off64_t) read_offset,
 	              &error );
@@ -658,31 +658,31 @@ PyObject *pyvshadow_store_read_random(
 	if( read_count <= -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to read data.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
 
 		Py_DecRef(
-		 (PyObject *) result_data );
+		 (PyObject *) string_object );
 
 		return( NULL );
 	}
 	/* Need to resize the string here in case read_size was not fully read.
 	 */
 	if( _PyString_Resize(
-	     &result_data,
+	     &string_object,
 	     (Py_ssize_t) read_count ) != 0 )
 	{
 		Py_DecRef(
-		 (PyObject *) result_data );
+		 (PyObject *) string_object );
 
 		return( NULL );
 	}
-	return( result_data );
+	return( string_object );
 }
 
 /* Seeks a certain offset in the (store) data
@@ -731,10 +731,10 @@ PyObject *pyvshadow_store_seek_offset(
  	if( offset == -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to seek offset.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -783,10 +783,10 @@ PyObject *pyvshadow_store_get_offset(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve offset.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -835,10 +835,10 @@ PyObject *pyvshadow_store_get_size(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: failed to retrieve size.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -887,10 +887,10 @@ PyObject *pyvshadow_store_get_volume_size(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: failed to retrieve volume size.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -941,10 +941,10 @@ PyObject *pyvshadow_store_get_identifier(
 	if( result == -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve identifier.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -994,10 +994,10 @@ PyObject *pyvshadow_store_get_creation_time(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve creation time.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -1046,10 +1046,10 @@ PyObject *pyvshadow_store_get_creation_time_as_integer(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve creation time.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -1100,10 +1100,10 @@ PyObject *pyvshadow_store_get_copy_identifier(
 	if( result == -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve copy identifier.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -1155,10 +1155,10 @@ PyObject *pyvshadow_store_get_copy_set_identifier(
 	if( result == -1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve copy set identifier.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -1207,10 +1207,10 @@ PyObject *pyvshadow_store_get_number_of_blocks(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve number of blocks.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -1228,8 +1228,6 @@ PyObject *pyvshadow_store_get_block_by_index(
            pyvshadow_store_t *pyvshadow_store,
            int block_index )
 {
-	char error_string[ PYVSHADOW_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error  = NULL;
 	libvshadow_block_t *block = NULL;
 	PyObject *block_object    = NULL;
@@ -1257,26 +1255,13 @@ PyObject *pyvshadow_store_get_block_by_index(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYVSHADOW_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve block: %d.",
-			 function,
-			 block_index );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve block: %d.\n%s",
-			 function,
-			 block_index,
-			 error_string );
-		}
+		pyvshadow_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve block: %d.",
+		 function,
+		 block_index );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1371,10 +1356,10 @@ PyObject *pyvshadow_store_get_blocks(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve number of blocks.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );

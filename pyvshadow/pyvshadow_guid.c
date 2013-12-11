@@ -48,10 +48,10 @@ PyObject *pyvshadow_string_new_from_guid(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to create GUID.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -66,10 +66,10 @@ PyObject *pyvshadow_string_new_from_guid(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to copy byte stream to GUID.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -84,10 +84,10 @@ PyObject *pyvshadow_string_new_from_guid(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to copy GUID to string.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -99,10 +99,10 @@ PyObject *pyvshadow_string_new_from_guid(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to free GUID.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );

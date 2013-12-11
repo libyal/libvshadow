@@ -318,10 +318,10 @@ void pyvshadow_block_free(
 	     &error ) != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to free libvshadow block.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -371,10 +371,10 @@ PyObject *pyvshadow_block_get_original_offset(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve original offset.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -423,10 +423,10 @@ PyObject *pyvshadow_block_get_relative_offset(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve relative offset.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
@@ -475,10 +475,10 @@ PyObject *pyvshadow_block_get_offset(
 	if( result != 1 )
 	{
 		pyvshadow_error_raise(
+		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve offset.",
-		 function,
-		 error );
+		 function );
 
 		libcerror_error_free(
 		 &error );
