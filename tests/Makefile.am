@@ -52,9 +52,9 @@ vshadow_test_open_close_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_open_close_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@ \
-	../libvshadow/libvshadow.la
+	@LIBCSTRING_LIBADD@
 
 vshadow_test_read_SOURCES = \
 	vshadow_test_libcerror.h \
@@ -65,10 +65,11 @@ vshadow_test_read_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_read_LDADD = \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
+	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
-	../libvshadow/libvshadow.la
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 vshadow_test_seek_SOURCES = \
 	vshadow_test_libcerror.h \
@@ -78,9 +79,11 @@ vshadow_test_seek_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_seek_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libvshadow/libvshadow.la \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	../libvshadow/libvshadow.la
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -43,6 +43,10 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20140131
+* 2014 update
+* updated dependencies
+
 20131211
 * worked on Python bindings
 
@@ -59,7 +63,7 @@ Tools:
 * updated libcerror
 
 20131003
-* Updated dependencies
+* updated dependencies
 * worked on setup.py, largely for MSI builds
 * updated msvscpp files
 

@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libvshadow volume
  *
- * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #endif
 
-#include "pyvshadow.h"
 #include "pyvshadow_error.h"
 #include "pyvshadow_file_object_io_handle.h"
 #include "pyvshadow_libbfio.h"

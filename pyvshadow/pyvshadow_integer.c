@@ -1,7 +1,7 @@
 /*
  * Integer functions
  *
- * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -22,7 +22,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "pyvshadow.h"
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_integer.h"
 #include "pyvshadow_python.h"

@@ -2,7 +2,7 @@
 #
 # Library open close testing script
 #
-# Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
@@ -24,15 +24,36 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
+list_contains()
+{
+	LIST=$1;
+	SEARCH=$2;
+
+	for LINE in $LIST;
+	do
+		if test $LINE = $SEARCH;
+		then
+			return ${EXIT_SUCCESS};
+		fi
+	done
+
+	return ${EXIT_FAILURE};
+}
+
 test_open_close()
 { 
 	INPUT_FILE=$1;
 
+	rm -rf tmp;
+	mkdir tmp;
+
 	echo "Testing open close of input: ${INPUT_FILE}";
 
-	./${VSHADOW_TEST_OPEN_CLOSE} ${INPUT_FILE};
+	${TEST_RUNNER} ./${VSHADOW_TEST_OPEN_CLOSE} ${INPUT_FILE};
 
 	RESULT=$?;
+
+	rm -rf tmp;
 
 	echo "";
 
@@ -49,6 +70,20 @@ fi
 if ! test -x ${VSHADOW_TEST_OPEN_CLOSE};
 then
 	echo "Missing executable: ${VSHADOW_TEST_OPEN_CLOSE}";
+
+	exit ${EXIT_FAILURE};
+fi
+
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+	TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+	echo "Missing test runner: ${TEST_RUNNER}";
 
 	exit ${EXIT_FAILURE};
 fi
@@ -72,19 +107,34 @@ then
 
 	EXIT_RESULT=${EXIT_IGNORE};
 else
+	IGNORELIST="";
+
+	if test -f "input/.libvshadow/ignore";
+	then
+		IGNORELIST=`cat input/.libvshadow/ignore | sed '/^#/d'`;
+	fi
 	for TESTDIR in input/*;
 	do
-		if [ -d "${TESTDIR}" ];
+		if test -d "${TESTDIR}";
 		then
 			DIRNAME=`basename ${TESTDIR}`;
 
-			for TESTFILE in ${TESTDIR}/*;
-			do
-				if ! test_open_close "${TESTFILE}";
+			if ! list_contains "${IGNORELIST}" "${DIRNAME}";
+			then
+				if test -f "input/.libvshadow/${DIRNAME}/files";
 				then
-					exit ${EXIT_FAILURE};
+					TESTFILES=`cat input/.libvshadow/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+				else
+					TESTFILES=`ls ${TESTDIR}/*`;
 				fi
-			done
+				for TESTFILE in ${TESTFILES};
+				do
+					if ! test_open_close "${TESTFILE}";
+					then
+						exit ${EXIT_FAILURE};
+					fi
+				done
+			fi
 		fi
 	done
 
