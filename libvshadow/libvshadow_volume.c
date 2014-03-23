@@ -641,6 +641,7 @@ int libvshadow_volume_open_file_io_handle(
 	static char *function                         = "libvshadow_volume_open_file_io_handle";
 	int bfio_access_flags                         = 0;
 	int file_io_handle_is_open                    = 0;
+	int file_io_handle_opened_in_library          = 0;
 
 	if( volume == NULL )
 	{
@@ -724,6 +725,7 @@ int libvshadow_volume_open_file_io_handle(
 
 			goto on_error;
 		}
+		file_io_handle_opened_in_library = 1;
 	}
 	if( libvshadow_volume_open_read(
 	     internal_volume,
@@ -755,7 +757,7 @@ int libvshadow_volume_open_file_io_handle(
 	}
 #endif
 	internal_volume->file_io_handle                   = file_io_handle;
-	internal_volume->file_io_handle_opened_in_library = ( file_io_handle_is_open == 0 );
+	internal_volume->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
 
 #if defined( HAVE_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -775,7 +777,7 @@ int libvshadow_volume_open_file_io_handle(
 	return( 1 );
 
 on_error:
-	if( file_io_handle_is_open == 0 )
+	if( file_io_handle_opened_in_library != 0 )
 	{
 		libbfio_handle_close(
 		 file_io_handle,
@@ -834,6 +836,25 @@ int libvshadow_volume_close(
 		return( -1 );
 	}
 #endif
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		if( internal_volume->file_io_handle_created_in_library != 0 )
+		{
+			if( libvshadow_debug_print_read_offsets(
+			     internal_volume->file_io_handle,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print the read offsets.",
+				 function );
+			}
+		}
+	}
+#endif
 	if( internal_volume->file_io_handle_opened_in_library != 0 )
 	{
 		if( libbfio_handle_close(
@@ -853,22 +874,6 @@ int libvshadow_volume_close(
 	}
 	if( internal_volume->file_io_handle_created_in_library != 0 )
 	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			if( libvshadow_debug_print_read_offsets(
-			     internal_volume->file_io_handle,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print the read offsets.",
-				 function );
-			}
-		}
-#endif
 		if( libbfio_handle_free(
 		     &( internal_volume->file_io_handle ),
 		     error ) != 1 )

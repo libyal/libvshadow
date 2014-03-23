@@ -1,7 +1,7 @@
 /*
  * Error functions
  *
- * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -28,7 +28,7 @@
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_python.h"
 
-#define PYVSHADOW_ERROR_STRING_SIZE	768
+#define PYVSHADOW_ERROR_STRING_SIZE		768
 
 #if defined( __cplusplus )
 extern "C" {

@@ -327,9 +327,8 @@ int pyvshadow_volume_init(
 
 		return( -1 );
 	}
-	/* Make sure libvshadow volume is set to NULL
-	 */
-	pyvshadow_volume->volume = NULL;
+	pyvshadow_volume->volume         = NULL;
+	pyvshadow_volume->file_io_handle = NULL;
 
 	if( libvshadow_volume_initialize(
 	     &( pyvshadow_volume->volume ),
@@ -548,13 +547,12 @@ PyObject *pyvshadow_volume_open_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *file_object            = NULL;
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-	char *mode                       = NULL;
-	static char *keyword_list[]      = { "file_object", "mode", NULL };
-	static char *function            = "pyvshadow_volume_open_file_object";
-	int result                       = 0;
+	PyObject *file_object       = NULL;
+	libcerror_error_t *error    = NULL;
+	char *mode                  = NULL;
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	static char *function       = "pyvshadow_volume_open_file_object";
+	int result                  = 0;
 
 	if( pyvshadow_volume == NULL )
 	{
@@ -587,7 +585,7 @@ PyObject *pyvshadow_volume_open_file_object(
 		return( NULL );
 	}
 	if( pyvshadow_file_object_initialize(
-	     &file_io_handle,
+	     &( pyvshadow_volume->file_io_handle ),
 	     file_object,
 	     &error ) != 1 )
 	{
@@ -606,7 +604,7 @@ PyObject *pyvshadow_volume_open_file_object(
 
 	result = libvshadow_volume_open_file_io_handle(
 	          pyvshadow_volume->volume,
-                  file_io_handle,
+                  pyvshadow_volume->file_io_handle,
                   LIBVSHADOW_OPEN_READ,
 	          &error );
 
@@ -631,10 +629,10 @@ PyObject *pyvshadow_volume_open_file_object(
 	return( Py_None );
 
 on_error:
-	if( file_io_handle != NULL )
+	if( pyvshadow_volume->file_io_handle != NULL )
 	{
 		libbfio_handle_free(
-		 &file_io_handle,
+		 &( pyvshadow_volume->file_io_handle ),
 		 NULL );
 	}
 	return( NULL );
@@ -682,6 +680,30 @@ PyObject *pyvshadow_volume_close(
 		 &error );
 
 		return( NULL );
+	}
+	if( pyvshadow_volume->file_io_handle != NULL )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libbfio_handle_free(
+		          &( pyvshadow_volume->file_io_handle ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyvshadow_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to free libbfio file IO handle.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
 	}
 	Py_IncRef(
 	 Py_None );

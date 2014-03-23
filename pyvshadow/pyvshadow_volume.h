@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "pyvshadow_libbfio.h"
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
 
@@ -43,6 +44,10 @@ struct pyvshadow_volume
 	/* The libvshadow volume
 	 */
 	libvshadow_volume_t *volume;
+
+	/* The libbfio file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
 };
 
 extern PyMethodDef pyvshadow_volume_object_methods[];
