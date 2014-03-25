@@ -810,6 +810,7 @@ int main( int argc, char * const argv[] )
 	libvshadow_volume_t *volume = NULL;
 	size64_t volume_size        = 0;
 	int number_of_stores        = 0;
+	int store_index             = 0;
 
 	if( argc < 2 )
 	{
@@ -869,18 +870,20 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( number_of_stores > 0 )
+	for( store_index = number_of_stores - 1;
+	     store_index >= 0;
+	     store_index-- )
 	{
 		if( libvshadow_volume_get_store(
 		     volume,
-		     number_of_stores - 1,
+		     store_index,
 		     &store,
 		     &error ) != 1 )
 		{
 			fprintf(
 			 stderr,
 			 "Unable to retrieve store: %d.\n",
-			 number_of_stores - 1 );
+			 store_index );
 
 			goto on_error;
 		}
@@ -897,7 +900,8 @@ int main( int argc, char * const argv[] )
 		}
 		fprintf(
 		 stdout,
-		 "Volume size: %" PRIu64 " bytes\n",
+		 "Store: %d volume size: %" PRIu64 " bytes\n",
+		 store_index,
 		 volume_size );
 
 		if( vshadow_test_read_from_store(
@@ -907,7 +911,7 @@ int main( int argc, char * const argv[] )
 			fprintf(
 			 stderr,
 			 "Unable to read from store: %d.\n",
-			 number_of_stores - 1 );
+			 store_index );
 
 			goto on_error;
 		}
@@ -918,7 +922,7 @@ int main( int argc, char * const argv[] )
 			fprintf(
 			 stderr,
 			 "Unable to free store: %d.\n",
-			 number_of_stores - 1 );
+			 store_index );
 
 			goto on_error;
 		}

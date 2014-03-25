@@ -1,5 +1,6 @@
 TODO
 * fix issue with multi threaded read test
+  - store descriptor initialization?
 * add error tolerance for missing NTFS backup volume header
 * pyvshadow
   - work on store
@@ -42,6 +43,9 @@ Tools:
   - print attribute flags description
 * vshadowmount
   - dokan fix volume size hints
+
+20140325
+* worked on setup.py
 
 20140323
 * worked on Python bindings

@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pyvshadow\pyvshadow_block_flags.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pyvshadow\pyvshadow_blocks.c"
 				>
 			</File>
@@ -240,6 +244,10 @@
 			</File>
 			<File
 				RelativePath="..\..\pyvshadow\pyvshadow_block.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyvshadow\pyvshadow_block_flags.h"
 				>
 			</File>
 			<File

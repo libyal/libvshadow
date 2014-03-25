@@ -127,6 +127,7 @@ int main( int argc, char * const argv[] )
 	libvshadow_volume_t *volume = NULL;
 	size64_t volume_size        = 0;
 	int number_of_stores        = 0;
+	int store_index             = 0;
 
 	if( argc < 2 )
 	{
@@ -186,166 +187,144 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libvshadow_volume_get_store(
-	     volume,
-	     number_of_stores - 1,
-	     &store,
-	     &error ) != 1 )
+	for( store_index = number_of_stores - 1;
+	     store_index >= 0;
+	     store_index-- )
 	{
-		fprintf(
-		 stderr,
-		 "Unable to retrieve store: %d.\n",
-		 number_of_stores - 1 );
+		if( libvshadow_volume_get_store(
+		     volume,
+		     store_index,
+		     &store,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to retrieve store: %d.\n",
+			 store_index );
 
-		goto on_error;
-	}
-	if( libvshadow_volume_get_size(
-	     volume,
-	     &volume_size,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to retrieve volume size.\n" );
+			goto on_error;
+		}
+		if( libvshadow_volume_get_size(
+		     volume,
+		     &volume_size,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to retrieve volume size.\n" );
 
-		goto on_error;
-	}
-	if( volume_size > (size64_t) INT64_MAX )
-	{
+			goto on_error;
+		}
 		fprintf(
-		 stderr,
-		 "Volume size exceeds maximum.\n" );
+		 stdout,
+		 "Store: %d volume size: %" PRIu64 " bytes\n",
+		 store_index,
+		 volume_size );
 
-		goto on_error;
-	}
-	/* Test: SEEK_SET offset: 0
-	 * Expected result: 0
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     0,
-	     SEEK_SET,
-	     0 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
+		if( volume_size > (size64_t) INT64_MAX )
+		{
+			fprintf(
+			 stderr,
+			 "Volume size exceeds maximum.\n" );
 
-		goto on_error;
-	}
-	/* Test: SEEK_SET offset: <volume_size>
-	 * Expected result: <volume_size>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     (off64_t) volume_size,
-	     SEEK_SET,
-	     (off64_t) volume_size ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_SET offset: <volume_size / 5>
-	 * Expected result: <volume_size / 5>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     (off64_t) ( volume_size / 5 ),
-	     SEEK_SET,
-	     (off64_t) ( volume_size / 5 ) ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_SET offset: <volume_size + 987>
-	 * Expected result: <volume_size + 987>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     (off64_t) ( volume_size + 987 ),
-	     SEEK_SET,
-	     (off64_t) ( volume_size + 987 ) ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_SET offset: -987
-	 * Expected result: -1
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     -987,
-	     SEEK_SET,
-	     -1 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_CUR offset: 0
-	 * Expected result: <volume_size + 987>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     0,
-	     SEEK_CUR,
-	     (off64_t) ( volume_size + 987 ) ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_CUR offset: <-1 * (volume_size + 987)>
-	 * Expected result: 0
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     -1 * (off64_t) ( volume_size + 987 ),
-	     SEEK_CUR,
-	     0 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_CUR offset: <volume_size / 3>
-	 * Expected result: <volume_size / 3>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     (off64_t) ( volume_size / 3 ),
-	     SEEK_CUR,
-	     (off64_t) ( volume_size / 3 ) ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	if( volume_size == 0 )
-	{
-		/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+			goto on_error;
+		}
+		/* Test: SEEK_SET offset: 0
 		 * Expected result: 0
 		 */
 		if( vshadow_test_seek_offset(
 		     store,
-		     -2 * (off64_t) ( volume_size / 3 ),
+		     0,
+		     SEEK_SET,
+		     0 ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_SET offset: <volume_size>
+		 * Expected result: <volume_size>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     (off64_t) volume_size,
+		     SEEK_SET,
+		     (off64_t) volume_size ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_SET offset: <volume_size / 5>
+		 * Expected result: <volume_size / 5>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     (off64_t) ( volume_size / 5 ),
+		     SEEK_SET,
+		     (off64_t) ( volume_size / 5 ) ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_SET offset: <volume_size + 987>
+		 * Expected result: <volume_size + 987>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     (off64_t) ( volume_size + 987 ),
+		     SEEK_SET,
+		     (off64_t) ( volume_size + 987 ) ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_SET offset: -987
+		 * Expected result: -1
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     -987,
+		     SEEK_SET,
+		     -1 ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_CUR offset: 0
+		 * Expected result: <volume_size + 987>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     0,
+		     SEEK_CUR,
+		     (off64_t) ( volume_size + 987 ) ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_CUR offset: <-1 * (volume_size + 987)>
+		 * Expected result: 0
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     -1 * (off64_t) ( volume_size + 987 ),
 		     SEEK_CUR,
 		     0 ) != 1 )
 		{
@@ -355,16 +334,124 @@ int main( int argc, char * const argv[] )
 
 			goto on_error;
 		}
-	}
-	else
-	{
-		/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+		/* Test: SEEK_CUR offset: <volume_size / 3>
+		 * Expected result: <volume_size / 3>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     (off64_t) ( volume_size / 3 ),
+		     SEEK_CUR,
+		     (off64_t) ( volume_size / 3 ) ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		if( volume_size == 0 )
+		{
+			/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+			 * Expected result: 0
+			 */
+			if( vshadow_test_seek_offset(
+			     store,
+			     -2 * (off64_t) ( volume_size / 3 ),
+			     SEEK_CUR,
+			     0 ) != 1 )
+			{
+				fprintf(
+				 stderr,
+				 "Unable to test seek offset.\n" );
+
+				goto on_error;
+			}
+		}
+		else
+		{
+			/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+			 * Expected result: -1
+			 */
+			if( vshadow_test_seek_offset(
+			     store,
+			     -2 * (off64_t) ( volume_size / 3 ),
+			     SEEK_CUR,
+			     -1 ) != 1 )
+			{
+				fprintf(
+				 stderr,
+				 "Unable to test seek offset.\n" );
+
+				goto on_error;
+			}
+		}
+		/* Test: SEEK_END offset: 0
+		 * Expected result: <volume_size>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     0,
+		     SEEK_END,
+		     (off64_t) volume_size ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_END offset: <-1 * volume_size>
+		 * Expected result: 0
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     -1 * (off64_t) volume_size,
+		     SEEK_END,
+		     0 ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_END offset: <-1 * (volume_size / 4)>
+		 * Expected result: <volume_size - (volume_size / 4)>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     -1 * (off64_t) ( volume_size / 4 ),
+		     SEEK_END,
+		     (off64_t) volume_size - (off64_t) ( volume_size / 4 ) ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_END offset: 542
+		 * Expected result: <volume_size + 542>
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     542,
+		     SEEK_END,
+		     (off64_t) ( volume_size + 542 ) ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			goto on_error;
+		}
+		/* Test: SEEK_END offset: <-1 * (volume_size + 542)>
 		 * Expected result: -1
 		 */
 		if( vshadow_test_seek_offset(
 		     store,
-		     -2 * (off64_t) ( volume_size / 3 ),
-		     SEEK_CUR,
+		     -1 * (off64_t) ( volume_size + 542 ),
+		     SEEK_END,
 		     -1 ) != 1 )
 		{
 			fprintf(
@@ -373,108 +460,33 @@ int main( int argc, char * const argv[] )
 
 			goto on_error;
 		}
-	}
-	/* Test: SEEK_END offset: 0
-	 * Expected result: <volume_size>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     0,
-	     SEEK_END,
-	     (off64_t) volume_size ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
+		/* Test: UNKNOWN (88) offset: 0
+		 * Expected result: -1
+		 */
+		if( vshadow_test_seek_offset(
+		     store,
+		     0,
+		     88,
+		     -1 ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
 
-		goto on_error;
-	}
-	/* Test: SEEK_END offset: <-1 * volume_size>
-	 * Expected result: 0
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     -1 * (off64_t) volume_size,
-	     SEEK_END,
-	     0 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
+			goto on_error;
+		}
+		/* Clean up
+		 */
+		if( libvshadow_store_free(
+		     &store,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to free store.\n" );
 
-		goto on_error;
-	}
-	/* Test: SEEK_END offset: <-1 * (volume_size / 4)>
-	 * Expected result: <volume_size - (volume_size / 4)>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     -1 * (off64_t) ( volume_size / 4 ),
-	     SEEK_END,
-	     (off64_t) volume_size - (off64_t) ( volume_size / 4 ) ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_END offset: 542
-	 * Expected result: <volume_size + 542>
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     542,
-	     SEEK_END,
-	     (off64_t) ( volume_size + 542 ) ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: SEEK_END offset: <-1 * (volume_size + 542)>
-	 * Expected result: -1
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     -1 * (off64_t) ( volume_size + 542 ),
-	     SEEK_END,
-	     -1 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Test: UNKNOWN (88) offset: 0
-	 * Expected result: -1
-	 */
-	if( vshadow_test_seek_offset(
-	     store,
-	     0,
-	     88,
-	     -1 ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to test seek offset.\n" );
-
-		goto on_error;
-	}
-	/* Clean up
-	 */
-	if( libvshadow_store_free(
-	     &store,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to free store.\n" );
-
-		goto on_error;
+			goto on_error;
+		}
 	}
 	if( libvshadow_volume_close(
 	     volume,

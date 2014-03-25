@@ -28,6 +28,7 @@
 
 #include "pyvshadow.h"
 #include "pyvshadow_block.h"
+#include "pyvshadow_block_flags.h"
 #include "pyvshadow_blocks.h"
 #include "pyvshadow_error.h"
 #include "pyvshadow_file_object_io_handle.h"
@@ -280,13 +281,14 @@ on_error:
 PyMODINIT_FUNC initpyvshadow(
                 void )
 {
-	PyObject *module                 = NULL;
-	PyTypeObject *block_type_object  = NULL;
-	PyTypeObject *blocks_type_object = NULL;
-	PyTypeObject *store_type_object  = NULL;
-	PyTypeObject *stores_type_object = NULL;
-	PyTypeObject *volume_type_object = NULL;
-	PyGILState_STATE gil_state       = 0;
+	PyObject *module                      = NULL;
+	PyTypeObject *block_type_object       = NULL;
+	PyTypeObject *block_flags_type_object = NULL;
+	PyTypeObject *blocks_type_object      = NULL;
+	PyTypeObject *store_type_object       = NULL;
+	PyTypeObject *stores_type_object      = NULL;
+	PyTypeObject *volume_type_object      = NULL;
+	PyGILState_STATE gil_state            = 0;
 
 	/* Create the module
 	 * This function must be called before grabbing the GIL
@@ -395,6 +397,30 @@ PyMODINIT_FUNC initpyvshadow(
 	 module,
 	 "block",
 	 (PyObject *) block_type_object );
+
+	/* Setup the block flags type object
+	 */
+	pyvshadow_block_flags_type_object.tp_new = PyType_GenericNew;
+
+	if( pyvshadow_block_flags_init_type(
+             &pyvshadow_block_flags_type_object ) != 1 )
+	{
+		goto on_error;
+	}
+	if( PyType_Ready(
+	     &pyvshadow_block_flags_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyvshadow_block_flags_type_object );
+
+	block_flags_type_object = &pyvshadow_block_flags_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "block_flags",
+	 (PyObject *) block_flags_type_object );
 
 on_error:
 	PyGILState_Release(

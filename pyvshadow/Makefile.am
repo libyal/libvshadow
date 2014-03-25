@@ -18,6 +18,7 @@ pyexec_LTLIBRARIES = pyvshadow.la
 pyvshadow_la_SOURCES = \
 	pyvshadow.c pyvshadow.h \
 	pyvshadow_block.c pyvshadow_block.h \
+	pyvshadow_block_flags.c pyvshadow_block_flags.h \
 	pyvshadow_blocks.c pyvshadow_blocks.h \
 	pyvshadow_datetime.c pyvshadow_datetime.h \
 	pyvshadow_error.c pyvshadow_error.h \
