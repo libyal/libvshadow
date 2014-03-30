@@ -892,6 +892,19 @@ int libvshadow_volume_close(
 	internal_volume->file_io_handle = NULL;
 	internal_volume->size           = 0;
 
+	if( libvshadow_io_handle_clear(
+	     internal_file->io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to clear IO handle.",
+		 function );
+
+		result = -1;
+	}
 	if( libcdata_array_empty(
 	     internal_volume->store_descriptors_array,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_store_descriptor_free,
