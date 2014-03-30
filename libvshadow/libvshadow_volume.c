@@ -893,7 +893,7 @@ int libvshadow_volume_close(
 	internal_volume->size           = 0;
 
 	if( libvshadow_io_handle_clear(
-	     internal_file->io_handle,
+	     internal_volume->io_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
