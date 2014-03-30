@@ -1,4 +1,7 @@
 TODO
+* remove deprecated functions
+  - libvshadow_store_read_random
+  - pyvshadow.store.read_random
 * fix issue with multi threaded read test
   - store descriptor initialization?
 * add error tolerance for missing NTFS backup volume header

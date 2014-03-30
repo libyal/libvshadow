@@ -1,4 +1,4 @@
-.Dd January 31, 2014
+.Dd March 30, 2014
 .Dt libvshadow 3
 .Os libvshadow
 .Sh NAME
@@ -77,7 +77,7 @@ Store functions
 .Ft ssize_t
 .Fn libvshadow_store_read_buffer "libvshadow_store_t *store, void *buffer, size_t buffer_size, libvshadow_error_t **error"
 .Ft ssize_t
-.Fn libvshadow_store_read_random "libvshadow_store_t *store, void *buffer, size_t buffer_size, off64_t offset, libvshadow_error_t **error"
+.Fn libvshadow_store_read_buffer_at_offset "libvshadow_store_t *store, void *buffer, size_t buffer_size, off64_t offset, libvshadow_error_t **error"
 .Ft off64_t
 .Fn libvshadow_store_seek_offset "libvshadow_store_t *store, off64_t offset, int whence, libvshadow_error_t **error"
 .Ft int

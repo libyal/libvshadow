@@ -103,6 +103,14 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
          libcerror_error_t **error );
 
 LIBVSHADOW_EXTERN \
+ssize_t libvshadow_store_read_buffer_at_offset(
+         libvshadow_store_t *store,
+         void *buffer,
+         size_t buffer_size,
+         off64_t offset,
+         libcerror_error_t **error );
+
+LIBVSHADOW_EXTERN \
 ssize_t libvshadow_store_read_random(
          libvshadow_store_t *store,
          void *buffer,

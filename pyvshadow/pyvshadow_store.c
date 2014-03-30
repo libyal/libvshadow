@@ -51,8 +51,15 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	  "\n"
 	  "Reads a buffer of store data." },
 
+	{ "read_buffer_at_offset",
+	  (PyCFunction) pyvshadow_store_read_buffer_at_offset,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "read_buffer_at_offset(size, offset) -> String\n"
+	  "\n"
+	  "Reads a buffer of store data at a specific offset." },
+
 	{ "read_random",
-	  (PyCFunction) pyvshadow_store_read_random,
+	  (PyCFunction) pyvshadow_store_read_buffer_at_offset,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read_random(size, offset) -> String\n"
 	  "\n"
@@ -575,14 +582,14 @@ PyObject *pyvshadow_store_read_buffer(
 /* Reads (store) data at a specific offset
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyvshadow_store_read_random(
+PyObject *pyvshadow_store_read_buffer_at_offset(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments,
            PyObject *keywords )
 {
 	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
-	static char *function       = "pyvshadow_store_read_random";
+	static char *function       = "pyvshadow_store_read_buffer_at_offset";
 	static char *keyword_list[] = { "size", "offset", NULL };
 	off64_t read_offset         = 0;
 	ssize_t read_count          = 0;
@@ -644,7 +651,7 @@ PyObject *pyvshadow_store_read_random(
 
 	Py_BEGIN_ALLOW_THREADS
 
-	read_count = libvshadow_store_read_random(
+	read_count = libvshadow_store_read_buffer_at_offset(
 	              pyvshadow_store->store,
 	              PyString_AsString(
 	               string_object ),

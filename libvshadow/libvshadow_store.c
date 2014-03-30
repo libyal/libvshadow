@@ -478,6 +478,108 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 /* Reads (store) data at a specific offset
  * Returns the number of bytes read or -1 on error
  */
+ssize_t libvshadow_store_read_buffer_at_offset(
+         libvshadow_store_t *store,
+         void *buffer,
+         size_t buffer_size,
+         off64_t offset,
+         libcerror_error_t **error )
+{
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_read_buffer_at_offset";
+	ssize_t read_count                          = 0;
+
+	if( store == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store.",
+		 function );
+
+		return( -1 );
+	}
+	internal_store = (libvshadow_internal_store_t *) store;
+
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_store->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( libvshadow_internal_store_seek_offset(
+	     internal_store,
+	     offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek offset.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libvshadow_internal_store_read_buffer_from_file_io_handle(
+		      internal_store,
+		      internal_store->file_io_handle,
+		      buffer,
+		      buffer_size,
+		      error );
+
+	if( read_count == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read buffer from store descriptor: %d.",
+		 function,
+		 internal_store->store_descriptor_index );
+
+		goto on_error;
+	}
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_store->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( read_count );
+
+on_error:
+#if defined( HAVE_MULTI_THREAD_SUPPORT )
+	libcthreads_read_write_lock_release_for_write(
+	 internal_store->read_write_lock,
+	 NULL );
+#endif
+	return( -1 );
+}
+
+/* Reads (store) data at a specific offset
+ * Returns the number of bytes read or -1 on error
+ */
 ssize_t libvshadow_store_read_random(
          libvshadow_store_t *store,
          void *buffer,

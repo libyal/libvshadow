@@ -68,7 +68,7 @@ PyObject *pyvshadow_store_read_buffer(
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pyvshadow_store_read_random(
+PyObject *pyvshadow_store_read_buffer_at_offset(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments,
            PyObject *keywords );
