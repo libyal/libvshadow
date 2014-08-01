@@ -1895,7 +1895,7 @@ int __stdcall vshadowmount_dokan_GetFileInformation(
 			goto on_error;
 		}
 	}
-	if( qcowmount_dokan_set_file_information(
+	if( vshadowmount_dokan_set_file_information(
 	     file_information,
 	     volume_size,
 	     number_of_sub_items,
