@@ -72,7 +72,7 @@ PyTypeObject pyvshadow_block_flags_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pyvshadow block flags object (wraps LIBVSHADOW_BLOCK_FLAGS)",
@@ -145,26 +145,26 @@ int pyvshadow_block_flags_init_type(
 		return( -1 );
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "IS_FORWARDER",
-             PyInt_FromLong(
-              LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER ) ) != 0 )
+	     type_object->tp_dict,
+	     "IS_FORWARDER",
+	     PyInt_FromLong(
+	      LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "IS_OVERLAY",
-             PyInt_FromLong(
-              LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY ) ) != 0 )
+	     type_object->tp_dict,
+	     "IS_OVERLAY",
+	     PyInt_FromLong(
+	      LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "NOT_USED",
-             PyInt_FromLong(
-              LIBVSHADOW_BLOCK_FLAG_NOT_USED ) ) != 0 )
+	     type_object->tp_dict,
+	     "NOT_USED",
+	     PyInt_FromLong(
+	      LIBVSHADOW_BLOCK_FLAG_NOT_USED ) ) != 0 )
 	{
 		goto on_error;
 	}
@@ -188,11 +188,11 @@ PyObject *pyvshadow_block_flags_new(
            void )
 {
 	pyvshadow_block_flags_t *pyvshadow_block_flags = NULL;
-	static char *function                  = "pyvshadow_block_flags_new";
+	static char *function                          = "pyvshadow_block_flags_new";
 
 	pyvshadow_block_flags = PyObject_New(
-	                     struct pyvshadow_block_flags,
-	                     &pyvshadow_block_flags_type_object );
+	                         struct pyvshadow_block_flags,
+	                         &pyvshadow_block_flags_type_object );
 
 	if( pyvshadow_block_flags == NULL )
 	{

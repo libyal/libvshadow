@@ -10,8 +10,16 @@ Package: libvshadow
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libvshadow-dbg
 Description: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
  libvshadow is a library to access the Windows NT Volume Shadow Snapshot (VSS) format.
+
+Package: libvshadow-dbg
+Architecture: any
+Section: debug
+Depends: libvshadow (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libvshadow
+ Debugging symbols for libvshadow.
 
 Package: libvshadow-dev
 Section: libdevel
@@ -31,6 +39,14 @@ Package: libvshadow-python
 Section: python
 Architecture: any
 Depends: libvshadow (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Suggests: libvshadow-python-dbg
 Description: Python bindings for libvshadow
  Python bindings for libvshadow.
+
+Package: libvshadow-python-dbg
+Section: debug
+Architecture: any
+Depends: libvshadow-python (= ${Source-Version})
+Description: Debugging symbols for libvshadow-python
+ Debugging symbols for libvshadow-python.
 

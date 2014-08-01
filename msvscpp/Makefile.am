@@ -1,5 +1,5 @@
 MSVSCPP_FILES = \
-	dokan_dll/dokan_dll.vcproj \
+	dokan/dokan.vcproj \
 	libbfio/libbfio.vcproj \
 	libcdata/libcdata.vcproj \
 	libcerror/libcerror.vcproj \
@@ -14,8 +14,9 @@ MSVSCPP_FILES = \
 	libfdatetime/libfdatetime.vcproj \
 	libfguid/libfguid.vcproj \
 	libuna/libuna.vcproj \
-	libvshadow_dll/libvshadow_dll.vcproj \
+	libvshadow/libvshadow.vcproj \
 	pyvshadow/pyvshadow.vcproj \
+	vshadow_test_open_close/vshadow_test_open_close.vcproj \
 	vshadow_test_read/vshadow_test_read.vcproj \
 	vshadow_test_seek/vshadow_test_seek.vcproj \
 	vshadowinfo/vshadowinfo.vcproj \

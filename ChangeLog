@@ -47,6 +47,13 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20140731
+* updated dependencies
+* worked on Python bindings
+
+20140531
+* updated dependencies
+
 20140325
 * worked on setup.py
 

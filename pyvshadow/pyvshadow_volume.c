@@ -166,7 +166,7 @@ PyTypeObject pyvshadow_volume_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pyvshadow volume object (wraps libvshadow_volume_t)",
@@ -465,6 +465,209 @@ PyObject *pyvshadow_volume_signal_abort(
 	return( Py_None );
 }
 
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+
+/* Opens a volume
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyvshadow_volume_open(
+           pyvshadow_volume_t *pyvshadow_volume,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *exception_string    = NULL;
+	PyObject *exception_traceback = NULL;
+	PyObject *exception_type      = NULL;
+	PyObject *exception_value     = NULL;
+	PyObject *string_object       = NULL;
+	libcerror_error_t *error      = NULL;
+	static char *function         = "pyvshadow_volume_open";
+	static char *keyword_list[]   = { "filename", "mode", NULL };
+	const wchar_t *filename_wide  = NULL;
+	const char *filename_narrow   = NULL;
+	char *error_string            = NULL;
+	int result                    = 0;
+
+	if( pyvshadow_volume == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid volume.",
+		 function );
+
+		return( NULL );
+	}
+	/* Note that PyArg_ParseTupleAndKeywords with "s" will force Unicode strings to be converted to narrow character string.
+	 * On Windows the narrow character strings contains an extended ASCII string with a codepage. Hence we get a conversion
+	 * exception. We cannot use "u" here either since that does not allow us to pass non Unicode string objects and
+	 * Python (at least 2.7) does not seems to automatically upcast them.
+	 */
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "O|s",
+	     keyword_list,
+	     &string_object ) == 0 )
+	{
+		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_IsInstance(
+	          string_object,
+	          (PyObject *) &PyUnicode_Type );
+
+	if( result == -1 )
+	{
+		PyErr_Fetch(
+		 &exception_type,
+		 &exception_value,
+		 &exception_traceback );
+
+		exception_string = PyObject_Repr(
+		                    exception_value );
+
+		error_string = PyString_AsString(
+		                exception_string );
+
+		if( error_string != NULL )
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type unicode with error: %s.",
+			 function,
+			 error_string );
+		}
+		else
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type unicode.",
+			 function );
+		}
+		Py_DecRef(
+		 exception_string );
+
+		return( NULL );
+	}
+	else if( result != 0 )
+	{
+		PyErr_Clear();
+
+		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
+		                             string_object );
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libvshadow_volume_open_wide(
+		          pyvshadow_volume->volume,
+		          filename_wide,
+		          LIBVSHADOW_OPEN_READ,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyvshadow_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to open volume.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	PyErr_Clear();
+
+	result = PyObject_IsInstance(
+		  string_object,
+		  (PyObject *) &PyString_Type );
+
+	if( result == -1 )
+	{
+		PyErr_Fetch(
+		 &exception_type,
+		 &exception_value,
+		 &exception_traceback );
+
+		exception_string = PyObject_Repr(
+				    exception_value );
+
+		error_string = PyString_AsString(
+				exception_string );
+
+		if( error_string != NULL )
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type string with error: %s.",
+			 function,
+			 error_string );
+		}
+		else
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type string.",
+			 function );
+		}
+		Py_DecRef(
+		 exception_string );
+
+		return( NULL );
+	}
+	else if( result != 0 )
+	{
+		PyErr_Clear();
+
+		filename_narrow = PyString_AsString(
+				   string_object );
+
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libvshadow_volume_open(
+		          pyvshadow_volume->volume,
+		          filename_narrow,
+		          LIBVSHADOW_OPEN_READ,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyvshadow_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to open volume.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	PyErr_Format(
+	 PyExc_TypeError,
+	 "%s: unsupported string object type",
+	 function );
+
+	return( NULL );
+}
+
+#else
+
 /* Opens a volume
  * Returns a Python object if successful or NULL on error
  */
@@ -489,6 +692,9 @@ PyObject *pyvshadow_volume_open(
 
 		return( NULL );
 	}
+	/* Note that PyArg_ParseTupleAndKeywords with "s" will force Unicode strings to be converted to narrow character string.
+	 * For systems that support UTF-8 this works for Unicode string objects as well.
+	 */
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
@@ -496,9 +702,9 @@ PyObject *pyvshadow_volume_open(
 	     keyword_list,
 	     &filename,
 	     &mode ) == 0 )
-        {
-                return( NULL );
-        }
+	{
+		return( NULL );
+	}
 	if( ( mode != NULL )
 	 && ( mode[ 0 ] != 'r' ) )
 	{
@@ -514,8 +720,8 @@ PyObject *pyvshadow_volume_open(
 
 	result = libvshadow_volume_open(
 	          pyvshadow_volume->volume,
-                  filename,
-                  LIBVSHADOW_OPEN_READ,
+	          filename,
+	          LIBVSHADOW_OPEN_READ,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -538,6 +744,8 @@ PyObject *pyvshadow_volume_open(
 
 	return( Py_None );
 }
+
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 /* Opens a volume using a file-like object
  * Returns a Python object if successful or NULL on error
@@ -570,9 +778,9 @@ PyObject *pyvshadow_volume_open_file_object(
 	     keyword_list,
 	     &file_object,
 	     &mode ) == 0 )
-        {
-                return( NULL );
-        }
+	{
+		return( NULL );
+	}
 	if( ( mode != NULL )
 	 && ( mode[ 0 ] != 'r' ) )
 	{
@@ -604,8 +812,8 @@ PyObject *pyvshadow_volume_open_file_object(
 
 	result = libvshadow_volume_open_file_io_handle(
 	          pyvshadow_volume->volume,
-                  pyvshadow_volume->file_io_handle,
-                  LIBVSHADOW_OPEN_READ,
+	          pyvshadow_volume->file_io_handle,
+	          LIBVSHADOW_OPEN_READ,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -849,9 +1057,9 @@ PyObject *pyvshadow_volume_get_store(
 	     "i",
 	     keyword_list,
 	     &store_index ) == 0 )
-        {
+	{
 		return( NULL );
-        }
+	}
 	store_object = pyvshadow_volume_get_store_by_index(
 	                pyvshadow_volume,
 	                store_index );

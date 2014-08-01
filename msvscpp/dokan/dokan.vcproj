@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="libcsystem"
-	ProjectGUID="{A2B861D5-6751-43A9-B085-8D48F8754AC5}"
-	RootNamespace="libcsystem"
+	Name="dokan"
+	ProjectGUID="{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}"
+	RootNamespace="dokan"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -19,7 +19,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -39,8 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libclocale;..\..\libcnotify;..\..\libuna"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCSYSTEM"
+				AdditionalIncludeDirectories="..\..\..\dokan\sys\"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;DOKAN_DLL"
 				RuntimeLibrary="2"
 				WarningLevel="4"
 				CompileAs="1"
@@ -55,13 +55,19 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName).lib"
-				ModuleDefinitionFile=""
-				IgnoreAllDefaultLibraries="false"
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
+				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -73,6 +79,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -80,7 +89,7 @@
 			Name="VSDebug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -101,8 +110,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libclocale;..\..\libcnotify;..\..\libuna"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCSYSTEM"
+				AdditionalIncludeDirectories="..\..\..\dokan\sys\"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;DOKAN_DLL"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
@@ -120,13 +129,20 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName).lib"
-				ModuleDefinitionFile=""
-				IgnoreAllDefaultLibraries="false"
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
+				GenerateDebugInformation="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="1"
+				TargetMachine="1"
+				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -136,6 +152,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -151,23 +170,75 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_getopt.c"
+				RelativePath="..\..\..\dokan\dokan\access.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_glob.c"
+				RelativePath="..\..\..\dokan\dokan\cleanup.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_signal.c"
+				RelativePath="..\..\..\dokan\dokan\close.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_string.c"
+				RelativePath="..\..\..\dokan\dokan\create.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_support.c"
+				RelativePath="..\..\..\dokan\dokan\directory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\dokan.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\fileinfo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\flush.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\lock.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\mount.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\read.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\security.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\setfile.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\status.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\timeout.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\version.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\volume.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\dokan\dokan\write.c"
 				>
 			</File>
 		</Filter>
@@ -177,67 +248,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_definitions.h"
+				RelativePath="..\..\..\dokan\dokan\dokan.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_file_io.h"
+				RelativePath="..\..\..\dokan\dokan\dokanc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_file_stream.h"
+				RelativePath="..\..\..\dokan\dokan\dokani.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_find.h"
+				RelativePath="..\..\..\dokan\dokan\fileinfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcsystem\libcsystem_getopt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_glob.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_i18n.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_libcerror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_libclocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_libcnotify.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_libcstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_libuna.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_signal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_string.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_support.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcsystem\libcsystem_unused.h"
+				RelativePath="..\..\..\dokan\dokan\list.h"
 				>
 			</File>
 		</Filter>

@@ -54,7 +54,8 @@ vshadow_test_open_close_SOURCES = \
 vshadow_test_open_close_LDADD = \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 vshadow_test_read_SOURCES = \
 	vshadow_test_libcerror.h \

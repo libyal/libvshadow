@@ -79,7 +79,7 @@ int libvshadow_store_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid internal volume.",
+		 "%s: invalid volume.",
 		 function );
 
 		return( -1 );

@@ -276,7 +276,7 @@ PyTypeObject pyvshadow_store_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pyvshadow store object (wraps libvshadow_store_t)",
@@ -944,7 +944,7 @@ PyObject *pyvshadow_store_get_identifier(
 
 	Py_END_ALLOW_THREADS
 
-	if( result == -1 )
+	if( result != 1 )
 	{
 		pyvshadow_error_raise(
 		 error,
@@ -1316,9 +1316,9 @@ PyObject *pyvshadow_store_get_block(
 	     "i",
 	     keyword_list,
 	     &block_index ) == 0 )
-        {
+	{
 		return( NULL );
-        }
+	}
 	block_object = pyvshadow_store_get_block_by_index(
 	                pyvshadow_store,
 	                block_index );

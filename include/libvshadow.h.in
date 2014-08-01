@@ -335,20 +335,6 @@ ssize_t libvshadow_store_read_buffer_at_offset(
          off64_t offset,
          libvshadow_error_t **error );
 
-/* Reads (store) data at a specific offset
- * Returns the number of bytes read or -1 on error
- *
- * This function is deprecated use libvshadow_store_read_buffer_at_offset instead
- */
-LIBVSHADOW_DEPRECATED \
-LIBVSHADOW_EXTERN \
-ssize_t libvshadow_store_read_random(
-         libvshadow_store_t *store,
-         void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libvshadow_error_t **error );
-
 /* Seeks a certain offset of the (store) data
  * Returns the offset if seek is successful or -1 on error
  */
@@ -452,6 +438,24 @@ int libvshadow_store_get_block_by_index(
      int block_index,
      libvshadow_block_t **block,
      libvshadow_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Store functions - deprecated
+ * ------------------------------------------------------------------------- */
+
+/* Reads (store) data at a specific offset
+ * Returns the number of bytes read or -1 on error
+ *
+ * This function is deprecated use libvshadow_store_read_buffer_at_offset instead
+ */
+LIBVSHADOW_DEPRECATED \
+LIBVSHADOW_EXTERN \
+ssize_t libvshadow_store_read_random(
+         libvshadow_store_t *store,
+         void *buffer,
+         size_t buffer_size,
+         off64_t offset,
+         libvshadow_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Block functions

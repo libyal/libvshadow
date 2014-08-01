@@ -103,13 +103,6 @@ stamp-h1
 /libvshadow/libvshadow_definitions.h
 /vshadowtools/vshadowinfo
 /vshadowtools/vshadowmount
-/macosx/Introduction.rtf
-/macosx/libvshadow.pmdoc/01bin.xml
-/macosx/libvshadow.pmdoc/02include.xml
-/macosx/libvshadow.pmdoc/03lib.xml
-/macosx/libvshadow.pmdoc/04share.xml
-/macosx/libvshadow.pmdoc/05python.xml
-/macosx/libvshadow.pmdoc/index.xml
 /pyvshadow/setup.py
 /tests/input
 /tests/tmp

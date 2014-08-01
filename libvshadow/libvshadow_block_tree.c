@@ -91,8 +91,8 @@ int libvshadow_block_tree_insert(
 		{
 			libcnotify_printf(
 			 "%s: store: %02d not used flag set - ignoring block descriptor.\n",
-			 store_index,
-			 function );
+			 function,
+			 store_index );
 			libcnotify_printf(
 			 "\n" );
 		}

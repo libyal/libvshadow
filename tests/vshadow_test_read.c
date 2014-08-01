@@ -161,10 +161,10 @@ int vshadow_test_read_buffer(
 	return( result );
 }
 
-/* Tests libvshadow_store_read_random
+/* Tests libvshadow_store_read_buffer_at_offset
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int vshadow_test_read_random(
+int vshadow_test_read_buffer_at_offset(
      libvshadow_store_t *store,
      off64_t input_offset,
      size64_t input_size,
@@ -189,7 +189,7 @@ int vshadow_test_read_random(
 
 	fprintf(
 	 stdout,
-	 "Testing reading random with offset: %" PRIi64 " and size: %" PRIu64 "\t",
+	 "Testing reading buffer at offset: %" PRIi64 " with size: %" PRIu64 "\t",
 	 input_offset,
 	 input_size );
 
@@ -201,7 +201,7 @@ int vshadow_test_read_random(
 		{
 			read_size = (size_t) remaining_size;
 		}
-		read_count = libvshadow_store_read_random(
+		read_count = libvshadow_store_read_buffer_at_offset(
 			      store,
 			      buffer,
 			      read_size,
@@ -415,7 +415,7 @@ int vshadow_test_read_from_store(
 		return( result );
 	}
 
-	/* Case 1: test random read
+	/* Case 1: test buffer at offset read
 	 */
 
 	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
@@ -542,13 +542,13 @@ int vshadow_test_read_from_store(
 			return( result );
 		}
 	}
-	/* Case 3: test random read
+	/* Case 3: test buffer at offset read
 	 */
 
 	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
 	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
 	 */
-	result = vshadow_test_read_random(
+	result = vshadow_test_read_buffer_at_offset(
 	          store,
 	          (off64_t) ( volume_size / 7 ),
 	          volume_size / 2,
@@ -559,14 +559,14 @@ int vshadow_test_read_from_store(
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test read random.\n" );
+		 "Unable to test read buffer at offset.\n" );
 
 		return( result );
 	}
 	/* Test: offset: <volume_size / 7> size: <volume_size / 2>
 	 * Expected result: offset: < ( volume_size / 7 ) + ( volume_size / 2 ) > size: <volume_size / 2>
 	 */
-	result = vshadow_test_read_random(
+	result = vshadow_test_read_buffer_at_offset(
 	          store,
 	          (off64_t) ( volume_size / 7 ),
 	          volume_size / 2,
@@ -577,7 +577,7 @@ int vshadow_test_read_from_store(
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test read random.\n" );
+		 "Unable to test read buffer at offset.\n" );
 
 		return( result );
 	}
