@@ -63,7 +63,7 @@ void usage_fprint(
 
 	fprintf( stream, "\t-a:     shows allocation information\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-o:     specify the volume offset\n" );
+	fprintf( stream, "\t-o:     specify the volume offset in bytes\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }

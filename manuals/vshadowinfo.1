@@ -1,4 +1,4 @@
-.Dd January 31, 2014
+.Dd August 31, 2014
 .Dt vshadowinfo
 .Os libvshadow
 .Sh NAME
@@ -6,6 +6,7 @@
 .Nd determines information about a Windows NT Volume Shadow Snapshot (VSS) volume
 .Sh SYNOPSIS
 .Nm vshadowinfo
+.Op Fl o Ar offset
 .Op Fl ahvV
 .Va Ar source
 .Sh DESCRIPTION
@@ -28,6 +29,8 @@ The options are as follows:
 shows allocation information
 .It Fl h
 shows this help
+.It Fl o Ar offset
+specify the volume offset in bytes
 .It Fl v
 verbose output to stderr
 .It Fl V

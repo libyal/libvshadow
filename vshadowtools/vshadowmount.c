@@ -93,7 +93,7 @@ void usage_fprint(
 	fprintf( stream, "\tmount_point: the directory to serve as mount point\n\n" );
 
 	fprintf( stream, "\t-h:          shows this help\n" );
-	fprintf( stream, "\t-o:          specify the volume offset\n" );
+	fprintf( stream, "\t-o:          specify the volume offset in bytes\n" );
 	fprintf( stream, "\t-v:          verbose output to stderr\n"
 	                 "\t             vshadowmount will remain running in the foreground\n" );
 	fprintf( stream, "\t-V:          print version\n" );
