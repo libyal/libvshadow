@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <memory.h>
 #include <types.h>
 
 #include "libvshadow_definitions.h"
@@ -27,6 +28,7 @@
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libclocale.h"
+#include "libvshadow_libcstring.h"
 #include "libvshadow_support.h"
 
 #if !defined( HAVE_LOCAL_LIBVSHADOW )

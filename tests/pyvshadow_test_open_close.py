@@ -54,7 +54,7 @@ def pyvshadow_test_single_open_close_file(filename, mode):
 
   except TypeError, exception:
     if (not filename and
-        exception.message == "argument 1 must be string, not None"):
+        exception.message == "pyvshadow_volume_open: unsupported string object type."):
       pass
 
     else:
