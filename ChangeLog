@@ -47,6 +47,10 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20140928
+* removed README.macosx
+* changes for project site move
+
 20140901
 * bug fix in Python-bindings
 * Code clean up
