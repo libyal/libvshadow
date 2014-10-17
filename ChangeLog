@@ -47,6 +47,9 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20141017
+* changes for deployment
+
 20140928
 * removed README.macosx
 * changes for project site move
