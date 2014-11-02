@@ -270,9 +270,8 @@ ssize_t libvshadow_store_read_buffer(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer from store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
+		 "%s: unable to read buffer.",
+		 function );
 
 		read_count = -1;
 	}
@@ -451,9 +450,8 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer from store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
+		 "%s: unable to read buffer.",
+		 function );
 
 		read_count = -1;
 	}
@@ -545,9 +543,8 @@ ssize_t libvshadow_store_read_buffer_at_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer from store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
+		 "%s: unable to read buffer.",
+		 function );
 
 		goto on_error;
 	}
@@ -647,9 +644,8 @@ ssize_t libvshadow_store_read_random(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer from store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
+		 "%s: unable to read buffer.",
+		 function );
 
 		goto on_error;
 	}
@@ -849,17 +845,6 @@ int libvshadow_store_get_offset(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-	if( internal_store->internal_volume == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid store - missing internal volume.",
-		 function );
-
-		return( -1 );
-	}
 	if( offset == NULL )
 	{
 		libcerror_error_set(
@@ -930,17 +915,6 @@ int libvshadow_store_get_size(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-	if( internal_store->internal_volume == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid store - missing internal volume.",
-		 function );
-
-		return( -1 );
-	}
 	if( libvshadow_volume_get_size(
 	     (libvshadow_volume_t *) internal_store->internal_volume,
 	     size,
@@ -950,9 +924,8 @@ int libvshadow_store_get_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size from store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
+		 "%s: unable to retrieve size from volume.",
+		 function );
 
 		return( -1 );
 	}
@@ -1410,6 +1383,17 @@ int libvshadow_store_get_number_of_blocks(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
+	if( internal_store->internal_volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid store - missing internal volume.",
+		 function );
+
+		return( -1 );
+	}
 	if( libcdata_array_get_entry_by_index(
 	     internal_store->internal_volume->store_descriptors_array,
 	     internal_store->store_descriptor_index,
@@ -1472,6 +1456,17 @@ int libvshadow_store_get_block_by_index(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
+	if( internal_store->internal_volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid store - missing internal volume.",
+		 function );
+
+		return( -1 );
+	}
 	if( block == NULL )
 	{
 		libcerror_error_set(
