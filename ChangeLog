@@ -1,7 +1,4 @@
 TODO
-* remove deprecated functions
-  - libvshadow_store_read_random
-  - pyvshadow.store.read_random
 * fix issue with multi threaded read test
   - store descriptor initialization?
 * add error tolerance for missing NTFS backup volume header
@@ -46,6 +43,14 @@ Tools:
   - print attribute flags description
 * vshadowmount
   - dokan fix volume size hints
+
+20141114
+* code clean up
+
+20141104
+* removed deprecated functions
+  - libvshadow_store_read_random
+  - pyvshadow.store.read_random
 
 20141027
 * changes for deployment

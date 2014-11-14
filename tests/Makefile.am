@@ -53,6 +53,7 @@ vshadow_test_open_close_SOURCES = \
 
 vshadow_test_open_close_LDADD = \
 	../libvshadow/libvshadow.la \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@ \
 	@PTHREAD_LIBADD@

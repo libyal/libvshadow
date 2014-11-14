@@ -683,7 +683,8 @@ int vshadow_test_read_from_multiple_stores(
 	libvshadow_store_t *store              = NULL;
 	static char *function                  = "vshadow_test_read_from_multiple_stores";
 	int iterator                           = 0;
-	int number_of_iterations               = 4;
+	int number_of_threads                  = 4;
+	int store_index                        = 0;
 
 	if( volume == NULL )
 	{
@@ -701,7 +702,7 @@ int vshadow_test_read_from_multiple_stores(
 		if( libcthreads_thread_pool_create(
 		     &thread_pool,
 		     NULL,
-		     number_of_iterations,
+		     number_of_threads,
 		     number_of_stores,
 		     (int (*)(intptr_t *, void *)) &vshadow_test_read_callback_function,
 		     NULL,
@@ -716,24 +717,22 @@ int vshadow_test_read_from_multiple_stores(
 
 			goto on_error;
 		}
-		if( number_of_stores < number_of_iterations )
-		{
-			number_of_iterations = number_of_stores;
-		}
+		store_index = number_of_stores - 1;
+
 		for( iterator = 1;
 		     iterator <= number_of_stores;
 		     iterator++ )
 		{
 			if( libvshadow_volume_get_store(
 			     volume,
-			     number_of_stores - iterator,
+			     store_index,
 			     &store,
 			     &error ) != 1 )
 			{
 				fprintf(
 				 stderr,
 				 "Unable to retrieve store: %d.\n",
-				 number_of_stores - iterator );
+				 store_index );
 
 				goto on_error;
 			}
@@ -748,11 +747,13 @@ int vshadow_test_read_from_multiple_stores(
 				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 				 "%s: unable to push store: %d onto queue.",
 				 function,
-				 number_of_stores - iterator );
+				 store_index );
 
 				goto on_error;
 			}
 			store = NULL;
+
+			store_index--;
 		}
 		if( libcthreads_thread_pool_join(
 		     &thread_pool,
@@ -795,7 +796,7 @@ on_error:
 	return( -1 );
 }
 
-#endif
+#endif /* defined( HAVE_MULTI_THREAD_SUPPORT ) */
 
 /* The main program
  */

@@ -80,16 +80,16 @@ int libvshadow_store_free(
      libvshadow_store_t **store,
      libcerror_error_t **error );
 
-LIBVSHADOW_EXTERN \
-ssize_t libvshadow_store_read_buffer(
-         libvshadow_store_t *store,
+ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
+         libvshadow_internal_store_t *internal_store,
+         libbfio_handle_t *file_io_handle,
          void *buffer,
          size_t buffer_size,
          libcerror_error_t **error );
 
-ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
-         libvshadow_internal_store_t *internal_store,
-         libbfio_handle_t *file_io_handle,
+LIBVSHADOW_EXTERN \
+ssize_t libvshadow_store_read_buffer(
+         libvshadow_store_t *store,
          void *buffer,
          size_t buffer_size,
          libcerror_error_t **error );
@@ -104,14 +104,6 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 
 LIBVSHADOW_EXTERN \
 ssize_t libvshadow_store_read_buffer_at_offset(
-         libvshadow_store_t *store,
-         void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libcerror_error_t **error );
-
-LIBVSHADOW_EXTERN \
-ssize_t libvshadow_store_read_random(
          libvshadow_store_t *store,
          void *buffer,
          size_t buffer_size,

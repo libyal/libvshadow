@@ -58,13 +58,6 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	  "\n"
 	  "Reads a buffer of store data at a specific offset." },
 
-	{ "read_random",
-	  (PyCFunction) pyvshadow_store_read_buffer_at_offset,
-	  METH_VARARGS | METH_KEYWORDS,
-	  "read_random(size, offset) -> String\n"
-	  "\n"
-	  "Reads a buffer of store data at a specific offset." },
-
 	{ "seek_offset",
 	  (PyCFunction) pyvshadow_store_seek_offset,
 	  METH_VARARGS | METH_KEYWORDS,

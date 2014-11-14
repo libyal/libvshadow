@@ -33,9 +33,17 @@
 
 /* The following type definitions hide internal data structures
  */
+#if defined( HAVE_DEBUG_OUTPUT )
+typedef struct libvshadow_block {}	libvshadow_block_t;
+typedef struct libvshadow_store {}	libvshadow_store_t;
+typedef struct libvshadow_volume {}	libvshadow_volume_t;
+
+#else
 typedef intptr_t libvshadow_block_t;
 typedef intptr_t libvshadow_store_t;
 typedef intptr_t libvshadow_volume_t;
+
+#endif
 
 #endif
 
