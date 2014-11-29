@@ -32,7 +32,6 @@
 #include "vshadowtools_libclocale.h"
 #include "vshadowtools_libcnotify.h"
 #include "vshadowtools_libcstring.h"
-/* TODO libcsystem is required for gettext */
 #include "vshadowtools_libcsystem.h"
 #include "vshadowtools_libfdatetime.h"
 #include "vshadowtools_libfguid.h"

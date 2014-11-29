@@ -61,11 +61,13 @@ int libvshadow_check_volume_signature(
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
+
 LIBVSHADOW_EXTERN \
 int libvshadow_check_volume_signature_wide(
      const wchar_t *filename,
      libcerror_error_t **error );
-#endif
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBVSHADOW_EXTERN \
 int libvshadow_check_volume_signature_file_io_handle(

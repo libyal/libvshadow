@@ -103,7 +103,7 @@ int libvshadow_set_codepage(
 
 #endif /* !defined( HAVE_LOCAL_LIBVSHADOW ) */
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a file contains a VSS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libvshadow_check_volume_signature(
@@ -210,7 +210,7 @@ on_error:
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a file contains a VSS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libvshadow_check_volume_signature_wide(
@@ -315,9 +315,9 @@ on_error:
 	return( -1 );
 }
 
-#endif
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier) using a Basic File IO (bfio) handle
+/* Determines if a file contains a VSS volume signature using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libvshadow_check_volume_signature_file_io_handle(

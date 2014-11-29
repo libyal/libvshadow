@@ -73,7 +73,7 @@ int libvshadow_set_codepage(
      int codepage,
      libvshadow_error_t **error );
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a file contains a VSS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBVSHADOW_EXTERN \
@@ -81,7 +81,7 @@ int libvshadow_check_volume_signature(
      const char *filename,
      libvshadow_error_t **error );
 
-/* Determines if a volume is a VSS volume (check for the VSS identifier)
+/* Determines if a file contains a VSS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBVSHADOW_EXTERN \
@@ -90,14 +90,16 @@ int libvshadow_check_volume_signature_wide(
      libvshadow_error_t **error );
 
 #if defined( LIBVSHADOW_HAVE_BFIO )
-/* Determines if a volume is a VSS volume (check for the VSS identifier) using a Basic File IO (bfio) handle
+
+/* Determines if a file contains a VSS volume signature using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBVSHADOW_EXTERN \
 int libvshadow_check_volume_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libvshadow_error_t **error );
-#endif
+
+#endif /* defined( LIBVSHADOW_HAVE_BFIO ) */
 
 /* -------------------------------------------------------------------------
  * Notify functions
@@ -219,6 +221,7 @@ int libvshadow_volume_open(
      libvshadow_error_t **error );
 
 #if defined( LIBVSHADOW_HAVE_WIDE_CHARACTER_TYPE )
+
 /* Opens a volume
  * Returns 1 if successful or -1 on error
  */
@@ -228,9 +231,11 @@ int libvshadow_volume_open_wide(
      const wchar_t *filename,
      int access_flags,
      libvshadow_error_t **error );
-#endif
+
+#endif /* defined( LIBVSHADOW_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBVSHADOW_HAVE_BFIO )
+
 /* Opens a volume using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
@@ -240,7 +245,8 @@ int libvshadow_volume_open_file_io_handle(
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libvshadow_error_t **error );
-#endif
+
+#endif /* defined( LIBVSHADOW_HAVE_BFIO ) */
 
 /* Closes a volume
  * Returns 0 if successful or -1 on error
@@ -312,6 +318,7 @@ ssize_t libvshadow_store_read_buffer(
          libvshadow_error_t **error );
 
 #if defined( LIBVSHADOW_HAVE_BFIO )
+
 /* Opens a volume using a Basic File IO (bfio) handle using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
@@ -322,7 +329,8 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
          void *buffer,
          size_t buffer_size,
          libvshadow_error_t **error );
-#endif
+
+#endif /* defined( LIBVSHADOW_HAVE_BFIO ) */
 
 /* Reads (store) data at a specific offset
  * Returns the number of bytes read or -1 on error
