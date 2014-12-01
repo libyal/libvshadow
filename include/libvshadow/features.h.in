@@ -24,7 +24,7 @@
 
 /* The libvshadow type support features
  */
-#if @HAVE_WIDE_CHARACTER_TYPE@ || defined( HAVE_WIDE_CHARACTER_TYPE )
+#if defined( HAVE_WIDE_CHARACTER_TYPE ) || @HAVE_WIDE_CHARACTER_TYPE@
 #define LIBVSHADOW_HAVE_WIDE_CHARACTER_TYPE	1
 #endif
 

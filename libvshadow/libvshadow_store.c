@@ -133,7 +133,7 @@ int libvshadow_store_initialize(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_initialize(
 	     &( internal_store->read_write_lock ),
 	     error ) != 1 )
@@ -195,7 +195,7 @@ int libvshadow_store_free(
 
 		/* The file_io_handle, io_handle and internal_volume references are freed elsewhere
 		 */
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 		if( libcthreads_read_write_lock_free(
 		     &( internal_store->read_write_lock ),
 		     error ) != 1 )
@@ -344,7 +344,7 @@ ssize_t libvshadow_store_read_buffer(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -377,7 +377,7 @@ ssize_t libvshadow_store_read_buffer(
 
 		read_count = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -422,7 +422,7 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -455,7 +455,7 @@ ssize_t libvshadow_store_read_buffer_from_file_io_handle(
 
 		read_count = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -500,7 +500,7 @@ ssize_t libvshadow_store_read_buffer_at_offset(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -548,7 +548,7 @@ ssize_t libvshadow_store_read_buffer_at_offset(
 
 		goto on_error;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -566,7 +566,7 @@ ssize_t libvshadow_store_read_buffer_at_offset(
 	return( read_count );
 
 on_error:
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 internal_store->read_write_lock,
 	 NULL );
@@ -670,7 +670,7 @@ off64_t libvshadow_store_seek_offset(
 	}
 	internal_store = (libvshadow_internal_store_t *) store;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -702,7 +702,7 @@ off64_t libvshadow_store_seek_offset(
 
 		offset = -1;
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -755,7 +755,7 @@ int libvshadow_store_get_offset(
 
 		return( -1 );
 	}
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_read(
 	     internal_store->read_write_lock,
 	     error ) != 1 )
@@ -772,7 +772,7 @@ int libvshadow_store_get_offset(
 #endif
 	*offset = internal_store->current_offset;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
 	     internal_store->read_write_lock,
 	     error ) != 1 )

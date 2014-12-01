@@ -138,7 +138,7 @@ struct libvshadow_store_descriptor
 	 */
 	uint8_t block_descriptors_read;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	/* The read/write lock
 	 */
 	libcthreads_read_write_lock_t *read_write_lock;

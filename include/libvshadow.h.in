@@ -81,6 +81,8 @@ int libvshadow_check_volume_signature(
      const char *filename,
      libvshadow_error_t **error );
 
+#if defined( LIBVSHADOW_HAVE_WIDE_CHARACTER_TYPE )
+
 /* Determines if a file contains a VSS volume signature
  * Returns 1 if true, 0 if not or -1 on error
  */
@@ -88,6 +90,8 @@ LIBVSHADOW_EXTERN \
 int libvshadow_check_volume_signature_wide(
      const wchar_t *filename,
      libvshadow_error_t **error );
+
+#endif /* defined( LIBVSHADOW_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBVSHADOW_HAVE_BFIO )
 

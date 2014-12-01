@@ -60,7 +60,7 @@ struct libvshadow_internal_store
 	 */
 	off64_t current_offset;
 
-#if defined( HAVE_MULTI_THREAD_SUPPORT )
+#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	/* The read/write lock
 	 */
 	libcthreads_read_write_lock_t *read_write_lock;

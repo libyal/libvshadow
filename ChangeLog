@@ -44,8 +44,12 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20141201
+* code clean up
+
 20141114
 * code clean up
+* worked on multi-threading support
 
 20141104
 * removed deprecated functions
