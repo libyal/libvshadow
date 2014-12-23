@@ -17,7 +17,8 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON
 TESTS_PYVSHADOW  = \
-	test_pyvshadow_open_close.sh
+	test_pyvshadow_open_close.sh \
+	test_pyvshadow_seek.sh
 endif
 
 TESTS = \
@@ -29,12 +30,14 @@ TESTS = \
 
 check_SCRIPTS = \
 	pyvshadow_test_open_close.py \
+	pyvshadow_test_seek.py \
 	test_open_close.sh \
 	test_pyvshadow_open_close.sh \
-	test_vshadowinfo.sh \
+	test_pyvshadow_seek.sh \
 	test_read.sh \
 	test_runner.sh \
-	test_seek.sh
+	test_seek.sh \
+	test_vshadowinfo.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
