@@ -229,10 +229,8 @@ PyGetSetDef pyvshadow_store_object_get_set_definitions[] = {
 };
 
 PyTypeObject pyvshadow_store_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyvshadow.store",
 	/* tp_basicsize */
@@ -413,8 +411,9 @@ int pyvshadow_store_init(
 void pyvshadow_store_free(
       pyvshadow_store_t *pyvshadow_store )
 {
-	libcerror_error_t *error = NULL;
-	static char *function    = "pyvshadow_store_free";
+	libcerror_error_t *error    = NULL;
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyvshadow_store_free";
 
 	if( pyvshadow_store == NULL )
 	{
@@ -425,29 +424,32 @@ void pyvshadow_store_free(
 
 		return;
 	}
-	if( pyvshadow_store->ob_type == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid store - missing ob_type.",
-		 function );
-
-		return;
-	}
-	if( pyvshadow_store->ob_type->tp_free == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid store - invalid ob_type - missing tp_free.",
-		 function );
-
-		return;
-	}
 	if( pyvshadow_store->store == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
 		 "%s: invalid store - missing libvshadow store.",
+		 function );
+
+		return;
+	}
+	ob_type = Py_TYPE(
+	           pyvshadow_store );
+
+	if( ob_type == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
+		 function );
+
+		return;
+	}
+	if( ob_type->tp_free == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -470,7 +472,7 @@ void pyvshadow_store_free(
 		Py_DecRef(
 		 (PyObject *) pyvshadow_store->volume_object );
 	}
-	pyvshadow_store->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyvshadow_store );
 }
 
@@ -486,6 +488,7 @@ PyObject *pyvshadow_store_read_buffer(
 	PyObject *string_object     = NULL;
 	static char *function       = "pyvshadow_store_read_buffer";
 	static char *keyword_list[] = { "size", NULL };
+	char *buffer                = NULL;
 	ssize_t read_count          = 0;
 	int read_size               = -1;
 
@@ -527,16 +530,26 @@ PyObject *pyvshadow_store_read_buffer(
 
 		return( NULL );
 	}
+#if PY_MAJOR_VERSION >= 3
+	string_object = PyBytes_FromStringAndSize(
+	                 NULL,
+	                 read_size );
+
+	buffer = PyBytes_AsString(
+	          string_object );
+#else
 	string_object = PyString_FromStringAndSize(
 	                 NULL,
 	                 read_size );
 
+	buffer = PyString_AsString(
+	          string_object );
+#endif
 	Py_BEGIN_ALLOW_THREADS
 
 	read_count = libvshadow_store_read_buffer(
 	              pyvshadow_store->store,
-	              PyString_AsString(
-	               string_object ),
+	              (uint8_t *) buffer,
 	              (size_t) read_size,
 	              &error );
 
@@ -560,9 +573,15 @@ PyObject *pyvshadow_store_read_buffer(
 	}
 	/* Need to resize the string here in case read_size was not fully read.
 	 */
+#if PY_MAJOR_VERSION >= 3
+	if( _PyBytes_Resize(
+	     &string_object,
+	     (Py_ssize_t) read_count ) != 0 )
+#else
 	if( _PyString_Resize(
 	     &string_object,
 	     (Py_ssize_t) read_count ) != 0 )
+#endif
 	{
 		Py_DecRef(
 		 (PyObject *) string_object );
@@ -584,6 +603,7 @@ PyObject *pyvshadow_store_read_buffer_at_offset(
 	PyObject *string_object     = NULL;
 	static char *function       = "pyvshadow_store_read_buffer_at_offset";
 	static char *keyword_list[] = { "size", "offset", NULL };
+	char *buffer                = NULL;
 	off64_t read_offset         = 0;
 	ssize_t read_count          = 0;
 	int read_size               = 0;
@@ -638,16 +658,26 @@ PyObject *pyvshadow_store_read_buffer_at_offset(
 	}
 	/* Make sure the data fits into the memory buffer
 	 */
+#if PY_MAJOR_VERSION >= 3
+	string_object = PyBytes_FromStringAndSize(
+	                 NULL,
+	                 read_size );
+
+	buffer = PyBytes_AsString(
+	          string_object );
+#else
 	string_object = PyString_FromStringAndSize(
 	                 NULL,
 	                 read_size );
 
+	buffer = PyString_AsString(
+	          string_object );
+#endif
 	Py_BEGIN_ALLOW_THREADS
 
 	read_count = libvshadow_store_read_buffer_at_offset(
 	              pyvshadow_store->store,
-	              PyString_AsString(
-	               string_object ),
+	              (uint8_t *) buffer,
 	              (size_t) read_size,
 	              (off64_t) read_offset,
 	              &error );
@@ -672,9 +702,15 @@ PyObject *pyvshadow_store_read_buffer_at_offset(
 	}
 	/* Need to resize the string here in case read_size was not fully read.
 	 */
+#if PY_MAJOR_VERSION >= 3
+	if( _PyBytes_Resize(
+	     &string_object,
+	     (Py_ssize_t) read_count ) != 0 )
+#else
 	if( _PyString_Resize(
 	     &string_object,
 	     (Py_ssize_t) read_count ) != 0 )
+#endif
 	{
 		Py_DecRef(
 		 (PyObject *) string_object );
@@ -1179,6 +1215,7 @@ PyObject *pyvshadow_store_get_number_of_blocks(
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_store_get_number_of_blocks";
 	int number_of_blocks     = 0;
 	int result               = 0;
@@ -1216,8 +1253,14 @@ PyObject *pyvshadow_store_get_number_of_blocks(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) number_of_blocks ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_blocks );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_blocks );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves a specific block by index

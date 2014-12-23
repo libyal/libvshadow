@@ -131,22 +131,17 @@ PyObject *pyvshadow_check_volume_signature(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *exception_string    = NULL;
-	PyObject *exception_traceback = NULL;
-	PyObject *exception_type      = NULL;
-	PyObject *exception_value     = NULL;
-	PyObject *string_object       = NULL;
-	libcerror_error_t *error      = NULL;
-	static char *function         = "pyvshadow_check_volume_signature";
-	static char *keyword_list[]   = { "filename", NULL };
-	const char *filename_narrow   = NULL;
-	char *error_string            = NULL;
-	int result                    = 0;
+	PyObject *string_object      = NULL;
+	libcerror_error_t *error     = NULL;
+	static char *function        = "pyvshadow_check_volume_signature";
+	static char *keyword_list[]  = { "filename", NULL };
+	const char *filename_narrow  = NULL;
+	int result                   = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	const wchar_t *filename_wide  = NULL;
+	const wchar_t *filename_wide = NULL;
 #else
-	PyObject *utf8_string_object  = NULL;
+	PyObject *utf8_string_object = NULL;
 #endif
 
 	PYVSHADOW_UNREFERENCED_PARAMETER( self )
@@ -173,34 +168,10 @@ PyObject *pyvshadow_check_volume_signature(
 
 	if( result == -1 )
 	{
-		PyErr_Fetch(
-		 &exception_type,
-		 &exception_value,
-		 &exception_traceback );
-
-		exception_string = PyObject_Repr(
-		                    exception_value );
-
-		error_string = PyString_AsString(
-		                exception_string );
-
-		if( error_string != NULL )
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type unicode with error: %s.",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type unicode.",
-			 function );
-		}
-		Py_DecRef(
-		 exception_string );
+		pyvshadow_error_fetch_and_raise(
+	         PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type unicode.",
+		 function );
 
 		return( NULL );
 	}
@@ -224,40 +195,20 @@ PyObject *pyvshadow_check_volume_signature(
 
 		if( utf8_string_object == NULL )
 		{
-			PyErr_Fetch(
-			 &exception_type,
-			 &exception_value,
-			 &exception_traceback );
-
-			exception_string = PyObject_Repr(
-					    exception_value );
-
-			error_string = PyString_AsString(
-					exception_string );
-
-			if( error_string != NULL )
-			{
-				PyErr_Format(
-				 PyExc_RuntimeError,
-				 "%s: unable to convert unicode string to UTF-8 with error: %s.",
-				 function,
-				 error_string );
-			}
-			else
-			{
-				PyErr_Format(
-				 PyExc_RuntimeError,
-				 "%s: unable to convert unicode string to UTF-8.",
-				 function );
-			}
-			Py_DecRef(
-			 exception_string );
+			pyvshadow_error_fetch_and_raise(
+			 PyExc_RuntimeError,
+			 "%s: unable to convert unicode string to UTF-8.",
+			 function );
 
 			return( NULL );
 		}
+#if PY_MAJOR_VERSION >= 3
+		filename_narrow = PyBytes_AsString(
+				   utf8_string_object );
+#else
 		filename_narrow = PyString_AsString(
 				   utf8_string_object );
-
+#endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libvshadow_check_volume_signature(
@@ -296,40 +247,21 @@ PyObject *pyvshadow_check_volume_signature(
 	}
 	PyErr_Clear();
 
+#if PY_MAJOR_VERSION >= 3
+	result = PyObject_IsInstance(
+		  string_object,
+		  (PyObject *) &PyBytes_Type );
+#else
 	result = PyObject_IsInstance(
 		  string_object,
 		  (PyObject *) &PyString_Type );
-
+#endif
 	if( result == -1 )
 	{
-		PyErr_Fetch(
-		 &exception_type,
-		 &exception_value,
-		 &exception_traceback );
-
-		exception_string = PyObject_Repr(
-				    exception_value );
-
-		error_string = PyString_AsString(
-				exception_string );
-
-		if( error_string != NULL )
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type string with error: %s.",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type string.",
-			 function );
-		}
-		Py_DecRef(
-		 exception_string );
+		pyvshadow_error_fetch_and_raise(
+	         PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type string.",
+		 function );
 
 		return( NULL );
 	}
@@ -337,9 +269,13 @@ PyObject *pyvshadow_check_volume_signature(
 	{
 		PyErr_Clear();
 
+#if PY_MAJOR_VERSION >= 3
+		filename_narrow = PyBytes_AsString(
+				   string_object );
+#else
 		filename_narrow = PyString_AsString(
 				   string_object );
-
+#endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libvshadow_check_volume_signature(
@@ -481,16 +417,42 @@ on_error:
 	return( NULL );
 }
 
-/* Declarations for DLL import/export
+#if PY_MAJOR_VERSION >= 3
+
+/* The pyvshadow module definition
  */
-#ifndef PyMODINIT_FUNC
-#define PyMODINIT_FUNC void
-#endif
+PyModuleDef pyvshadow_module_definition = {
+	PyModuleDef_HEAD_INIT,
+
+	/* m_name */
+	"pyvshadow",
+	/* m_doc */
+	"Python libvshadow module (pyvshadow).",
+	/* m_size */
+	-1,
+	/* m_methods */
+	pyvshadow_module_methods,
+	/* m_reload */
+	NULL,
+	/* m_traverse */
+	NULL,
+	/* m_clear */
+	NULL,
+	/* m_free */
+	NULL,
+};
+
+#endif /* PY_MAJOR_VERSION >= 3 */
 
 /* Initializes the pyvshadow module
  */
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_pyvshadow(
+                void )
+#else
 PyMODINIT_FUNC initpyvshadow(
                 void )
+#endif
 {
 	PyObject *module                      = NULL;
 	PyTypeObject *block_type_object       = NULL;
@@ -505,11 +467,23 @@ PyMODINIT_FUNC initpyvshadow(
 	 * This function must be called before grabbing the GIL
 	 * otherwise the module will segfault on a version mismatch
 	 */
+#if PY_MAJOR_VERSION >= 3
+	module = PyModule_Create(
+	          &pyvshadow_module_definition );
+#else
 	module = Py_InitModule3(
 	          "pyvshadow",
 	          pyvshadow_module_methods,
 	          "Python libvshadow module (pyvshadow)." );
-
+#endif
+	if( module == NULL )
+	{
+#if PY_MAJOR_VERSION >= 3
+		return( NULL );
+#else
+		return;
+#endif
+	}
 	PyEval_InitThreads();
 
 	gil_state = PyGILState_Ensure();
@@ -633,8 +607,23 @@ PyMODINIT_FUNC initpyvshadow(
 	 "block_flags",
 	 (PyObject *) block_flags_type_object );
 
+	PyGILState_Release(
+	 gil_state );
+
+#if PY_MAJOR_VERSION >= 3
+	return( module );
+#else
+	return;
+#endif
+
 on_error:
 	PyGILState_Release(
 	 gil_state );
+
+#if PY_MAJOR_VERSION >= 3
+	return( NULL );
+#else
+	return;
+#endif
 }
 

@@ -32,10 +32,8 @@
 #include "pyvshadow_unused.h"
 
 PyTypeObject pyvshadow_block_flags_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyvshadow.block_flags",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pyvshadow_block_flags_type_object = {
 int pyvshadow_block_flags_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,27 +144,45 @@ int pyvshadow_block_flags_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER );
+#else
+	value_object = PyInt_FromLong(
+	                LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "IS_FORWARDER",
-	     PyInt_FromLong(
-	      LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY );
+#else
+	value_object = PyInt_FromLong(
+	                LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "IS_OVERLAY",
-	     PyInt_FromLong(
-	      LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBVSHADOW_BLOCK_FLAG_NOT_USED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBVSHADOW_BLOCK_FLAG_NOT_USED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "NOT_USED",
-	     PyInt_FromLong(
-	      LIBVSHADOW_BLOCK_FLAG_NOT_USED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -249,7 +267,8 @@ int pyvshadow_block_flags_init(
 void pyvshadow_block_flags_free(
       pyvshadow_block_flags_t *pyvshadow_block_flags )
 {
-	static char *function = "pyvshadow_block_flags_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyvshadow_block_flags_free";
 
 	if( pyvshadow_block_flags == NULL )
 	{
@@ -260,25 +279,28 @@ void pyvshadow_block_flags_free(
 
 		return;
 	}
-	if( pyvshadow_block_flags->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyvshadow_block_flags );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid block flags - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyvshadow_block_flags->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid block flags - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pyvshadow_block_flags->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyvshadow_block_flags );
 }
 

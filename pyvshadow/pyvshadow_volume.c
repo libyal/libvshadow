@@ -126,10 +126,8 @@ PyGetSetDef pyvshadow_volume_object_get_set_definitions[] = {
 };
 
 PyTypeObject pyvshadow_volume_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyvshadow.volume",
 	/* tp_basicsize */
@@ -353,9 +351,10 @@ int pyvshadow_volume_init(
 void pyvshadow_volume_free(
       pyvshadow_volume_t *pyvshadow_volume )
 {
-	libcerror_error_t *error = NULL;
-	static char *function    = "pyvshadow_volume_free";
-	int result               = 0;
+	libcerror_error_t *error    = NULL;
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyvshadow_volume_free";
+	int result                  = 0;
 
 	if( pyvshadow_volume == NULL )
 	{
@@ -366,29 +365,32 @@ void pyvshadow_volume_free(
 
 		return;
 	}
-	if( pyvshadow_volume->ob_type == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid volume - missing ob_type.",
-		 function );
-
-		return;
-	}
-	if( pyvshadow_volume->ob_type->tp_free == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid volume - invalid ob_type - missing tp_free.",
-		 function );
-
-		return;
-	}
 	if( pyvshadow_volume->volume == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
 		 "%s: invalid volume - missing libvshadow volume.",
+		 function );
+
+		return;
+	}
+	ob_type = Py_TYPE(
+	           pyvshadow_volume );
+
+	if( ob_type == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
+		 function );
+
+		return;
+	}
+	if( ob_type->tp_free == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -412,7 +414,7 @@ void pyvshadow_volume_free(
 		libcerror_error_free(
 		 &error );
 	}
-	pyvshadow_volume->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyvshadow_volume );
 }
 
@@ -473,23 +475,18 @@ PyObject *pyvshadow_volume_open(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *exception_string    = NULL;
-	PyObject *exception_traceback = NULL;
-	PyObject *exception_type      = NULL;
-	PyObject *exception_value     = NULL;
-	PyObject *string_object       = NULL;
-	libcerror_error_t *error      = NULL;
-	static char *function         = "pyvshadow_volume_open";
-	static char *keyword_list[]   = { "filename", "mode", NULL };
-	const char *filename_narrow   = NULL;
-	char *error_string            = NULL;
-	char *mode                    = NULL;
-	int result                    = 0;
+	PyObject *string_object      = NULL;
+	libcerror_error_t *error     = NULL;
+	static char *function        = "pyvshadow_volume_open";
+	static char *keyword_list[]  = { "filename", "mode", NULL };
+	const char *filename_narrow  = NULL;
+	char *mode                   = NULL;
+	int result                   = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	const wchar_t *filename_wide  = NULL;
+	const wchar_t *filename_wide = NULL;
 #else
-	PyObject *utf8_string_object  = NULL;
+	PyObject *utf8_string_object = NULL;
 #endif
 
 	if( pyvshadow_volume == NULL )
@@ -535,34 +532,10 @@ PyObject *pyvshadow_volume_open(
 
 	if( result == -1 )
 	{
-		PyErr_Fetch(
-		 &exception_type,
-		 &exception_value,
-		 &exception_traceback );
-
-		exception_string = PyObject_Repr(
-		                    exception_value );
-
-		error_string = PyString_AsString(
-		                exception_string );
-
-		if( error_string != NULL )
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type unicode with error: %s.",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type unicode.",
-			 function );
-		}
-		Py_DecRef(
-		 exception_string );
+		pyvshadow_error_fetch_and_raise(
+	         PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type unicode.",
+		 function );
 
 		return( NULL );
 	}
@@ -588,40 +561,20 @@ PyObject *pyvshadow_volume_open(
 
 		if( utf8_string_object == NULL )
 		{
-			PyErr_Fetch(
-			 &exception_type,
-			 &exception_value,
-			 &exception_traceback );
-
-			exception_string = PyObject_Repr(
-					    exception_value );
-
-			error_string = PyString_AsString(
-					exception_string );
-
-			if( error_string != NULL )
-			{
-				PyErr_Format(
-				 PyExc_RuntimeError,
-				 "%s: unable to convert unicode string to UTF-8 with error: %s.",
-				 function,
-				 error_string );
-			}
-			else
-			{
-				PyErr_Format(
-				 PyExc_RuntimeError,
-				 "%s: unable to convert unicode string to UTF-8.",
-				 function );
-			}
-			Py_DecRef(
-			 exception_string );
+			pyvshadow_error_fetch_and_raise(
+			 PyExc_RuntimeError,
+			 "%s: unable to convert unicode string to UTF-8.",
+			 function );
 
 			return( NULL );
 		}
+#if PY_MAJOR_VERSION >= 3
+		filename_narrow = PyBytes_AsString(
+				   utf8_string_object );
+#else
 		filename_narrow = PyString_AsString(
 				   utf8_string_object );
-
+#endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libvshadow_volume_open(
@@ -655,40 +608,21 @@ PyObject *pyvshadow_volume_open(
 	}
 	PyErr_Clear();
 
+#if PY_MAJOR_VERSION >= 3
+	result = PyObject_IsInstance(
+		  string_object,
+		  (PyObject *) &PyBytes_Type );
+#else
 	result = PyObject_IsInstance(
 		  string_object,
 		  (PyObject *) &PyString_Type );
-
+#endif
 	if( result == -1 )
 	{
-		PyErr_Fetch(
-		 &exception_type,
-		 &exception_value,
-		 &exception_traceback );
-
-		exception_string = PyObject_Repr(
-				    exception_value );
-
-		error_string = PyString_AsString(
-				exception_string );
-
-		if( error_string != NULL )
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type string with error: %s.",
-			 function,
-			 error_string );
-		}
-		else
-		{
-			PyErr_Format(
-		         PyExc_RuntimeError,
-			 "%s: unable to determine if string object is of type string.",
-			 function );
-		}
-		Py_DecRef(
-		 exception_string );
+		pyvshadow_error_fetch_and_raise(
+	         PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type string.",
+		 function );
 
 		return( NULL );
 	}
@@ -696,9 +630,13 @@ PyObject *pyvshadow_volume_open(
 	{
 		PyErr_Clear();
 
+#if PY_MAJOR_VERSION >= 3
+		filename_narrow = PyBytes_AsString(
+				   string_object );
+#else
 		filename_narrow = PyString_AsString(
 				   string_object );
-
+#endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libvshadow_volume_open(
@@ -915,6 +853,7 @@ PyObject *pyvshadow_volume_get_number_of_stores(
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyvshadow_volume_get_number_of_stores";
 	int number_of_stores     = 0;
 	int result               = 0;
@@ -952,8 +891,14 @@ PyObject *pyvshadow_volume_get_number_of_stores(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) number_of_stores ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_stores );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_stores );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves a specific store by index

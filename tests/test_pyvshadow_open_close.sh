@@ -49,16 +49,21 @@ test_open_close()
 
 	echo "Testing open close of input: ${INPUT_FILE}";
 
-	PYTHONPATH=../pyvshadow/.libs/ ${PYTHON} pyvshadow_test_open_close.py ${INPUT_FILE};
+	if test `uname -s` = 'Darwin';
+	then
+		DYLD_LIBRARY_PATH="../libvshadow/.libs/" PYTHONPATH="../pyvshadow/.libs/" ${PYTHON} ${SCRIPT} ${INPUT_FILE};
+		RESULT=$?;
+	else
+		LD_LIBRARY_PATH="../libvshadow/.libs/" PYTHONPATH="../pyvshadow/.libs/" ${PYTHON} ${SCRIPT} ${INPUT_FILE};
+		RESULT=$?;
+	fi
 
 	rm -rf tmp;
-
-	RESULT=$?;
 
 	return ${RESULT};
 }
 
-PYTHON=`which python`;
+PYTHON=`which python${PYTHON_VERSION} 2> /dev/null`;
 
 if ! test -x ${PYTHON};
 then
@@ -72,6 +77,15 @@ then
 	echo "No input directory found.";
 
 	exit ${EXIT_IGNORE};
+fi
+
+SCRIPT="pyvshadow_test_open_close.py";
+
+if ! test -f ${SCRIPT};
+then
+	echo "Missing script: ${SCRIPT}";
+
+	exit ${EXIT_FAILURE};
 fi
 
 OLDIFS=${IFS};
@@ -88,9 +102,9 @@ then
 else
 	IGNORELIST="";
 
-	if test -f "input/.libvshadow/ignore";
+	if test -f "input/.pyvshadow/ignore";
 	then
-		IGNORELIST=`cat input/.libvshadow/ignore | sed '/^#/d'`;
+		IGNORELIST=`cat input/.pyvshadow/ignore | sed '/^#/d'`;
 	fi
 	for TESTDIR in input/*;
 	do
@@ -100,9 +114,9 @@ else
 
 			if ! list_contains "${IGNORELIST}" "${DIRNAME}";
 			then
-				if test -f "input/.libvshadow/${DIRNAME}/files";
+				if test -f "input/.pyvshadow/${DIRNAME}/files";
 				then
-					TEST_FILES=`cat input/.libvshadow/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+					TEST_FILES=`cat input/.pyvshadow/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
 				else
 					TEST_FILES=`ls -1 ${TESTDIR}/* 2> /dev/null`;
 				fi

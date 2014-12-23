@@ -57,10 +57,8 @@ PySequenceMethods pyvshadow_blocks_sequence_methods = {
 };
 
 PyTypeObject pyvshadow_blocks_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyvshadow._blocks",
 	/* tp_basicsize */
@@ -259,7 +257,8 @@ int pyvshadow_blocks_init(
 void pyvshadow_blocks_free(
       pyvshadow_blocks_t *pyvshadow_blocks )
 {
-	static char *function = "pyvshadow_blocks_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyvshadow_blocks_free";
 
 	if( pyvshadow_blocks == NULL )
 	{
@@ -270,20 +269,23 @@ void pyvshadow_blocks_free(
 
 		return;
 	}
-	if( pyvshadow_blocks->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyvshadow_blocks );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - missing ob_type.",
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyvshadow_blocks->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - invalid ob_type - missing tp_free.",
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -293,7 +295,7 @@ void pyvshadow_blocks_free(
 		Py_DecRef(
 		 (PyObject *) pyvshadow_blocks->store_object );
 	}
-	pyvshadow_blocks->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyvshadow_blocks );
 }
 
