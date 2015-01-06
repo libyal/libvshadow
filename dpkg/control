@@ -1,13 +1,12 @@
 Source: libvshadow
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev, libfuse-dev, python-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libvshadow/
 
 Package: libvshadow
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libvshadow-dbg
@@ -17,28 +16,28 @@ Description: Library to access the Windows NT Volume Shadow Snapshot (VSS) forma
 Package: libvshadow-dbg
 Architecture: any
 Section: debug
-Depends: libvshadow (= ${Source-Version}), ${misc:Depends}
+Depends: libvshadow (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libvshadow
  Debugging symbols for libvshadow.
 
 Package: libvshadow-dev
 Section: libdevel
 Architecture: any
-Depends: libvshadow (= ${Source-Version})
+Depends: libvshadow (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libvshadow
  Header files and libraries for developing applications for libvshadow.
 
 Package: libvshadow-tools
 Section: utils
 Architecture: any
-Depends: libvshadow (= ${Source-Version}), ${shlibs:Depends}
+Depends: libvshadow (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Several tools for reading Windows NT Volume Shadow Snapshots (VSS)
  Several tools for reading Windows NT Volume Shadow Snapshots (VSS).
 
 Package: libvshadow-python
 Section: python
 Architecture: any
-Depends: libvshadow (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Depends: libvshadow (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Suggests: libvshadow-python-dbg
 Description: Python bindings for libvshadow
  Python bindings for libvshadow.
@@ -46,7 +45,7 @@ Description: Python bindings for libvshadow
 Package: libvshadow-python-dbg
 Section: debug
 Architecture: any
-Depends: libvshadow-python (= ${Source-Version})
+Depends: libvshadow-python (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libvshadow-python
  Debugging symbols for libvshadow-python.
 

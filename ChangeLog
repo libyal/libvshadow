@@ -44,6 +44,9 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20150106
+* 2015 update
+
 20141223
 * worked on Python 3 support
 * worked on tests
