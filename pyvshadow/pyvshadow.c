@@ -463,6 +463,14 @@ PyMODINIT_FUNC initpyvshadow(
 	PyTypeObject *volume_type_object      = NULL;
 	PyGILState_STATE gil_state            = 0;
 
+#if defined( HAVE_DEBUG_OUTPUT )
+	libvshadow_notify_set_stream(
+	 stderr,
+	 NULL );
+	libvshadow_notify_set_verbose(
+	 1 );
+#endif
+
 	/* Create the module
 	 * This function must be called before grabbing the GIL
 	 * otherwise the module will segfault on a version mismatch
