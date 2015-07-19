@@ -44,6 +44,9 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20150719
+* worked on signature check
+
 20150106
 * 2015 update
 
