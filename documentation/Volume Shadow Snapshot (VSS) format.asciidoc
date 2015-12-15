@@ -1,6 +1,9 @@
 = Volume Shadow Snapshot (VSS)
 Analysis the Windows NT VSS format
 
+:toc:
+:toclevels: 4
+
 :numbered!:
 [abstract]
 == Summary
