@@ -44,6 +44,10 @@ Tools:
 * vshadowmount
   - dokan fix volume size hints
 
+20151220
+* changes for deployment
+* updated dependencies
+
 20150905
 * updated dependencies
 
