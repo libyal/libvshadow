@@ -114,7 +114,6 @@ stamp-h[1-9]
 /libvshadow/libvshadow_definitions.h
 /vshadowtools/vshadowinfo
 /vshadowtools/vshadowmount
-/pyvshadow/setup.py
 /tests/input
 /tests/tmp*
 /tests/vshadow_test_open_close
