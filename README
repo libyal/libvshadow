@@ -2,19 +2,22 @@ libvshadow is a library to access the Volume Shadow Snapshot (VSS) format.
 The VSS format is used by Windows, as of Vista, to maintain copies of data on a storage media volume.
 
 Project information:
+
 * Status: alpha
 * Licence: LGPLv3+
 
 Also see:
+
 * OSDFC 2012: Paper - Windowless Shadow Snapshots: https://googledrive.com/host/0B3fBvzttpiiSZDZXRFVMdnZCeHc/Paper%20-%20Windowless%20Shadow%20Snapshots.pdf
 * OSDFC 2012: Slides - Windowless Shadow Snapshots: https://googledrive.com/host/0B3fBvzttpiiSZDZXRFVMdnZCeHc/Slides%20-%20Windowless%20Shadow%20Snapshots.pdf
 
 Work in progress:
+
 * Dokan library support
 * Multi-threading support
-* Python 3 support
 
 For more information see:
+
 * Project documentation: https://github.com/libyal/libvshadow/wiki/Home
 * How to build from source: https://github.com/libyal/libvshadow/wiki/Building
 

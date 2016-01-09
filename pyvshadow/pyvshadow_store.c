@@ -169,7 +169,6 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 	  "\n"
 	  "Retrieves a sequence object of the blocks." },
 
-
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
 };
@@ -382,7 +381,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an store object
+/* Intializes a store object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_store_init(
@@ -406,7 +405,7 @@ int pyvshadow_store_init(
 	return( 0 );
 }
 
-/* Frees an store object
+/* Frees a store object
  */
 void pyvshadow_store_free(
       pyvshadow_store_t *pyvshadow_store )

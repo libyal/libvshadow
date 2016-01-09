@@ -35,6 +35,7 @@
 #include "vshadowtools_libvshadow.h"
 
 #if !defined( LIBVSHADOW_HAVE_BFIO )
+
 extern \
 int libvshadow_volume_open_file_io_handle(
      libvshadow_volume_t *volume,
@@ -46,7 +47,8 @@ extern \
 int libvshadow_check_volume_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
-#endif
+
+#endif /* !defined( LIBVSHADOW_HAVE_BFIO ) */
 
 #define INFO_HANDLE_NOTIFY_STREAM		stdout
 
@@ -148,6 +150,12 @@ int info_handle_initialize(
 on_error:
 	if( *info_handle != NULL )
 	{
+		if( ( *info_handle )->input_file_io_handle != NULL )
+		{
+			libbfio_handle_free(
+			 &( ( *info_handle )->input_file_io_handle ),
+			 NULL );
+		}
 		memory_free(
 		 *info_handle );
 

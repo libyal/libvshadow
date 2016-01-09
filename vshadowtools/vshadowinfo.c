@@ -115,7 +115,7 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libvshadow_error_t *error                           = NULL;
+	libcerror_error_t *error                            = NULL;
 	libcstring_system_character_t *option_volume_offset = NULL;
 	libcstring_system_character_t *source               = NULL;
 	char *program                                       = "vshadowinfo";

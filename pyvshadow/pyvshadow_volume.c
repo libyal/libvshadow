@@ -40,13 +40,15 @@
 #include "pyvshadow_volume.h"
 
 #if !defined( LIBVSHADOW_HAVE_BFIO )
+
 LIBVSHADOW_EXTERN \
 int libvshadow_volume_open_file_io_handle(
      libvshadow_volume_t *volume,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libvshadow_error_t **error );
-#endif
+
+#endif /* !defined( LIBVSHADOW_HAVE_BFIO ) */
 
 PyMethodDef pyvshadow_volume_object_methods[] = {
 

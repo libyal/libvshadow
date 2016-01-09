@@ -20,6 +20,8 @@ SUBDIRS = \
 	libcsystem \
 	vshadowtools \
 	pyvshadow \
+	pyvshadow2 \
+	pyvshadow3 \
 	po \
 	manuals \
 	tests \
@@ -33,8 +35,10 @@ DPKG_FILES = \
 	dpkg/copyright \
 	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libvshadow-dev.docs \
 	dpkg/libvshadow.docs \
+	dpkg/libvshadow-dev.docs \
+	dpkg/libvshadow-python.docs \
+	dpkg/libvshadow-python3.docs \
 	dpkg/libvshadow-tools.docs \
 	dpkg/source/format
 

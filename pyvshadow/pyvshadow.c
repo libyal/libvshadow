@@ -42,11 +42,13 @@
 #include "pyvshadow_volume.h"
 
 #if !defined( LIBVSHADOW_HAVE_BFIO )
+
 LIBVSHADOW_EXTERN \
 int libvshadow_check_volume_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libvshadow_error_t **error );
-#endif
+
+#endif /* !defined( LIBVSHADOW_HAVE_BFIO ) */
 
 /* The pyvshadow module methods
  */
