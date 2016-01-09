@@ -1094,30 +1094,45 @@ int libvshadow_volume_open_read(
 
 				goto on_error;
 			}
-			store_descriptor->index = store_descriptor_index;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "Reading VSS store: %02d:\n",
-				 store_descriptor->index );
-			}
-#endif
-			if( libvshadow_store_descriptor_read_store_header(
-			     store_descriptor,
-			     file_io_handle,
-			     error ) != 1 )
+			if( store_descriptor == NULL )
 			{
 				libcerror_error_set(
 				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read store: %d header.",
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: invalid store descriptor: %d.",
 				 function,
-				 store_descriptor->index );
+				 store_descriptor_index );
 
 				goto on_error;
+			}
+			store_descriptor->index = store_descriptor_index;
+
+			if( store_descriptor->store_header_offset > 0 )
+			{
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "Reading VSS store: %02d:\n",
+					 store_descriptor->index );
+				}
+#endif
+				if( libvshadow_store_descriptor_read_store_header(
+				     store_descriptor,
+				     file_io_handle,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read store: %d header.",
+					 function,
+					 store_descriptor->index );
+
+					goto on_error;
+				}
 			}
 			store_descriptor->previous_store_descriptor = last_store_descriptor;
 

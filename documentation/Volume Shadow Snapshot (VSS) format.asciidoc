@@ -27,7 +27,7 @@ this type of volume format.
 [preface]
 == License
 ....
-Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the 
 terms of the GNU Free Documentation License, Version 1.3 or any later version 
 published by the Free Software Foundation; with no Invariant Sections, no 
@@ -56,6 +56,7 @@ Updates for Windows 8 Consumer Preview.
 | 0.0.11 | J.B. Metz | November 2012 | Additional findings regarding Windows 2003 R2 (SP2).
 | 0.0.12 | J.B. Metz | May 2013 | Small changes.
 | 0.0.13 | J.B. Metz | December 2014 | Switched to asccidoc format.
+| 0.0.14 | J.B. Metz | January 2016 | Small changes.
 |===
 
 :numbered:
@@ -96,9 +97,11 @@ The following version of programs were used to test the information within this 
 
 * Windows 2003 R2 (SP2)
 * Windows Vista
-* Windows 2008 server
+* Windows 2008
 * Windows 7
 * Windows 8 (Consumer Preview)
+* [yellow-background]*TODO: Windows 2012*
+* [yellow-background]*TODO: Windows 10*
 
 ==  Volume header
 The VSS volume header is part of the NTFS volume header (or $Boot metadata 
@@ -179,7 +182,10 @@ Each catalog entry consists of a catalog entry type 0x02. A corresponding type
 0x03 is required if the shadow copy is stored in a store, which is the case as 
 of Windows Vista.
 
-[yellow-background]*Note how does Windows 2003 R2 volumes store the snapshot data?*
+[NOTE]
+A Windows 2003 R2 catalog does not contain catalog entry type 0x03.
+
+[yellow-background]*How does Windows 2003 R2 volumes store the snapshot data?*
 
 The type 0x02 and type 0x03 entries are not necessarily stored directly after 
 one-and-other and can be scattered over the catalog. For now it is assumed that 
