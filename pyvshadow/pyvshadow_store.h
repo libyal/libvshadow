@@ -63,6 +63,10 @@ int pyvshadow_store_init(
 void pyvshadow_store_free(
       pyvshadow_store_t *pyvshadow_store );
 
+PyObject *pyvshadow_store_has_in_volume_data(
+           pyvshadow_store_t *pyvshadow_store,
+           PyObject *arguments );
+
 PyObject *pyvshadow_store_read_buffer(
            pyvshadow_store_t *pyvshadow_store,
            PyObject *arguments,

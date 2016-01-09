@@ -44,6 +44,13 @@ PyMethodDef pyvshadow_store_object_methods[] = {
 
 	/* Functions to access the store data */
 
+	{ "has_in_volume_data",
+	  (PyCFunction) pyvshadow_store_has_in_volume_data,
+	  METH_NOARGS,
+	  "has_in_volume_data() -> Boolean\n"
+	  "\n"
+	  "Determines if the store as in-volume data." },
+
 	{ "read_buffer",
 	  (PyCFunction) pyvshadow_store_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
@@ -473,6 +480,62 @@ void pyvshadow_store_free(
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyvshadow_store );
+}
+
+/* Determines if the store has in-volume data
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyvshadow_store_has_in_volume_data(
+           pyvshadow_store_t *pyvshadow_store,
+           PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyvshadow_store_has_in_volume_data";
+	int result               = 0;
+
+	PYVSHADOW_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyvshadow_store == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid store.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libvshadow_store_has_in_volume_data(
+	          pyvshadow_store->store,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyvshadow_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine if the store has in-volume data.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 (PyObject *) Py_False );
+
+		return( Py_False );
+	}
+	Py_IncRef(
+	 (PyObject *) Py_True );
+
+	return( Py_True );
 }
 
 /* Reads (store) data at the current offset into a buffer
@@ -1144,6 +1207,13 @@ PyObject *pyvshadow_store_get_copy_identifier(
 
 		return( NULL );
 	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
 	string_object = pyvshadow_string_new_from_guid(
 			 guid_data,
 			 16 );
@@ -1198,6 +1268,13 @@ PyObject *pyvshadow_store_get_copy_set_identifier(
 		 &error );
 
 		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
 	}
 	string_object = pyvshadow_string_new_from_guid(
 			 guid_data,

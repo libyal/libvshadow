@@ -655,11 +655,13 @@ int info_handle_store_fprint(
 	 "\tIdentifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 	 guid_string );
 
-	if( libvshadow_store_get_copy_set_identifier(
-	     store,
-	     guid_buffer,
-	     16,
-	     error ) != 1 )
+	result = libvshadow_store_get_copy_set_identifier(
+	          store,
+	          guid_buffer,
+	          16,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -671,53 +673,55 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
-	if( libfguid_identifier_copy_from_byte_stream(
-	     guid,
-	     guid_buffer,
-	     16,
-	     LIBFGUID_ENDIAN_LITTLE,
-	     error ) != 1 )
+	else if( result != 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy byte stream to GUID.",
-		 function );
+		if( libfguid_identifier_copy_from_byte_stream(
+		     guid,
+		     guid_buffer,
+		     16,
+		     LIBFGUID_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy byte stream to GUID.",
+			 function );
 
-		goto on_error;
-	}
+			goto on_error;
+		}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libfguid_identifier_copy_to_utf16_string(
-		  guid,
-		  (uint16_t *) guid_string,
-		  48,
-		  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-		  error );
+		result = libfguid_identifier_copy_to_utf16_string(
+			  guid,
+			  (uint16_t *) guid_string,
+			  48,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+			  error );
 #else
-	result = libfguid_identifier_copy_to_utf8_string(
-		  guid,
-		  (uint8_t *) guid_string,
-		  48,
-		  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-		  error );
+		result = libfguid_identifier_copy_to_utf8_string(
+			  guid,
+			  (uint8_t *) guid_string,
+			  48,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+			  error );
 #endif
-	if( result != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy GUID to string.",
-		 function );
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy GUID to string.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tShadow copy set ID\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 guid_string );
 	}
-	fprintf(
-	 info_handle->notify_stream,
-	 "\tShadow copy set ID\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-	 guid_string );
-
 	if( libvshadow_store_get_creation_time(
 	     store,
 	     &value_64bit,
@@ -778,11 +782,13 @@ int info_handle_store_fprint(
 	 "\tCreation time\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
 	 filetime_string );
 
-	if( libvshadow_store_get_copy_identifier(
-	     store,
-	     guid_buffer,
-	     16,
-	     error ) != 1 )
+	result = libvshadow_store_get_copy_identifier(
+	          store,
+	          guid_buffer,
+	          16,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -794,53 +800,55 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
-	if( libfguid_identifier_copy_from_byte_stream(
-	     guid,
-	     guid_buffer,
-	     16,
-	     LIBFGUID_ENDIAN_LITTLE,
-	     error ) != 1 )
+	else if( result != 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy byte stream to GUID.",
-		 function );
+		if( libfguid_identifier_copy_from_byte_stream(
+		     guid,
+		     guid_buffer,
+		     16,
+		     LIBFGUID_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy byte stream to GUID.",
+			 function );
 
-		goto on_error;
-	}
+			goto on_error;
+		}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libfguid_identifier_copy_to_utf16_string(
-		  guid,
-		  (uint16_t *) guid_string,
-		  48,
-		  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-		  error );
+		result = libfguid_identifier_copy_to_utf16_string(
+			  guid,
+			  (uint16_t *) guid_string,
+			  48,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+			  error );
 #else
-	result = libfguid_identifier_copy_to_utf8_string(
-		  guid,
-		  (uint8_t *) guid_string,
-		  48,
-		  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-		  error );
+		result = libfguid_identifier_copy_to_utf8_string(
+			  guid,
+			  (uint8_t *) guid_string,
+			  48,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+			  error );
 #endif
-	if( result != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy GUID to string.",
-		 function );
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy GUID to string.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tShadow copy ID\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 guid_string );
 	}
-	fprintf(
-	 info_handle->notify_stream,
-	 "\tShadow copy ID\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-	 guid_string );
-
 	if( libvshadow_store_get_volume_size(
 	     store,
 	     &volume_size,
@@ -861,10 +869,12 @@ int info_handle_store_fprint(
 	 "\tVolume size\t\t: %" PRIu64 " bytes\n",
 	 volume_size );
 
-	if( libvshadow_store_get_attribute_flags(
-	     store,
-	     &attribute_flags,
-	     error ) != 1 )
+	result = libvshadow_store_get_attribute_flags(
+	          store,
+	          &attribute_flags,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -876,12 +886,14 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
+	else if( result != 0 )
+	{
 /* TODO print a description of the flags */
-	fprintf(
-	 info_handle->notify_stream,
-	 "\tAttribute flags\t\t: 0x%08" PRIx32 "\n",
-	 attribute_flags );
-
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tAttribute flags\t\t: 0x%08" PRIx32 "\n",
+		 attribute_flags );
+	}
 	if( libfguid_identifier_free(
 	     &guid,
 	     error ) != 1 )

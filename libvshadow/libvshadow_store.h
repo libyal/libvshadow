@@ -80,6 +80,11 @@ int libvshadow_store_free(
      libvshadow_store_t **store,
      libcerror_error_t **error );
 
+LIBVSHADOW_EXTERN \
+int libvshadow_store_has_in_volume_data(
+     libvshadow_store_t *store,
+     libcerror_error_t **error );
+
 ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
          libvshadow_internal_store_t *internal_store,
          libbfio_handle_t *file_io_handle,

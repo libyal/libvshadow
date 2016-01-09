@@ -1,4 +1,4 @@
-.Dd January  6, 2015
+.Dd January  9, 2016
 .Dt libvshadow 3
 .Os libvshadow
 .Sh NAME
@@ -82,6 +82,8 @@ Available when compiled with libbfio support:
 Store functions
 .Ft int
 .Fn libvshadow_store_free "libvshadow_store_t **store, libvshadow_error_t **error"
+.Ft int
+.Fn libvshadow_store_has_in_volume_data "libvshadow_store_t *store, libvshadow_error_t **error"
 .Ft ssize_t
 .Fn libvshadow_store_read_buffer "libvshadow_store_t *store, void *buffer, size_t buffer_size, libvshadow_error_t **error"
 .Ft ssize_t

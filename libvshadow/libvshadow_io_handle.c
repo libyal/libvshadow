@@ -1212,7 +1212,7 @@ int libvshadow_io_handle_read_catalog(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to retrieve number of store descriptors.",
+						 "%s: unable to retrieve store descriptors by identifier.",
 						 function );
 
 						goto on_error;
@@ -1226,6 +1226,7 @@ int libvshadow_io_handle_read_catalog(
 					last_store_descriptor->store_block_range_list_offset = store_descriptor->store_block_range_list_offset;
 					last_store_descriptor->store_bitmap_offset           = store_descriptor->store_bitmap_offset;
 					last_store_descriptor->store_previous_bitmap_offset  = store_descriptor->store_previous_bitmap_offset;
+					last_store_descriptor->has_in_volume_store_data      = 1;
 				}
 #if defined( HAVE_DEBUG_OUTPUT )
 				else

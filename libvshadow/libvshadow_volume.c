@@ -1108,7 +1108,7 @@ int libvshadow_volume_open_read(
 			}
 			store_descriptor->index = store_descriptor_index;
 
-			if( store_descriptor->store_header_offset > 0 )
+			if( store_descriptor->has_in_volume_store_data != 0 )
 			{
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )

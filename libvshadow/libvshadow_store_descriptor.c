@@ -357,6 +357,29 @@ int libvshadow_store_descriptor_free(
 	return( result );
 }
 
+/* Determines if the store has in-volume data
+ * Returns 1 if the store has in-volume data, 0 if not or -1 on error
+ */
+int libvshadow_store_descriptor_has_in_volume_data(
+     libvshadow_store_descriptor_t *store_descriptor,
+     libcerror_error_t **error )
+{
+	static char *function = "libvshadow_store_descriptor_has_in_volume_data";
+
+	if( store_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	return( (int) store_descriptor->has_in_volume_store_data );
+}
+
 /* Compares 2 store descriptors by their creation time
  * Returns LIBCDATA_COMPARE_LESS, LIBCDATA_COMPARE_EQUAL, LIBCDATA_COMPARE_GREATER if successful or -1 on error
  */
@@ -2500,6 +2523,17 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 
 		return( -1 );
 	}
+	if( store_descriptor->has_in_volume_store_data == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store descriptor - missing in-volume store data.",
+		 function );
+
+		return( -1 );
+	}
 	if( active_store_descriptor == NULL )
 	{
 		libcerror_error_set(
@@ -3348,7 +3382,7 @@ int libvshadow_store_descriptor_get_creation_time(
 }
 
 /* Retrieves the copy identifier
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libvshadow_store_descriptor_get_copy_identifier(
      libvshadow_store_descriptor_t *store_descriptor,
@@ -3357,7 +3391,7 @@ int libvshadow_store_descriptor_get_copy_identifier(
      libcerror_error_t **error )
 {
 	static char *function = "libvshadow_store_descriptor_get_copy_identifier";
-	int result            = 1;
+	int result            = 0;
 
 	if( store_descriptor == NULL )
 	{
@@ -3407,19 +3441,24 @@ int libvshadow_store_descriptor_get_copy_identifier(
 		return( -1 );
 	}
 #endif
-	if( memory_copy(
-	     guid,
-	     store_descriptor->copy_identifier,
-	     16 ) == NULL )
+	if( store_descriptor->has_in_volume_store_data != 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy shadow copy identifier.",
-		 function );
+		result = 1;
 
-		result = -1;
+		if( memory_copy(
+		     guid,
+		     store_descriptor->copy_identifier,
+		     16 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy shadow copy identifier.",
+			 function );
+
+			result = -1;
+		}
 	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -3440,7 +3479,7 @@ int libvshadow_store_descriptor_get_copy_identifier(
 }
 
 /* Retrieves the copy set identifier
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libvshadow_store_descriptor_get_copy_set_identifier(
      libvshadow_store_descriptor_t *store_descriptor,
@@ -3449,7 +3488,7 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
      libcerror_error_t **error )
 {
 	static char *function = "libvshadow_store_descriptor_get_copy_set_identifier";
-	int result            = 1;
+	int result            = 0;
 
 	if( store_descriptor == NULL )
 	{
@@ -3499,19 +3538,24 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
 		return( -1 );
 	}
 #endif
-	if( memory_copy(
-	     guid,
-	     store_descriptor->copy_set_identifier,
-	     16 ) == NULL )
+	if( store_descriptor->has_in_volume_store_data != 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy shadow copy set identifier.",
-		 function );
+		result = 1;
 
-		result = -1;
+		if( memory_copy(
+		     guid,
+		     store_descriptor->copy_set_identifier,
+		     16 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy shadow copy set identifier.",
+			 function );
+
+			result = -1;
+		}
 	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
@@ -3532,7 +3576,7 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
 }
 
 /* Retrieves the attribute flags
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libvshadow_store_descriptor_get_attribute_flags(
      libvshadow_store_descriptor_t *store_descriptor,
@@ -3540,6 +3584,7 @@ int libvshadow_store_descriptor_get_attribute_flags(
      libcerror_error_t **error )
 {
 	static char *function = "libvshadow_store_descriptor_get_attribute_flags";
+	int result            = 0;
 
 	if( store_descriptor == NULL )
 	{
@@ -3578,8 +3623,12 @@ int libvshadow_store_descriptor_get_attribute_flags(
 		return( -1 );
 	}
 #endif
-	*attribute_flags = store_descriptor->attribute_flags;
+	if( store_descriptor->has_in_volume_store_data != 0 )
+	{
+		result = 1;
 
+		*attribute_flags = store_descriptor->attribute_flags;
+	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(
 	     store_descriptor->read_write_lock,
@@ -3595,7 +3644,7 @@ int libvshadow_store_descriptor_get_attribute_flags(
 		return( -1 );
 	}
 #endif
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the number of blocks
@@ -3617,6 +3666,17 @@ int libvshadow_store_descriptor_get_number_of_blocks(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid store descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( store_descriptor->has_in_volume_store_data == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store descriptor - missing in-volume store data.",
 		 function );
 
 		return( -1 );
@@ -3704,6 +3764,17 @@ int libvshadow_store_descriptor_get_block_descriptor_by_index(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid store descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( store_descriptor->has_in_volume_store_data == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store descriptor - missing in-volume store data.",
 		 function );
 
 		return( -1 );

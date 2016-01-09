@@ -311,6 +311,14 @@ int libvshadow_store_free(
      libvshadow_store_t **store,
      libvshadow_error_t **error );
 
+/* Determines if the store has in-volume data
+ * Returns 1 if the store has in-volume data, 0 if not or -1 on error
+ */
+LIBVSHADOW_EXTERN \
+int libvshadow_store_has_in_volume_data(
+     libvshadow_store_t *store,
+     libvshadow_error_t **error );
+
 /* Reads (store) data at the current offset into a buffer
  * Returns the number of bytes read or -1 on error
  */
@@ -404,7 +412,7 @@ int libvshadow_store_get_creation_time(
      libvshadow_error_t **error );
 
 /* Retrieves the copy identifier
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 LIBVSHADOW_EXTERN \
 int libvshadow_store_get_copy_identifier(
@@ -414,7 +422,7 @@ int libvshadow_store_get_copy_identifier(
      libvshadow_error_t **error );
 
 /* Retrieves the copy set identifier
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 LIBVSHADOW_EXTERN \
 int libvshadow_store_get_copy_set_identifier(
@@ -424,7 +432,7 @@ int libvshadow_store_get_copy_set_identifier(
      libvshadow_error_t **error );
 
 /* Retrieves the attribute flags
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 LIBVSHADOW_EXTERN \
 int libvshadow_store_get_attribute_flags(

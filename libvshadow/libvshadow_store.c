@@ -216,6 +216,77 @@ int libvshadow_store_free(
 	return( result );
 }
 
+/* Determines if the store has in-volume data
+ * Returns 1 if the store has in-volume data, 0 if not or -1 on error
+ */
+int libvshadow_store_has_in_volume_data(
+     libvshadow_store_t *store,
+     libcerror_error_t **error )
+{
+	libvshadow_internal_store_t *internal_store     = NULL;
+	libvshadow_store_descriptor_t *store_descriptor = NULL;
+	static char *function                           = "libvshadow_store_has_in_volume_data";
+	int result                                      = 0;
+
+	if( store == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store.",
+		 function );
+
+		return( -1 );
+	}
+	internal_store = (libvshadow_internal_store_t *) store;
+
+	if( internal_store->internal_volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid store - missing internal volume.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_store->internal_volume->store_descriptors_array,
+	     internal_store->store_descriptor_index,
+	     (intptr_t **) &store_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve store descriptor: %d.",
+		 function,
+		 internal_store->store_descriptor_index );
+
+		return( -1 );
+	}
+	result = libvshadow_store_descriptor_has_in_volume_data(
+	          store_descriptor,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if store descriptor: %d has in-volume data.",
+		 function,
+		 internal_store->store_descriptor_index );
+
+		return( -1 );
+	}
+	return( result );
+}
+
 /* Reads (store) data at the current offset into a buffer using a Basic File IO (bfio) handle
  * This function is not multi-thread safe acquire write lock before call
  * Returns the number of bytes read or -1 on error
@@ -1044,7 +1115,7 @@ int libvshadow_store_get_creation_time(
 }
 
 /* Retrieves the copy identifier
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libvshadow_store_get_copy_identifier(
      libvshadow_store_t *store,
@@ -1055,6 +1126,7 @@ int libvshadow_store_get_copy_identifier(
 	libvshadow_internal_store_t *internal_store     = NULL;
 	libvshadow_store_descriptor_t *store_descriptor = NULL;
 	static char *function                           = "libvshadow_store_get_copy_identifier";
+	int result                                      = 0;
 
 	if( store == NULL )
 	{
@@ -1096,11 +1168,13 @@ int libvshadow_store_get_copy_identifier(
 
 		return( -1 );
 	}
-	if( libvshadow_store_descriptor_get_copy_identifier(
-	     store_descriptor,
-	     guid,
-	     size,
-	     error ) != 1 )
+	result = libvshadow_store_descriptor_get_copy_identifier(
+	          store_descriptor,
+	          guid,
+	          size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1112,11 +1186,11 @@ int libvshadow_store_get_copy_identifier(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the copy set identifier
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libvshadow_store_get_copy_set_identifier(
      libvshadow_store_t *store,
@@ -1127,6 +1201,7 @@ int libvshadow_store_get_copy_set_identifier(
 	libvshadow_internal_store_t *internal_store     = NULL;
 	libvshadow_store_descriptor_t *store_descriptor = NULL;
 	static char *function                           = "libvshadow_store_get_copy_set_identifier";
+	int result                                      = 0;
 
 	if( store == NULL )
 	{
@@ -1168,11 +1243,13 @@ int libvshadow_store_get_copy_set_identifier(
 
 		return( -1 );
 	}
-	if( libvshadow_store_descriptor_get_copy_set_identifier(
-	     store_descriptor,
-	     guid,
-	     size,
-	     error ) != 1 )
+	result = libvshadow_store_descriptor_get_copy_set_identifier(
+	          store_descriptor,
+	          guid,
+	          size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1184,11 +1261,11 @@ int libvshadow_store_get_copy_set_identifier(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the attribute flags
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libvshadow_store_get_attribute_flags(
      libvshadow_store_t *store,
@@ -1198,6 +1275,7 @@ int libvshadow_store_get_attribute_flags(
 	libvshadow_internal_store_t *internal_store     = NULL;
 	libvshadow_store_descriptor_t *store_descriptor = NULL;
 	static char *function                           = "libvshadow_store_get_attribute_flags";
+	int result                                      = 0;
 
 	if( store == NULL )
 	{
@@ -1239,10 +1317,12 @@ int libvshadow_store_get_attribute_flags(
 
 		return( -1 );
 	}
-	if( libvshadow_store_descriptor_get_attribute_flags(
-	     store_descriptor,
-	     attribute_flags,
-	     error ) != 1 )
+	result = libvshadow_store_descriptor_get_attribute_flags(
+	          store_descriptor,
+	          attribute_flags,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1254,7 +1334,7 @@ int libvshadow_store_get_attribute_flags(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the number of blocks

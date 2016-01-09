@@ -134,6 +134,10 @@ struct libvshadow_store_descriptor
 	 */
 	int index;
 
+	/* Value to indicate the store has in-volume store data
+	 */
+	uint8_t has_in_volume_store_data;
+
 	/* Value to indicate the block descriptors have been read
 	 */
 	uint8_t block_descriptors_read;
@@ -151,6 +155,10 @@ int libvshadow_store_descriptor_initialize(
 
 int libvshadow_store_descriptor_free(
      libvshadow_store_descriptor_t **store_descriptor,
+     libcerror_error_t **error );
+
+int libvshadow_store_descriptor_has_in_volume_data(
+     libvshadow_store_descriptor_t *store_descriptor,
      libcerror_error_t **error );
 
 int libvshadow_store_descriptor_compare_by_creation_time(
