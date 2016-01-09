@@ -64,7 +64,7 @@ pyvshadow_la_CPPFLAGS = $(PYTHON3_CPPFLAGS)
 pyvshadow_la_LDFLAGS  = -module -avoid-version $(PYTHON3_LDFLAGS)
 
 $(BUILT_SOURCES):
-	/bin/cp -f $(top_srcdir)/pyvshadow/pyvshadow*.[ch] .
+	/bin/cp -f $(top_srcdir)/pyvshadow/$@ $@
 
 endif
 
