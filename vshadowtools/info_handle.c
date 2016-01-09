@@ -547,6 +547,7 @@ int info_handle_store_fprint(
 	uint64_t value_64bit              = 0;
 	uint32_t attribute_flags          = 0;
 	int block_index                   = 0;
+	int has_in_volume_store_data      = 0;
 	int number_of_blocks              = 0;
 	int result                        = 0;
 
@@ -591,6 +592,28 @@ int info_handle_store_fprint(
 		 function );
 
 		goto on_error;
+	}
+	has_in_volume_store_data = libvshadow_store_has_in_volume_data(
+	                            store,
+	                            error );
+
+	if( has_in_volume_store_data == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if store: %d has in-volume data.",
+		 function,
+		 store_index );
+
+		goto on_error;
+	}
+	else if( has_in_volume_store_data == 0 )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tData stored outside volume.\n" );
 	}
 	if( libvshadow_store_get_identifier(
 	     store,

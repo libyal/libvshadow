@@ -512,7 +512,7 @@ PyObject *pyvshadow_store_has_in_volume_data(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyvshadow_error_raise(
 		 error,
