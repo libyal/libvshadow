@@ -20,8 +20,8 @@ SUBDIRS = \
 	libcsystem \
 	vshadowtools \
 	pyvshadow \
-	pyvshadow2 \
-	pyvshadow3 \
+	pyvshadow-python2 \
+	pyvshadow-python3 \
 	po \
 	manuals \
 	tests \

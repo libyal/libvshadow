@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libvshadow],
- [20160109],
+ [20160110],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -214,8 +214,8 @@ AC_CONFIG_FILES([libvshadow/Makefile])
 AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([vshadowtools/Makefile])
 AC_CONFIG_FILES([pyvshadow/Makefile])
-AC_CONFIG_FILES([pyvshadow2/Makefile])
-AC_CONFIG_FILES([pyvshadow3/Makefile])
+AC_CONFIG_FILES([pyvshadow-python2/Makefile])
+AC_CONFIG_FILES([pyvshadow-python3/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])

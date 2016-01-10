@@ -112,7 +112,7 @@ stamp-h[1-9]
 /include/libvshadow/types.h
 /libvshadow/libvshadow.rc
 /libvshadow/libvshadow_definitions.h
-/pyvshadow[23]/*.[ch]
+/pyvshadow-python[23]/*.[ch]
 /vshadowtools/vshadowinfo
 /vshadowtools/vshadowmount
 /tests/input
