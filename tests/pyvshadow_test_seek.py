@@ -2,7 +2,7 @@
 #
 # Python-bindings seek testing program
 #
-# Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
@@ -20,6 +20,7 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import print_function
 import argparse
 import os
 import sys
@@ -41,56 +42,59 @@ def get_whence_string(whence):
 
 
 def pyvshadow_test_seek_offset(
-    vshadow_store, input_offset, input_whence, output_offset):
+    vshadow_store, input_offset, input_whence, expected_offset):
 
   print("Testing seek of offset: {0:d} and whence: {1:s}\t".format(
-      input_offset, get_whence_string(input_whence)))
+      input_offset, get_whence_string(input_whence)), end="")
 
+  error_string = ""
   result = True
   try:
     vshadow_store.seek(input_offset, input_whence)
 
-    if result:
-      result_offset = vshadow_store.get_offset()
-      if output_offset != result_offset:
-        result = False
+    result_offset = vshadow_store.get_offset()
+    if expected_offset != result_offset:
+      result = False
 
   except Exception as exception:
-    print(str(exception))
-    if output_offset != -1:
+    error_string = str(exception)
+    if expected_offset != -1:
       result = False
 
   if not result:
     print("(FAIL)")
   else:
     print("(PASS)")
+
+  if error_string:
+    print(error_string)
   return result
 
 
 def pyvshadow_test_seek(vshadow_store):
-  volume_size = vshadow_store.size
+  file_size = vshadow_store.file_size
 
   # Test: SEEK_SET offset: 0
   # Expected result: 0
   if not pyvshadow_test_seek_offset(vshadow_store, 0, os.SEEK_SET, 0):
     return False
 
-  # Test: SEEK_SET offset: <volume_size>
-  # Expected result: <volume_size>
+  # Test: SEEK_SET offset: <file_size>
+  # Expected result: <file_size>
   if not pyvshadow_test_seek_offset(
-      vshadow_store, volume_size, os.SEEK_SET, volume_size):
+      vshadow_store, file_size, os.SEEK_SET, file_size):
     return False
 
-  # Test: SEEK_SET offset: <volume_size / 5>
-  # Expected result: <volume_size / 5>
-  seek_offset, _ = divmod(volume_size, 5)
+  # Test: SEEK_SET offset: <file_size / 5>
+  # Expected result: <file_size / 5>
+  seek_offset, _ = divmod(file_size, 5)
   if not pyvshadow_test_seek_offset(
       vshadow_store, seek_offset, os.SEEK_SET, seek_offset):
     return False
 
-  # Test: SEEK_SET offset: <volume_size + 987>
-  # Expected result: <volume_size + 987>
-  seek_offset = volume_size + 987
+  # Test: SEEK_SET offset: <file_size + 987>
+  # Expected result: <file_size + 987>
+  seek_offset = file_size + 987
   if not pyvshadow_test_seek_offset(
       vshadow_store, seek_offset, os.SEEK_SET, seek_offset):
     return False
@@ -98,74 +102,68 @@ def pyvshadow_test_seek(vshadow_store):
   # Test: SEEK_SET offset: -987
   # Expected result: -1
   seek_offset = -987
-  if not pyvshadow_test_seek_offset(
-      vshadow_store, seek_offset, os.SEEK_SET, -1):
+  if not pyvshadow_test_seek_offset(vshadow_store, seek_offset, os.SEEK_SET, -1):
     return False
 
   # Test: SEEK_CUR offset: 0
-  # Expected result: <volume_size + 987>
-  if not pyvshadow_test_seek_offset(
-      vshadow_store, 0, os.SEEK_CUR, volume_size + 987):
+  # Expected result: <file_size + 987>
+  if not pyvshadow_test_seek_offset(vshadow_store, 0, os.SEEK_CUR, file_size + 987):
     return False
 
-  # Test: SEEK_CUR offset: <-1 * (volume_size + 987)>
+  # Test: SEEK_CUR offset: <-1 * (file_size + 987)>
   # Expected result: 0
   if not pyvshadow_test_seek_offset(
-      vshadow_store, -1 * (volume_size + 987), os.SEEK_CUR, 0):
+      vshadow_store, -1 * (file_size + 987), os.SEEK_CUR, 0):
     return False
 
-  # Test: SEEK_CUR offset: <volume_size / 3>
-  # Expected result: <volume_size / 3>
-  seek_offset, _ = divmod(volume_size, 3)
+  # Test: SEEK_CUR offset: <file_size / 3>
+  # Expected result: <file_size / 3>
+  seek_offset, _ = divmod(file_size, 3)
   if not pyvshadow_test_seek_offset(
       vshadow_store, seek_offset, os.SEEK_CUR, seek_offset):
     return False
 
-  if volume_size == 0:
-    # Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+  if file_size == 0:
+    # Test: SEEK_CUR offset: <-2 * (file_size / 3)>
     # Expected result: 0
-    seek_offset, _ = divmod(volume_size, 3)
-    if not pyvshadow_test_seek_offset(
-        vshadow_store, -2 * seek_offset, os.SEEK_CUR, 0):
+    seek_offset, _ = divmod(file_size, 3)
+    if not pyvshadow_test_seek_offset(vshadow_store, -2 * seek_offset, os.SEEK_CUR, 0):
       return False
 
   else:
-    # Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+    # Test: SEEK_CUR offset: <-2 * (file_size / 3)>
     # Expected result: -1
-    seek_offset, _ = divmod(volume_size, 3)
+    seek_offset, _ = divmod(file_size, 3)
     if not pyvshadow_test_seek_offset(
         vshadow_store, -2 * seek_offset, os.SEEK_CUR, -1):
       return False
 
   # Test: SEEK_END offset: 0
-  # Expected result: <volume_size>
-  if not pyvshadow_test_seek_offset(
-      vshadow_store, 0, os.SEEK_END, volume_size):
+  # Expected result: <file_size>
+  if not pyvshadow_test_seek_offset(vshadow_store, 0, os.SEEK_END, file_size):
     return False
 
-  # Test: SEEK_END offset: <-1 * volume_size>
+  # Test: SEEK_END offset: <-1 * file_size>
   # Expected result: 0
-  if not pyvshadow_test_seek_offset(
-      vshadow_store, -1 * volume_size, os.SEEK_END, 0):
+  if not pyvshadow_test_seek_offset(vshadow_store, -1 * file_size, os.SEEK_END, 0):
     return False
 
-  # Test: SEEK_END offset: <-1 * (volume_size / 4)>
-  # Expected result: <volume_size - (volume_size / 4)>
-  seek_offset, _ = divmod(volume_size, 4)
+  # Test: SEEK_END offset: <-1 * (file_size / 4)>
+  # Expected result: <file_size - (file_size / 4)>
+  seek_offset, _ = divmod(file_size, 4)
   if not pyvshadow_test_seek_offset(
-      vshadow_store, -1 * seek_offset, os.SEEK_END, volume_size - seek_offset):
+      vshadow_store, -1 * seek_offset, os.SEEK_END, file_size - seek_offset):
     return False
 
   # Test: SEEK_END offset: 542
-  # Expected result: <volume_size + 542>
-  if not pyvshadow_test_seek_offset(
-      vshadow_store, 542, os.SEEK_END, volume_size + 542):
+  # Expected result: <file_size + 542>
+  if not pyvshadow_test_seek_offset(vshadow_store, 542, os.SEEK_END, file_size + 542):
     return False
 
-  # Test: SEEK_END offset: <-1 * (volume_size + 542)>
+  # Test: SEEK_END offset: <-1 * (file_size + 542)>
   # Expected result: -1
   if not pyvshadow_test_seek_offset(
-      vshadow_store, -1 * (volume_size + 542), os.SEEK_END, -1):
+      vshadow_store, -1 * (file_size + 542), os.SEEK_END, -1):
     return False
 
   # Test: UNKNOWN (88) offset: 0

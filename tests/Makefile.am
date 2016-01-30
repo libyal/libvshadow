@@ -12,12 +12,14 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBVSHADOW_DLL_IMPORT@
 
-if HAVE_PYTHON
+if HAVE_PYTHON_TESTS
 TESTS_PYVSHADOW  = \
 	test_pyvshadow_open_close.sh \
+	test_pyvshadow_read.sh \
 	test_pyvshadow_seek.sh
 endif
 
@@ -30,9 +32,11 @@ TESTS = \
 
 check_SCRIPTS = \
 	pyvshadow_test_open_close.py \
+	pyvshadow_test_read.py \
 	pyvshadow_test_seek.py \
 	test_open_close.sh \
 	test_pyvshadow_open_close.sh \
+	test_pyvshadow_read.sh \
 	test_pyvshadow_seek.sh \
 	test_read.sh \
 	test_runner.sh \
@@ -50,11 +54,13 @@ check_PROGRAMS = \
 vshadow_test_open_close_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libcstring.h \
+	vshadow_test_libcsystem.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_open_close.c \
 	vshadow_test_unused.h
 
 vshadow_test_open_close_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
@@ -65,11 +71,13 @@ vshadow_test_read_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libcstring.h \
 	vshadow_test_libcthreads.h \
+	vshadow_test_libcsystem.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_read.c \
 	vshadow_test_unused.h
 
 vshadow_test_read_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
@@ -79,11 +87,13 @@ vshadow_test_read_LDADD = \
 vshadow_test_seek_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libcstring.h \
+	vshadow_test_libcsystem.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_seek.c \
 	vshadow_test_unused.h
 
 vshadow_test_seek_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \

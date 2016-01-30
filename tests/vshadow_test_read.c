@@ -20,15 +20,15 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include <stdio.h>
-
-#include "vshadow_test_libcstring.h"
 #include "vshadow_test_libcerror.h"
+#include "vshadow_test_libcstring.h"
+#include "vshadow_test_libcsystem.h"
 #include "vshadow_test_libcthreads.h"
 #include "vshadow_test_libvshadow.h"
 #include "vshadow_test_unused.h"
@@ -37,7 +37,8 @@
 #define VSHADOW_TEST_READ_VERBOSE
  */
 
-#define VSHADOW_TEST_READ_BUFFER_SIZE	4096
+#define VSHADOW_TEST_READ_BUFFER_SIZE		4096
+#define VSHADOW_TEST_READ_NUMBER_OF_THREADS	4
 
 /* Tests libvshadow_store_seek_offset
  * Returns 1 if successful, 0 if not or -1 on error
@@ -48,9 +49,9 @@ int vshadow_test_seek_offset(
      int input_whence,
      off64_t expected_offset )
 {
-	libvshadow_error_t *error = NULL;
-	off64_t result_offset     = 0;
-	int result                = 0;
+	libcerror_error_t *error = NULL;
+	off64_t result_offset    = 0;
+	int result               = 0;
 
 	if( store == NULL )
 	{
@@ -77,11 +78,11 @@ int vshadow_test_seek_offset(
 	{
 		if( result != 1 )
 		{
-			libvshadow_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libvshadow_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -97,12 +98,12 @@ int vshadow_test_read_buffer(
 {
 	uint8_t buffer[ VSHADOW_TEST_READ_BUFFER_SIZE ];
 
-	libvshadow_error_t *error = NULL;
-	size64_t remaining_size   = 0;
-	size64_t result_size      = 0;
-	size_t read_size          = 0;
-	ssize_t read_count        = 0;
-	int result                = 0;
+	libcerror_error_t *error = NULL;
+	size64_t remaining_size  = 0;
+	size64_t result_size     = 0;
+	size_t read_size         = 0;
+	ssize_t read_count       = 0;
+	int result               = 0;
 
 	if( store == NULL )
 	{
@@ -151,11 +152,11 @@ int vshadow_test_read_buffer(
 	{
 		if( result != 1 )
 		{
-			libvshadow_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libvshadow_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -173,13 +174,13 @@ int vshadow_test_read_buffer_at_offset(
 {
 	uint8_t buffer[ VSHADOW_TEST_READ_BUFFER_SIZE ];
 
-	libvshadow_error_t *error = NULL;
-	off64_t result_offset     = 0;
-	size64_t remaining_size   = 0;
-	size64_t result_size      = 0;
-	size_t read_size          = 0;
-	ssize_t read_count        = 0;
-	int result                = 0;
+	libcerror_error_t *error = NULL;
+	off64_t result_offset    = 0;
+	size64_t remaining_size  = 0;
+	size64_t result_size     = 0;
+	size_t read_size         = 0;
+	ssize_t read_count       = 0;
+	int result               = 0;
 
 	if( store == NULL )
 	{
@@ -189,7 +190,7 @@ int vshadow_test_read_buffer_at_offset(
 
 	fprintf(
 	 stdout,
-	 "Testing reading buffer at offset: %" PRIi64 " with size: %" PRIu64 "\t",
+	 "Testing reading buffer at offset: %" PRIi64 " and size: %" PRIu64 "\t",
 	 input_offset,
 	 input_size );
 
@@ -266,11 +267,11 @@ int vshadow_test_read_buffer_at_offset(
 	{
 		if( result != 1 )
 		{
-			libvshadow_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libvshadow_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
@@ -610,7 +611,7 @@ int vshadow_test_read_callback_function(
 
 		goto on_error;
 	}
-	if( libvshadow_store_get_size(
+	if( libvshadow_store_get_volume_size(
 	     store,
 	     &volume_size,
 	     &error ) != 1 )
@@ -670,20 +671,20 @@ on_error:
 	return( -1 );
 }
 
-/* Tests reading data from multiple stores at the same time
+/* Tests reading data from stores in multiple threads
  * This test requires multi-threading support
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int vshadow_test_read_from_multiple_stores(
+int vshadow_test_read_from_stores_multi_thread(
      libvshadow_volume_t *volume,
      int number_of_stores )
 {
 	libcerror_error_t *error               = NULL;
 	libcthreads_thread_pool_t *thread_pool = NULL;
 	libvshadow_store_t *store              = NULL;
-	static char *function                  = "vshadow_test_read_from_multiple_stores";
+	static char *function                  = "vshadow_test_read_from_stores_multi_thread";
 	int iterator                           = 0;
-	int number_of_threads                  = 4;
+	int number_of_threads                  = VSHADOW_TEST_READ_NUMBER_OF_THREADS;
 	int store_index                        = 0;
 
 	if( volume == NULL )
@@ -697,7 +698,7 @@ int vshadow_test_read_from_multiple_stores(
 
 		goto on_error;
 	}
-	if( number_of_stores > 1 )
+	if( number_of_threads > 1 )
 	{
 		if( libcthreads_thread_pool_create(
 		     &thread_pool,
@@ -806,21 +807,42 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libvshadow_error_t *error   = NULL;
-	libvshadow_store_t *store   = NULL;
-	libvshadow_volume_t *volume = NULL;
-	size64_t volume_size        = 0;
-	int number_of_stores        = 0;
-	int store_index             = 0;
+	libcerror_error_t *error              = NULL;
+	libvshadow_store_t *store             = NULL;
+	libvshadow_volume_t *volume           = NULL;
+	libcstring_system_character_t *source = NULL;
+	libcstring_system_integer_t option    = 0;
+	size64_t volume_size                  = 0;
+	int number_of_stores                  = 0;
+	int store_index                       = 0;
 
-	if( argc < 2 )
+	while( ( option = libcsystem_getopt(
+	                   argc,
+	                   argv,
+	                   _LIBCSTRING_SYSTEM_STRING( "" ) ) ) != (libcstring_system_integer_t) -1 )
+	{
+		switch( option )
+		{
+			case (libcstring_system_integer_t) '?':
+			default:
+				fprintf(
+				 stderr,
+				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+				 argv[ optind - 1 ] );
+
+				return( EXIT_FAILURE );
+		}
+	}
+	if( optind == argc )
 	{
 		fprintf(
 		 stderr,
-		 "Missing filename.\n" );
+		 "Missing source file or device.\n" );
 
 		return( EXIT_FAILURE );
 	}
+	source = argv[ optind ];
+
 #if defined( HAVE_DEBUG_OUTPUT ) && defined( VSHADOW_TEST_READ_VERBOSE )
 	libvshadow_notify_set_verbose(
 	 1 );
@@ -843,13 +865,13 @@ int main( int argc, char * const argv[] )
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libvshadow_volume_open_wide(
 	     volume,
-	     argv[ 1 ],
+	     source,
 	     LIBVSHADOW_OPEN_READ,
 	     &error ) != 1 )
 #else
 	if( libvshadow_volume_open(
 	     volume,
-	     argv[ 1 ],
+	     source,
 	     LIBVSHADOW_OPEN_READ,
 	     &error ) != 1 )
 #endif
@@ -888,8 +910,8 @@ int main( int argc, char * const argv[] )
 
 			goto on_error;
 		}
-		if( libvshadow_volume_get_size(
-		     volume,
+		if( libvshadow_store_get_volume_size(
+		     store,
 		     &volume_size,
 		     &error ) != 1 )
 		{
@@ -929,13 +951,13 @@ int main( int argc, char * const argv[] )
 		}
 	}
 #if defined( HAVE_MULTI_THREAD_SUPPORT )
-	if( vshadow_test_read_from_multiple_stores(
+	if( vshadow_test_read_from_stores_multi_thread(
 	     volume,
 	     number_of_stores ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to read from multiple stores.\n" );
+		 "Unable to read from stores in multiple threads.\n" );
 
 		goto on_error;
 	}
@@ -967,10 +989,10 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		libvshadow_error_backtrace_fprint(
+		libcerror_error_backtrace_fprint(
 		 error,
 		 stderr );
-		libvshadow_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	if( store != NULL )

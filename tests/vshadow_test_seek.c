@@ -20,15 +20,17 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include <stdio.h>
-
+#include "vshadow_test_libcerror.h"
 #include "vshadow_test_libcstring.h"
+#include "vshadow_test_libcsystem.h"
 #include "vshadow_test_libvshadow.h"
+#include "vshadow_test_unused.h"
 
 /* Define to make vshadow_test_seek generate verbose output
 #define VSHADOW_TEST_SEEK_VERBOSE
@@ -43,7 +45,7 @@ int vshadow_test_seek_offset(
      int input_whence,
      off64_t output_offset )
 {
-	libvshadow_error_t *error = NULL;
+	libcerror_error_t *error  = NULL;
 	const char *whence_string = NULL;
 	off64_t result_offset     = 0;
 	int result                = 0;
@@ -100,55 +102,339 @@ int vshadow_test_seek_offset(
 	 stdout,
 	 "\n" );
 
-	if( error != NULL)
+	if( error != NULL )
 	{
 		if( result != 1 )
 		{
-			libvshadow_error_backtrace_fprint(
+			libcerror_error_backtrace_fprint(
 			 error,
 			 stderr );
 		}
-		libvshadow_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	return( result );
 }
 
-/* The main program
+/* Tests seeking in a store
+ * Returns 1 if successful, 0 if not or -1 on error
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-int wmain( int argc, wchar_t * const argv[] )
-#else
-int main( int argc, char * const argv[] )
-#endif
+int vshadow_test_seek(
+     libvshadow_store_t *store,
+     size64_t volume_size )
 {
-	libvshadow_error_t *error   = NULL;
+	int result = 0;
+
+	if( store == NULL )
+	{
+		return( -1 );
+	}
+	if( volume_size > (size64_t) INT64_MAX )
+	{
+		fprintf(
+		 stderr,
+		 "Volume size exceeds maximum.\n" );
+
+		return( -1 );
+	}
+	/* Test: SEEK_SET offset: 0
+	 * Expected result: 0
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          0,
+	          SEEK_SET,
+	          0 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_SET offset: <volume_size>
+	 * Expected result: <volume_size>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          (off64_t) volume_size,
+	          SEEK_SET,
+	          (off64_t) volume_size );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_SET offset: <volume_size / 5>
+	 * Expected result: <volume_size / 5>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          (off64_t) ( volume_size / 5 ),
+	          SEEK_SET,
+	          (off64_t) ( volume_size / 5 ) );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_SET offset: <volume_size + 987>
+	 * Expected result: <volume_size + 987>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          (off64_t) ( volume_size + 987 ),
+	          SEEK_SET,
+	          (off64_t) ( volume_size + 987 ) );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_SET offset: -987
+	 * Expected result: -1
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          -987,
+	          SEEK_SET,
+	          -1 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_CUR offset: 0
+	 * Expected result: <volume_size + 987>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          0,
+	          SEEK_CUR,
+	          (off64_t) ( volume_size + 987 ) );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_CUR offset: <-1 * (volume_size + 987)>
+	 * Expected result: 0
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          -1 * (off64_t) ( volume_size + 987 ),
+	          SEEK_CUR,
+	          0 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_CUR offset: <volume_size / 3>
+	 * Expected result: <volume_size / 3>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          (off64_t) ( volume_size / 3 ),
+	          SEEK_CUR,
+	          (off64_t) ( volume_size / 3 ) );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	if( volume_size == 0 )
+	{
+		/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+		 * Expected result: 0
+		 */
+		result = vshadow_test_seek_offset(
+		          store,
+		          -2 * (off64_t) ( volume_size / 3 ),
+		          SEEK_CUR,
+		          0 );
+
+		if( result != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			return( result );
+		}
+	}
+	else
+	{
+		/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
+		 * Expected result: -1
+		 */
+		result = vshadow_test_seek_offset(
+		          store,
+		          -2 * (off64_t) ( volume_size / 3 ),
+		          SEEK_CUR,
+		          -1 );
+
+		if( result != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to test seek offset.\n" );
+
+			return( result );
+		}
+	}
+	/* Test: SEEK_END offset: 0
+	 * Expected result: <volume_size>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          0,
+	          SEEK_END,
+	          (off64_t) volume_size );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_END offset: <-1 * volume_size>
+	 * Expected result: 0
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          -1 * (off64_t) volume_size,
+	          SEEK_END,
+	          0 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_END offset: <-1 * (volume_size / 4)>
+	 * Expected result: <volume_size - (volume_size / 4)>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          -1 * (off64_t) ( volume_size / 4 ),
+	          SEEK_END,
+	          (off64_t) volume_size - (off64_t) ( volume_size / 4 ) );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_END offset: 542
+	 * Expected result: <volume_size + 542>
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          542,
+	          SEEK_END,
+	          (off64_t) ( volume_size + 542 ) );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: SEEK_END offset: <-1 * (volume_size + 542)>
+	 * Expected result: -1
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          -1 * (off64_t) ( volume_size + 542 ),
+	          SEEK_END,
+	          -1 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	/* Test: UNKNOWN (88) offset: 0
+	 * Expected result: -1
+	 */
+	result = vshadow_test_seek_offset(
+	          store,
+	          0,
+	          88,
+	          -1 );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to test seek offset.\n" );
+
+		return( result );
+	}
+	return( result );
+}
+
+/* Tests seeking in a volume
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int vshadow_test_seek_volume(
+     libcstring_system_character_t *source,
+     libcerror_error_t **error )
+{
 	libvshadow_store_t *store   = NULL;
 	libvshadow_volume_t *volume = NULL;
 	size64_t volume_size        = 0;
 	int number_of_stores        = 0;
+	int result                  = 0;
 	int store_index             = 0;
 
-	if( argc < 2 )
-	{
-		fprintf(
-		 stderr,
-		 "Missing filename.\n" );
-
-		return( EXIT_FAILURE );
-	}
-#if defined( HAVE_DEBUG_OUTPUT ) && defined( VSHADOW_TEST_SEEK_VERBOSE )
-	libvshadow_notify_set_verbose(
-	 1 );
-	libvshadow_notify_set_stream(
-	 stderr,
-	 NULL );
-#endif
-	/* Initialization
-	 */
 	if( libvshadow_volume_initialize(
 	     &volume,
-	     &error ) != 1 )
+	     error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -159,15 +445,15 @@ int main( int argc, char * const argv[] )
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libvshadow_volume_open_wide(
 	     volume,
-	     argv[ 1 ],
+	     source,
 	     LIBVSHADOW_OPEN_READ,
-	     &error ) != 1 )
+	     error ) != 1 )
 #else
 	if( libvshadow_volume_open(
 	     volume,
-	     argv[ 1 ],
+	     source,
 	     LIBVSHADOW_OPEN_READ,
-	     &error ) != 1 )
+	     error ) != 1 )
 #endif
 	{
 		fprintf(
@@ -179,7 +465,7 @@ int main( int argc, char * const argv[] )
 	if( libvshadow_volume_get_number_of_stores(
 	     volume,
 	     &number_of_stores,
-	     &error ) != 1 )
+	     error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -195,7 +481,7 @@ int main( int argc, char * const argv[] )
 		     volume,
 		     store_index,
 		     &store,
-		     &error ) != 1 )
+		     error ) != 1 )
 		{
 			fprintf(
 			 stderr,
@@ -204,10 +490,10 @@ int main( int argc, char * const argv[] )
 
 			goto on_error;
 		}
-		if( libvshadow_volume_get_size(
-		     volume,
+		if( libvshadow_store_get_volume_size(
+		     store,
 		     &volume_size,
-		     &error ) != 1 )
+		     error ) != 1 )
 		{
 			fprintf(
 			 stderr,
@@ -221,276 +507,38 @@ int main( int argc, char * const argv[] )
 		 store_index,
 		 volume_size );
 
-		if( volume_size > (size64_t) INT64_MAX )
+		result = vshadow_test_seek(
+		          store,
+		          volume_size );
+
+		if( result == -1 )
 		{
 			fprintf(
 			 stderr,
-			 "Volume size exceeds maximum.\n" );
+			 "Unable to seek in store: %d.\n",
+			 store_index );
 
 			goto on_error;
 		}
-		/* Test: SEEK_SET offset: 0
-		 * Expected result: 0
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     0,
-		     SEEK_SET,
-		     0 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_SET offset: <volume_size>
-		 * Expected result: <volume_size>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     (off64_t) volume_size,
-		     SEEK_SET,
-		     (off64_t) volume_size ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_SET offset: <volume_size / 5>
-		 * Expected result: <volume_size / 5>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     (off64_t) ( volume_size / 5 ),
-		     SEEK_SET,
-		     (off64_t) ( volume_size / 5 ) ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_SET offset: <volume_size + 987>
-		 * Expected result: <volume_size + 987>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     (off64_t) ( volume_size + 987 ),
-		     SEEK_SET,
-		     (off64_t) ( volume_size + 987 ) ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_SET offset: -987
-		 * Expected result: -1
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     -987,
-		     SEEK_SET,
-		     -1 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_CUR offset: 0
-		 * Expected result: <volume_size + 987>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     0,
-		     SEEK_CUR,
-		     (off64_t) ( volume_size + 987 ) ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_CUR offset: <-1 * (volume_size + 987)>
-		 * Expected result: 0
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     -1 * (off64_t) ( volume_size + 987 ),
-		     SEEK_CUR,
-		     0 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_CUR offset: <volume_size / 3>
-		 * Expected result: <volume_size / 3>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     (off64_t) ( volume_size / 3 ),
-		     SEEK_CUR,
-		     (off64_t) ( volume_size / 3 ) ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		if( volume_size == 0 )
-		{
-			/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
-			 * Expected result: 0
-			 */
-			if( vshadow_test_seek_offset(
-			     store,
-			     -2 * (off64_t) ( volume_size / 3 ),
-			     SEEK_CUR,
-			     0 ) != 1 )
-			{
-				fprintf(
-				 stderr,
-				 "Unable to test seek offset.\n" );
-
-				goto on_error;
-			}
-		}
-		else
-		{
-			/* Test: SEEK_CUR offset: <-2 * (volume_size / 3)>
-			 * Expected result: -1
-			 */
-			if( vshadow_test_seek_offset(
-			     store,
-			     -2 * (off64_t) ( volume_size / 3 ),
-			     SEEK_CUR,
-			     -1 ) != 1 )
-			{
-				fprintf(
-				 stderr,
-				 "Unable to test seek offset.\n" );
-
-				goto on_error;
-			}
-		}
-		/* Test: SEEK_END offset: 0
-		 * Expected result: <volume_size>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     0,
-		     SEEK_END,
-		     (off64_t) volume_size ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_END offset: <-1 * volume_size>
-		 * Expected result: 0
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     -1 * (off64_t) volume_size,
-		     SEEK_END,
-		     0 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_END offset: <-1 * (volume_size / 4)>
-		 * Expected result: <volume_size - (volume_size / 4)>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     -1 * (off64_t) ( volume_size / 4 ),
-		     SEEK_END,
-		     (off64_t) volume_size - (off64_t) ( volume_size / 4 ) ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_END offset: 542
-		 * Expected result: <volume_size + 542>
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     542,
-		     SEEK_END,
-		     (off64_t) ( volume_size + 542 ) ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: SEEK_END offset: <-1 * (volume_size + 542)>
-		 * Expected result: -1
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     -1 * (off64_t) ( volume_size + 542 ),
-		     SEEK_END,
-		     -1 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Test: UNKNOWN (88) offset: 0
-		 * Expected result: -1
-		 */
-		if( vshadow_test_seek_offset(
-		     store,
-		     0,
-		     88,
-		     -1 ) != 1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test seek offset.\n" );
-
-			goto on_error;
-		}
-		/* Clean up
-		 */
 		if( libvshadow_store_free(
 		     &store,
-		     &error ) != 1 )
+		     error ) != 1 )
 		{
 			fprintf(
 			 stderr,
-			 "Unable to free store.\n" );
+			 "Unable to free store: %d.\n",
+			 store_index );
 
 			goto on_error;
+		}
+		if( result == 0 )
+		{
+			break;
 		}
 	}
 	if( libvshadow_volume_close(
 	     volume,
-	     &error ) != 0 )
+	     error ) != 0 )
 	{
 		fprintf(
 		 stderr,
@@ -500,7 +548,7 @@ int main( int argc, char * const argv[] )
 	}
 	if( libvshadow_volume_free(
 	     &volume,
-	     &error ) != 1 )
+	     error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -508,17 +556,9 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	return( EXIT_SUCCESS );
+	return( result );
 
 on_error:
-	if( error != NULL )
-	{
-		libvshadow_error_backtrace_fprint(
-		 error,
-		 stderr );
-		libvshadow_error_free(
-		 &error );
-	}
 	if( store != NULL )
 	{
 		libvshadow_store_free(
@@ -533,6 +573,79 @@ on_error:
 		libvshadow_volume_free(
 		 &volume,
 		 NULL );
+	}
+	return( -1 );
+}
+
+/* The main program
+ */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+int wmain( int argc, wchar_t * const argv[] )
+#else
+int main( int argc, char * const argv[] )
+#endif
+{
+	libcerror_error_t *error              = NULL;
+	libcstring_system_character_t *source = NULL;
+	libcstring_system_integer_t option    = 0;
+	int result                            = 0;
+
+	while( ( option = libcsystem_getopt(
+	                   argc,
+	                   argv,
+	                   _LIBCSTRING_SYSTEM_STRING( "" ) ) ) != (libcstring_system_integer_t) -1 )
+	{
+		switch( option )
+		{
+			case (libcstring_system_integer_t) '?':
+			default:
+				fprintf(
+				 stderr,
+				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+				 argv[ optind - 1 ] );
+
+				return( EXIT_FAILURE );
+		}
+	}
+	if( optind == argc )
+	{
+		fprintf(
+		 stderr,
+		 "Missing source file or device.\n" );
+
+		return( EXIT_FAILURE );
+	}
+	source = argv[ optind ];
+
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( VSHADOW_TEST_SEEK_VERBOSE )
+	libvshadow_notify_set_verbose(
+	 1 );
+	libvshadow_notify_set_stream(
+	 stderr,
+	 NULL );
+#endif
+	result = vshadow_test_seek_volume(
+	          source,
+	          &error );
+
+	if( result != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to seek in volume.\n" );
+
+		goto on_error;
+	}
+	return( EXIT_SUCCESS );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_backtrace_fprint(
+		 error,
+		 stderr );
+		libcerror_error_free(
+		 &error );
 	}
 	return( EXIT_FAILURE );
 }
