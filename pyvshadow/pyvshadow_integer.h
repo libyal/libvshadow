@@ -52,5 +52,5 @@ int pyvshadow_integer_unsigned_copy_to_64bit(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_INTEGER_H ) */
 

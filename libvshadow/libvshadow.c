@@ -1,5 +1,5 @@
 /*
- * Library to acess the Windows NT Volume Shadow Snapshot (VSS) format
+ * Library to access the Windows NT Volume Shadow Snapshot (VSS) format
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *

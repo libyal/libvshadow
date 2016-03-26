@@ -20,9 +20,8 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #include "libvshadow_error.h"
 #include "libvshadow_libcerror.h"
@@ -92,5 +91,5 @@ int libvshadow_error_backtrace_sprint(
 	         size ) );
 }
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBVSHADOW ) */
 

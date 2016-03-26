@@ -23,9 +23,8 @@
 #define _LIBVSHADOW_NOTIFY_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #include "libvshadow_extern.h"
 #include "libvshadow_libcerror.h"
@@ -54,11 +53,11 @@ LIBVSHADOW_EXTERN \
 int libvshadow_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBVSHADOW ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_NOTIFY_H ) */
 

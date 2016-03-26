@@ -28,7 +28,7 @@
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_python.h"
 
-#define PYVSHADOW_ERROR_STRING_SIZE		2048
+#define PYVSHADOW_ERROR_STRING_SIZE	2048
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,5 +56,5 @@ void pyvshadow_error_raise(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_ERROR_H ) */
 
