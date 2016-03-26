@@ -17,7 +17,7 @@ AM_CPPFLAGS = \
 	@LIBVSHADOW_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
-TESTS_PYVSHADOW  = \
+TESTS_PYVSHADOW = \
 	test_pyvshadow_open_close.sh \
 	test_pyvshadow_read.sh \
 	test_pyvshadow_seek.sh

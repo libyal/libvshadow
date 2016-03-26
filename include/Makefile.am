@@ -1,13 +1,13 @@
 include_HEADERS = \
-        libvshadow.h
+	libvshadow.h
 
 pkginclude_HEADERS = \
-        libvshadow/codepage.h \
-        libvshadow/definitions.h \
-        libvshadow/error.h \
-        libvshadow/extern.h \
-        libvshadow/features.h \
-        libvshadow/types.h
+	libvshadow/codepage.h \
+	libvshadow/definitions.h \
+	libvshadow/error.h \
+	libvshadow/extern.h \
+	libvshadow/features.h \
+	libvshadow/types.h
 
 EXTRA_DIST = \
 	libvshadow.h.in \
