@@ -7,6 +7,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libfguid", "libfguid\libfgu
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_get_version", "vshadow_test_get_version\vshadow_test_get_version.vcproj", "{45479779-4BC1-4367-8926-C22F55783079}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_open_close", "vshadow_test_open_close\vshadow_test_open_close.vcproj", "{9EEBB28D-7E1A-4C4C-A36D-71647B9DACAA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A2B861D5-6751-43A9-B085-8D48F8754AC5} = {A2B861D5-6751-43A9-B085-8D48F8754AC5}
@@ -205,6 +211,10 @@ Global
 		{8C13E498-6369-4792-A0CF-B7134C54561B}.Release|Win32.Build.0 = Release|Win32
 		{8C13E498-6369-4792-A0CF-B7134C54561B}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{8C13E498-6369-4792-A0CF-B7134C54561B}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{45479779-4BC1-4367-8926-C22F55783079}.Release|Win32.ActiveCfg = Release|Win32
+		{45479779-4BC1-4367-8926-C22F55783079}.Release|Win32.Build.0 = Release|Win32
+		{45479779-4BC1-4367-8926-C22F55783079}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{45479779-4BC1-4367-8926-C22F55783079}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{9EEBB28D-7E1A-4C4C-A36D-71647B9DACAA}.Release|Win32.ActiveCfg = Release|Win32
 		{9EEBB28D-7E1A-4C4C-A36D-71647B9DACAA}.Release|Win32.Build.0 = Release|Win32
 		{9EEBB28D-7E1A-4C4C-A36D-71647B9DACAA}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

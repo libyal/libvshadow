@@ -16,6 +16,7 @@ MSVSCPP_FILES = \
 	libuna/libuna.vcproj \
 	libvshadow/libvshadow.vcproj \
 	pyvshadow/pyvshadow.vcproj \
+	vshadow_test_get_version/vshadow_test_get_version.vcproj \
 	vshadow_test_open_close/vshadow_test_open_close.vcproj \
 	vshadow_test_read/vshadow_test_read.vcproj \
 	vshadow_test_seek/vshadow_test_seek.vcproj \

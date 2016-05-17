@@ -54,5 +54,5 @@
 
 #endif /* defined( HAVE_LOCAL_LIBBFIO ) */
 
-#endif
+#endif /* !defined( _LIBVSHADOW_LIBBFIO_H ) */
 

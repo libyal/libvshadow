@@ -1,5 +1,5 @@
 /*
- * The internal libfguid header
+ * The libfguid header wrapper
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -43,7 +43,7 @@
 
 #include <libfguid.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFGUID ) */
 
-#endif
+#endif /* !defined( _VSHADOWTOOLS_LIBFGUID_H ) */
 

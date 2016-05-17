@@ -52,7 +52,7 @@
 #error Multi-threading support requires libbfio with multi-threading support
 #endif
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBBFIO ) */
 
-#endif
+#endif /* !defined( _VSHADOWTOOLS_LIBBFIO_H ) */
 

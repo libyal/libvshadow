@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBFVSHADOW_LIBFGUID_H )
-#define _LIBFVSHADOW_LIBFGUID_H
+#if !defined( _LIBVSHADOW_LIBFGUID_H )
+#define _LIBVSHADOW_LIBFGUID_H
 
 #include <common.h>
 
@@ -43,7 +43,7 @@
 
 #include <libfguid.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFGUID ) */
 
-#endif
+#endif /* !defined( _LIBVSHADOW_LIBFGUID_H ) */
 

@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBVSHADOW_LIBCFILE_H )
-#define _LIBVSHADOW_LIBCFILE_H
+#if !defined( _VSHADOWTOOLS_LIBCFILE_H )
+#define _VSHADOWTOOLS_LIBCFILE_H
 
 #include <common.h>
 
@@ -44,7 +44,7 @@
 
 #include <libcfile.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCFILE ) */
 
-#endif
+#endif /* !defined( _VSHADOWTOOLS_LIBCFILE_H ) */
 

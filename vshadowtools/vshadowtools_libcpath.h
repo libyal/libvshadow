@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBVSHADOWTOOLS_LIBCPATH_H )
-#define _LIBVSHADOWTOOLS_LIBCPATH_H
+#if !defined( _VSHADOWTOOLS_LIBCPATH_H )
+#define _VSHADOWTOOLS_LIBCPATH_H
 
 #include <common.h>
 
@@ -29,12 +29,7 @@
 #if defined( HAVE_LOCAL_LIBCPATH )
 
 #include <libcpath_definitions.h>
-#include <libcpath_narrow_split_string.h>
-#include <libcpath_narrow_string.h>
 #include <libcpath_path.h>
-#include <libcpath_types.h>
-#include <libcpath_wide_split_string.h>
-#include <libcpath_wide_string.h>
 
 #else
 
@@ -47,7 +42,7 @@
 
 #include <libcpath.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCPATH ) */
 
-#endif
+#endif /* !defined( _VSHADOWTOOLS_LIBCPATH_H ) */
 

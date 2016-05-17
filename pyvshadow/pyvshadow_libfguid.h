@@ -45,5 +45,5 @@
 
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_LIBFGUID_H ) */
 

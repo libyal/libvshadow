@@ -28,13 +28,13 @@
  */
 #if defined( HAVE_LOCAL_LIBFDATA )
 
-#include <libfdata_block.h>
-#include <libfdata_buffer.h>
-#include <libfdata_cache.h>
+#include <libfdata_area.h>
+#include <libfdata_btree.h>
 #include <libfdata_definitions.h>
 #include <libfdata_list.h>
 #include <libfdata_list_element.h>
 #include <libfdata_range_list.h>
+#include <libfdata_stream.h>
 #include <libfdata_tree.h>
 #include <libfdata_tree_node.h>
 #include <libfdata_types.h>
@@ -51,7 +51,7 @@
 
 #include <libfdata.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFDATA ) */
 
-#endif
+#endif /* !defined( _LIBVSHADOW_LIBFDATA_H ) */
 

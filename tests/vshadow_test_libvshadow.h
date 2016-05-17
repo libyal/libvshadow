@@ -24,14 +24,14 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBVSHADOW_DLL_IMPORT
- * before including libvshadow.h
+/* If Cygwin libtool DLL support is enabled and do not want to create static
+ * executables set LIBVSHADOW_DLL_IMPORT before including libvshadow.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBVSHADOW_DLL_IMPORT
 #endif
 
 #include <libvshadow.h>
 
-#endif
+#endif /* !defined( _VSHADOW_TEST_LIBVSHADOW_H ) */
 
