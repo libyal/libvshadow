@@ -40,15 +40,28 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	vshadow_test_error \
 	vshadow_test_get_version \
 	vshadow_test_open_close \
 	vshadow_test_read \
 	vshadow_test_seek
 
+vshadow_test_error_SOURCES = \
+	vshadow_test_error.c \
+	vshadow_test_libcstring.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_unused.h
+
+vshadow_test_error_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCSTRING_LIBADD@
+
 vshadow_test_get_version_SOURCES = \
 	vshadow_test_get_version.c \
 	vshadow_test_libcstring.h \
 	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
 	vshadow_test_unused.h
 
 vshadow_test_get_version_LDADD = \

@@ -124,6 +124,7 @@ stamp-h[1-9]
 /vshadowtools/vshadowmount
 /tests/input
 /tests/tmp*
+/tests/vshadow_test_error
 /tests/vshadow_test_get_version
 /tests/vshadow_test_open_close
 /tests/vshadow_test_read

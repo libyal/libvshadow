@@ -20,7 +20,6 @@
  */
 
 #include <common.h>
-#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -28,6 +27,7 @@
 
 #include "vshadow_test_libcstring.h"
 #include "vshadow_test_libvshadow.h"
+#include "vshadow_test_macros.h"
 #include "vshadow_test_unused.h"
 
 /* Tests retrieving the library version
@@ -46,11 +46,15 @@ int vshadow_test_get_version(
 	          LIBVSHADOW_VERSION_STRING,
 	          9 );
 
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
 	return( 1 );
+
+on_error:
+	return( 0 );
 }
 
 /* The main program
@@ -68,10 +72,13 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-	if( vshadow_test_get_version() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	VSHADOW_TEST_RUN(
+	 "libvshadow_get_version",
+	 vshadow_test_get_version() )
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 
