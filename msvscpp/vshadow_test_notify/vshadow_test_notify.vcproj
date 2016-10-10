@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="vshadow_test_get_version"
-	ProjectGUID="{45479779-4BC1-4367-8926-C22F55783079}"
-	RootNamespace="vshadow_test_get_version"
+	Name="vshadow_test_notify"
+	ProjectGUID="{232D4E58-3057-49EC-B44C-5B06BC3238AD}"
+	RootNamespace="vshadow_test_notify"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\vshadow_test_get_version.c"
+				RelativePath="..\..\tests\vshadow_test_notify.c"
 				>
 			</File>
 		</Filter>

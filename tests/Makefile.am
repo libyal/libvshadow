@@ -41,10 +41,11 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	vshadow_test_error \
-	vshadow_test_get_version \
+	vshadow_test_notify \
 	vshadow_test_open_close \
 	vshadow_test_read \
-	vshadow_test_seek
+	vshadow_test_seek \
+	vshadow_test_support
 
 vshadow_test_error_SOURCES = \
 	vshadow_test_error.c \
@@ -57,14 +58,14 @@ vshadow_test_error_LDADD = \
 	../libvshadow/libvshadow.la \
 	@LIBCSTRING_LIBADD@
 
-vshadow_test_get_version_SOURCES = \
-	vshadow_test_get_version.c \
+vshadow_test_notify_SOURCES = \
 	vshadow_test_libcstring.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
+	vshadow_test_notify.c \
 	vshadow_test_unused.h
 
-vshadow_test_get_version_LDADD = \
+vshadow_test_notify_LDADD = \
 	../libvshadow/libvshadow.la \
 	@LIBCSTRING_LIBADD@
 
@@ -116,6 +117,17 @@ vshadow_test_seek_LDADD = \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@ \
 	@PTHREAD_LIBADD@
+
+vshadow_test_support_SOURCES = \
+	vshadow_test_libcstring.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_support.c \
+	vshadow_test_unused.h
+
+vshadow_test_support_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

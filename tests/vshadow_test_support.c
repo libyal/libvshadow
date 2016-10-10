@@ -1,5 +1,5 @@
 /*
- * Library get version test program
+ * Library support functions test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,7 +30,7 @@
 #include "vshadow_test_macros.h"
 #include "vshadow_test_unused.h"
 
-/* Tests retrieving the library version
+/* Tests the libvshadow_get_version function
  * Returns 1 if successful or 0 if not
  */
 int vshadow_test_get_version(
@@ -74,7 +74,7 @@ int main(
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_get_version",
-	 vshadow_test_get_version() )
+	 vshadow_test_get_version );
 
 	return( EXIT_SUCCESS );
 

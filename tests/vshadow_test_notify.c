@@ -1,5 +1,5 @@
 /*
- * Library error functions test program
+ * Library notification functions test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,78 +30,60 @@
 #include "vshadow_test_macros.h"
 #include "vshadow_test_unused.h"
 
-/* Tests the libvshadow_error_free function
+/* Tests the libvshadow_notify_set_verbose function
  * Returns 1 if successful or 0 if not
  */
-int vshadow_test_error_free(
+int vshadow_test_notify_set_verbose(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libvshadow_error_free(
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libvshadow_error_fprint function
- * Returns 1 if successful or 0 if not
- */
-int vshadow_test_error_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libvshadow_error_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libvshadow_error_sprint function
- * Returns 1 if successful or 0 if not
- */
-int vshadow_test_error_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libvshadow_error_sprint(
-	 NULL,
-	 NULL,
+	libvshadow_notify_set_verbose(
 	 0 );
 
 	return( 1 );
 }
 
-/* Tests the libvshadow_error_backtrace_fprint function
+/* Tests the libvshadow_notify_set_stream function
  * Returns 1 if successful or 0 if not
  */
-int vshadow_test_error_backtrace_fprint(
+int vshadow_test_notify_set_stream(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libvshadow_error_backtrace_fprint(
+	libvshadow_notify_set_stream(
 	 NULL,
 	 NULL );
 
 	return( 1 );
 }
 
-/* Tests the libvshadow_error_backtrace_sprint function
+/* Tests the libvshadow_notify_stream_open function
  * Returns 1 if successful or 0 if not
  */
-int vshadow_test_error_backtrace_sprint(
+int vshadow_test_notify_stream_open(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libvshadow_error_backtrace_sprint(
+	libvshadow_notify_stream_open(
 	 NULL,
-	 NULL,
-	 0 );
+	 NULL );
+
+	return( 1 );
+}
+
+/* Tests the libvshadow_notify_stream_close function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_notify_stream_close(
+     void )
+{
+	/* Test invocation of function only
+	 */
+	libvshadow_notify_stream_close(
+	 NULL );
 
 	return( 1 );
 }
@@ -122,24 +104,20 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
 	VSHADOW_TEST_RUN(
-	 "libvshadow_error_free",
-	 vshadow_test_error_free );
+	 "libvshadow_notify_set_verbose",
+	 vshadow_test_notify_set_verbose )
 
 	VSHADOW_TEST_RUN(
-	 "libvshadow_error_fprint",
-	 vshadow_test_error_fprint );
+	 "libvshadow_notify_set_stream",
+	 vshadow_test_notify_set_stream )
 
 	VSHADOW_TEST_RUN(
-	 "libvshadow_error_sprint",
-	 vshadow_test_error_sprint );
+	 "libvshadow_notify_stream_open",
+	 vshadow_test_notify_stream_open )
 
 	VSHADOW_TEST_RUN(
-	 "libvshadow_error_backtrace_fprint",
-	 vshadow_test_error_backtrace_fprint );
-
-	VSHADOW_TEST_RUN(
-	 "libvshadow_error_backtrace_sprint",
-	 vshadow_test_error_backtrace_sprint );
+	 "libvshadow_notify_stream_close",
+	 vshadow_test_notify_stream_close )
 
 	return( EXIT_SUCCESS );
 
