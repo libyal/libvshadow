@@ -41,7 +41,6 @@ int libvshadow_block_tree_insert(
 {
 	libcdata_tree_node_t *existing_tree_node                 = NULL;
 	libcdata_tree_node_t *reverse_tree_node                  = NULL;
-	libcdata_list_element_t *reverse_list_element            = NULL;
 	libvshadow_block_descriptor_t *existing_block_descriptor = NULL;
 	libvshadow_block_descriptor_t *new_block_descriptor      = NULL;
 	libvshadow_block_descriptor_t *overlay_block_descriptor  = NULL;
@@ -463,7 +462,7 @@ int libvshadow_block_tree_insert(
 			  (intptr_t *) new_block_descriptor,
 			  (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libvshadow_block_descriptor_compare_by_relative_offset,
 			  &reverse_tree_node,
-			  (intptr_t **) &reverse_list_element,
+			  (intptr_t **) &reverse_block_descriptor,
 			  error );
 
 		if( result == -1 )
@@ -481,22 +480,6 @@ int libvshadow_block_tree_insert(
 		}
 		else if( result == 0 )
 		{
-			if( libcdata_list_element_get_value(
-			     reverse_list_element,
-			     (intptr_t **) &reverse_block_descriptor,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve reverse block descriptor from list element.",
-				 function );
-
-				new_block_descriptor = NULL;
-
-				goto on_error;
-			}
 			if( reverse_block_descriptor == NULL )
 			{
 				libcerror_error_set(
