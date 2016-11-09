@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libvshadow_block_descriptor.h"
 #include "libvshadow_block_range_descriptor.h"
@@ -33,7 +36,6 @@
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
-#include "libvshadow_libcstring.h"
 #include "libvshadow_libcthreads.h"
 #include "libvshadow_libfdatetime.h"
 #include "libvshadow_libfguid.h"
@@ -485,8 +487,8 @@ int libvshadow_store_descriptor_read_catalog_entry(
 	static char *function             = "libvshadow_store_descriptor_read_catalog_entry";
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 32 ];
-	libcstring_system_character_t guid_string[ 48 ];
+	system_character_t filetime_string[ 32 ];
+	system_character_t guid_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	libfguid_identifier_t *guid       = NULL;
@@ -677,7 +679,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libfguid_identifier_copy_to_utf16_string(
 				  guid,
 				  (uint16_t *) guid_string,
@@ -704,7 +706,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: store identifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: store identifier\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 guid_string );
 
@@ -766,7 +768,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libfdatetime_filetime_copy_to_utf16_string(
 				  filetime,
 				  (uint16_t *) filetime_string,
@@ -793,7 +795,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: creation time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+			 "%s: creation time\t\t\t: %" PRIs_SYSTEM " UTC\n",
 			 function,
 			 filetime_string );
 
@@ -879,7 +881,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libfguid_identifier_copy_to_utf16_string(
 				  guid,
 				  (uint16_t *) guid_string,
@@ -906,7 +908,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: store identifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: store identifier\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 guid_string );
 
@@ -1026,19 +1028,19 @@ int libvshadow_store_descriptor_read_store_header(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	libvshadow_store_block_t *store_block       = NULL;
-	uint8_t *store_header_data                  = NULL;
-	static char *function                       = "libvshadow_store_descriptor_read_store_header";
-	size_t store_header_data_offset             = 0;
+	libvshadow_store_block_t *store_block = NULL;
+	uint8_t *store_header_data            = NULL;
+	static char *function                 = "libvshadow_store_descriptor_read_store_header";
+	size_t store_header_data_offset       = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t guid_string[ 48 ];
+	system_character_t guid_string[ 48 ];
 
-	libcstring_system_character_t *value_string = NULL;
-	libfguid_identifier_t *guid                 = NULL;
-	size_t value_string_size                    = 0;
-	uint32_t value_32bit                        = 0;
-	int result                                  = 0;
+	libfguid_identifier_t *guid           = NULL;
+	system_character_t *value_string      = NULL;
+	size_t value_string_size              = 0;
+	uint32_t value_32bit                  = 0;
+	int result                            = 0;
 #endif
 
 	if( store_descriptor == NULL )
@@ -1187,7 +1189,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfguid_identifier_copy_to_utf16_string(
 			  guid,
 			  (uint16_t *) guid_string,
@@ -1214,7 +1216,7 @@ int libvshadow_store_descriptor_read_store_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: unknown5\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: unknown5\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 guid_string );
 
@@ -1234,7 +1236,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfguid_identifier_copy_to_utf16_string(
 			  guid,
 			  (uint16_t *) guid_string,
@@ -1261,7 +1263,7 @@ int libvshadow_store_descriptor_read_store_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: copy identifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: copy identifier\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 guid_string );
 
@@ -1281,7 +1283,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfguid_identifier_copy_to_utf16_string(
 			  guid,
 			  (uint16_t *) guid_string,
@@ -1308,7 +1310,7 @@ int libvshadow_store_descriptor_read_store_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: copy set identifier\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: copy set identifier\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 guid_string );
 
@@ -1411,7 +1413,7 @@ int libvshadow_store_descriptor_read_store_header(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libuna_utf16_string_size_from_utf16_stream(
 			  store_descriptor->operating_machine_string,
 			  (size_t) store_descriptor->operating_machine_string_size,
@@ -1437,7 +1439,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1451,7 +1453,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libuna_utf16_string_copy_from_utf16_stream(
 			  (libuna_utf16_character_t *) value_string,
 			  value_string_size,
@@ -1484,7 +1486,7 @@ int libvshadow_store_descriptor_read_store_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: operating machine string\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: operating machine string\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 value_string );
 
@@ -1542,7 +1544,7 @@ int libvshadow_store_descriptor_read_store_header(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libuna_utf16_string_size_from_utf16_stream(
 			  store_descriptor->service_machine_string,
 			  (size_t) store_descriptor->service_machine_string_size,
@@ -1568,7 +1570,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1582,7 +1584,7 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libuna_utf16_string_copy_from_utf16_stream(
 			  (libuna_utf16_character_t *) value_string,
 			  value_string_size,
@@ -1615,7 +1617,7 @@ int libvshadow_store_descriptor_read_store_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: service machine string\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: service machine string\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 value_string );
 

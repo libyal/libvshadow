@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -35,7 +34,6 @@ libvshadow_la_SOURCES = \
 	libvshadow_libcerror.h \
 	libvshadow_libclocale.h \
 	libvshadow_libcnotify.h \
-	libvshadow_libcstring.h \
 	libvshadow_libcthreads.h \
 	libvshadow_libfdata.h \
 	libvshadow_libfdatetime.h \
@@ -54,7 +52,6 @@ libvshadow_la_SOURCES = \
 	vshadow_volume.h
 
 libvshadow_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

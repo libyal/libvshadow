@@ -20,12 +20,15 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <narrow_string.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include "vshadow_test_libcstring.h"
+#include "vshadow_test_libcerror.h"
 #include "vshadow_test_libvshadow.h"
 #include "vshadow_test_macros.h"
 #include "vshadow_test_unused.h"
@@ -41,7 +44,7 @@ int vshadow_test_get_version(
 
 	version_string = libvshadow_get_version();
 
-	result = libcstring_narrow_string_compare(
+	result = narrow_string_compare(
 	          version_string,
 	          LIBVSHADOW_VERSION_STRING,
 	          9 );
@@ -57,9 +60,133 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libvshadow_get_access_flags_read function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_get_access_flags_read(
+     void )
+{
+	int access_flags = 0;
+
+	access_flags = libvshadow_get_access_flags_read();
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "access_flags",
+	 access_flags,
+	 LIBVSHADOW_ACCESS_FLAG_READ );
+
+	return( 1 );
+
+on_error:
+	return( 0 );
+}
+
+/* Tests the libvshadow_get_codepage function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_get_codepage(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int codepage             = 0;
+	int result               = 0;
+
+	result = libvshadow_get_codepage(
+	          &codepage,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_get_codepage(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_set_codepage function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_set_codepage(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	result = libvshadow_set_codepage(
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_set_codepage(
+	          -1,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc VSHADOW_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] VSHADOW_TEST_ATTRIBUTE_UNUSED )

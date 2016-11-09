@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -49,29 +48,24 @@ check_PROGRAMS = \
 
 vshadow_test_error_SOURCES = \
 	vshadow_test_error.c \
-	vshadow_test_libcstring.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
 	vshadow_test_unused.h
 
 vshadow_test_error_LDADD = \
-	../libvshadow/libvshadow.la \
-	@LIBCSTRING_LIBADD@
+	../libvshadow/libvshadow.la
 
 vshadow_test_notify_SOURCES = \
-	vshadow_test_libcstring.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
 	vshadow_test_notify.c \
 	vshadow_test_unused.h
 
 vshadow_test_notify_LDADD = \
-	../libvshadow/libvshadow.la \
-	@LIBCSTRING_LIBADD@
+	../libvshadow/libvshadow.la
 
 vshadow_test_open_close_SOURCES = \
 	vshadow_test_libcerror.h \
-	vshadow_test_libcstring.h \
 	vshadow_test_libcsystem.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_open_close.c \
@@ -81,13 +75,11 @@ vshadow_test_open_close_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
 
 vshadow_test_read_SOURCES = \
 	vshadow_test_libcerror.h \
-	vshadow_test_libcstring.h \
 	vshadow_test_libcthreads.h \
 	vshadow_test_libcsystem.h \
 	vshadow_test_libvshadow.h \
@@ -98,13 +90,11 @@ vshadow_test_read_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
 
 vshadow_test_seek_SOURCES = \
 	vshadow_test_libcerror.h \
-	vshadow_test_libcstring.h \
 	vshadow_test_libcsystem.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_seek.c \
@@ -114,12 +104,11 @@ vshadow_test_seek_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
 
 vshadow_test_support_SOURCES = \
-	vshadow_test_libcstring.h \
+	vshadow_test_libcerror.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
 	vshadow_test_support.c \
@@ -127,7 +116,7 @@ vshadow_test_support_SOURCES = \
 
 vshadow_test_support_LDADD = \
 	../libvshadow/libvshadow.la \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

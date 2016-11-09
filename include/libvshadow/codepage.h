@@ -118,5 +118,5 @@ enum LIBVSHADOW_CODEPAGES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_CODEPAGE_H ) */
 

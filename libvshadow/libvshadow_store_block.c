@@ -22,12 +22,12 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
-#include "libvshadow_libcstring.h"
 #include "libvshadow_libfguid.h"
 #include "libvshadow_io_handle.h"
 #include "libvshadow_store_block.h"
@@ -180,7 +180,7 @@ int libvshadow_store_block_read(
 	ssize_t read_count          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t guid_string[ 48 ];
+	system_character_t guid_string[ 48 ];
 
 	libfguid_identifier_t *guid = NULL;
 	uint64_t value_64bit        = 0;
@@ -330,7 +330,7 @@ int libvshadow_store_block_read(
 
 			return( -1 );
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfguid_identifier_copy_to_utf16_string(
 			  guid,
 			  (uint16_t *) guid_string,
@@ -357,7 +357,7 @@ int libvshadow_store_block_read(
 			return( -1 );
 		}
 		libcnotify_printf(
-		 "%s: identifier\t\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: identifier\t\t\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 guid_string );
 

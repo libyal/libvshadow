@@ -1,5 +1,5 @@
 /*
- * Library error functions test program
+ * Library block type testing program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,82 +30,45 @@
 #include "vshadow_test_libcerror.h"
 #include "vshadow_test_libvshadow.h"
 #include "vshadow_test_macros.h"
+#include "vshadow_test_memory.h"
 #include "vshadow_test_unused.h"
 
-/* Tests the libvshadow_error_free function
+/* Tests the libvshadow_block_free function
  * Returns 1 if successful or 0 if not
  */
-int vshadow_test_error_free(
+int vshadow_test_block_free(
      void )
 {
-	/* Test invocation of function only
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
 	 */
-	libvshadow_error_free(
-	 NULL );
+	result = libvshadow_block_free(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
 
 	return( 1 );
-}
 
-/* Tests the libvshadow_error_fprint function
- * Returns 1 if successful or 0 if not
- */
-int vshadow_test_error_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libvshadow_error_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libvshadow_error_sprint function
- * Returns 1 if successful or 0 if not
- */
-int vshadow_test_error_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libvshadow_error_sprint(
-	 NULL,
-	 NULL,
-	 0 );
-
-	return( 1 );
-}
-
-/* Tests the libvshadow_error_backtrace_fprint function
- * Returns 1 if successful or 0 if not
- */
-int vshadow_test_error_backtrace_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libvshadow_error_backtrace_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libvshadow_error_backtrace_sprint function
- * Returns 1 if successful or 0 if not
- */
-int vshadow_test_error_backtrace_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libvshadow_error_backtrace_sprint(
-	 NULL,
-	 NULL,
-	 0 );
-
-	return( 1 );
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
 }
 
 /* The main program
@@ -124,24 +87,8 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
 	VSHADOW_TEST_RUN(
-	 "libvshadow_error_free",
-	 vshadow_test_error_free );
-
-	VSHADOW_TEST_RUN(
-	 "libvshadow_error_fprint",
-	 vshadow_test_error_fprint );
-
-	VSHADOW_TEST_RUN(
-	 "libvshadow_error_sprint",
-	 vshadow_test_error_sprint );
-
-	VSHADOW_TEST_RUN(
-	 "libvshadow_error_backtrace_fprint",
-	 vshadow_test_error_backtrace_fprint );
-
-	VSHADOW_TEST_RUN(
-	 "libvshadow_error_backtrace_sprint",
-	 vshadow_test_error_backtrace_sprint );
+	 "libvshadow_block_free",
+	 vshadow_test_block_free );
 
 	return( EXIT_SUCCESS );
 

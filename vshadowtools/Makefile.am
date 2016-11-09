@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -35,7 +34,6 @@ vshadowinfo_SOURCES = \
 	vshadowtools_libclocale.h \
 	vshadowtools_libcnotify.h \
 	vshadowtools_libcpath.h \
-	vshadowtools_libcstring.h \
 	vshadowtools_libcsystem.h \
 	vshadowtools_libfdatetime.h \
 	vshadowtools_libfguid.h \
@@ -56,7 +54,6 @@ vshadowinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 vshadowmount_SOURCES = \
@@ -69,7 +66,6 @@ vshadowmount_SOURCES = \
 	vshadowtools_libclocale.h \
 	vshadowtools_libcnotify.h \
 	vshadowtools_libcpath.h \
-	vshadowtools_libcstring.h \
 	vshadowtools_libcsystem.h \
 	vshadowtools_libfdatetime.h \
 	vshadowtools_libfguid.h \
@@ -91,7 +87,6 @@ vshadowmount_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

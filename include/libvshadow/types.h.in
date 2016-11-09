@@ -187,14 +187,14 @@ typedef int64_t off64_t;
  */
 #if !defined( __USE_UNIX98 )
 #define __USE_UNIX98
-#define LIBCSTRING_DEFINITION_UNIX98
+#define LIBVSHADOW_DEFINITION_UNIX98
 #endif
 
 #include <wchar.h>
 
-#if defined( LIBCSTRING_DEFINITION_UNIX98 )
+#if defined( LIBVSHADOW_DEFINITION_UNIX98 )
 #undef __USE_UNIX98
-#undef LIBCSTRING_DEFINITION_UNIX98
+#undef LIBVSHADOW_DEFINITION_UNIX98
 #endif
 
 #endif
@@ -209,5 +209,5 @@ typedef intptr_t libvshadow_volume_t;
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_TYPES_H ) */
 

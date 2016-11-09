@@ -23,12 +23,14 @@
 #include <byte_stream.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "info_handle.h"
 #include "vshadowtools_libbfio.h"
 #include "vshadowtools_libcerror.h"
-#include "vshadowtools_libcstring.h"
 #include "vshadowtools_libcsystem.h"
 #include "vshadowtools_libfdatetime.h"
 #include "vshadowtools_libfguid.h"
@@ -265,7 +267,7 @@ int info_handle_signal_abort(
  */
 int info_handle_set_volume_offset(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_set_volume_offset";
@@ -283,7 +285,7 @@ int info_handle_set_volume_offset(
 
 		return( -1 );
 	}
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
 	if( libcsystem_string_decimal_copy_to_64_bit(
@@ -311,7 +313,7 @@ int info_handle_set_volume_offset(
  */
 int info_handle_open_input(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function  = "info_handle_open_input";
@@ -329,10 +331,10 @@ int info_handle_open_input(
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   filename );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_file_range_set_name_wide(
 	     info_handle->input_file_io_handle,
 	     filename,
@@ -536,8 +538,8 @@ int info_handle_store_fprint(
 {
 	uint8_t guid_buffer[ 16 ];
 
-	libcstring_system_character_t filetime_string[ 32 ];
-	libcstring_system_character_t guid_string[ 48 ];
+	system_character_t filetime_string[ 32 ];
+	system_character_t guid_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	libfguid_identifier_t *guid       = NULL;
@@ -647,7 +649,7 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libfguid_identifier_copy_to_utf16_string(
 		  guid,
 		  (uint16_t *) guid_string,
@@ -675,7 +677,7 @@ int info_handle_store_fprint(
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tIdentifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+	 "\tIdentifier\t\t: %" PRIs_SYSTEM "\n",
 	 guid_string );
 
 	result = libvshadow_store_get_copy_set_identifier(
@@ -714,7 +716,7 @@ int info_handle_store_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfguid_identifier_copy_to_utf16_string(
 			  guid,
 			  (uint16_t *) guid_string,
@@ -742,7 +744,7 @@ int info_handle_store_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tShadow copy set ID\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tShadow copy set ID\t: %" PRIs_SYSTEM "\n",
 		 guid_string );
 	}
 	if( libvshadow_store_get_creation_time(
@@ -774,7 +776,7 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libfdatetime_filetime_copy_to_utf16_string(
 		  filetime,
 		  (uint16_t *) filetime_string,
@@ -802,7 +804,7 @@ int info_handle_store_fprint(
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tCreation time\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+	 "\tCreation time\t\t: %" PRIs_SYSTEM " UTC\n",
 	 filetime_string );
 
 	result = libvshadow_store_get_copy_identifier(
@@ -841,7 +843,7 @@ int info_handle_store_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfguid_identifier_copy_to_utf16_string(
 			  guid,
 			  (uint16_t *) guid_string,
@@ -869,7 +871,7 @@ int info_handle_store_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tShadow copy ID\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tShadow copy ID\t\t: %" PRIs_SYSTEM "\n",
 		 guid_string );
 	}
 	if( libvshadow_store_get_volume_size(

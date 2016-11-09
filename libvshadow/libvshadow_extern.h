@@ -28,7 +28,7 @@
  */
 #if !defined( HAVE_LOCAL_LIBVSHADOW )
 
-/* If Cygwin libtool DLL support is enabled set LIBVSHADOW_DLL_EXPORT
+/* If libtool DLL support is enabled set LIBVSHADOW_DLL_EXPORT
  * before including libvshadow/extern.h
  */
 #if defined( _WIN32 ) && defined( DLL_EXPORT )
@@ -38,10 +38,9 @@
 #include <libvshadow/extern.h>
 
 #else
-
-#define LIBVSHADOW_EXTERN  extern
-
-#endif
+#define LIBVSHADOW_EXTERN	extern
 
 #endif
+
+#endif /* !defined( _LIBVSHADOW_INTERNAL_EXTERN_H ) */
 

@@ -21,7 +21,9 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libvshadow_debug.h"
 #include "libvshadow_definitions.h"
@@ -30,7 +32,6 @@
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
-#include "libvshadow_libcstring.h"
 #include "libvshadow_libcthreads.h"
 #include "libvshadow_store.h"
 #include "libvshadow_store_descriptor.h"
@@ -386,7 +387,7 @@ int libvshadow_volume_open(
 	if( libbfio_file_set_name(
 	     file_io_handle,
 	     filename,
-	     libcstring_narrow_string_length(
+	     narrow_string_length(
 	      filename ) + 1,
 	     error ) != 1 )
 	{
@@ -553,7 +554,7 @@ int libvshadow_volume_open_wide(
 	if( libbfio_file_set_name_wide(
 	     file_io_handle,
 	     filename,
-	     libcstring_wide_string_length(
+	     wide_string_length(
 	      filename ) + 1,
 	     error ) != 1 )
 	{

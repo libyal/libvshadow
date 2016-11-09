@@ -33,7 +33,6 @@
 #include "pyvshadow_guid.h"
 #include "pyvshadow_integer.h"
 #include "pyvshadow_libcerror.h"
-#include "pyvshadow_libcstring.h"
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
 #include "pyvshadow_store.h"

@@ -27,7 +27,6 @@
 
 #include "pyvshadow_libbfio.h"
 #include "pyvshadow_libcerror.h"
-#include "pyvshadow_libcstring.h"
 #include "pyvshadow_python.h"
 
 #if defined( __cplusplus )

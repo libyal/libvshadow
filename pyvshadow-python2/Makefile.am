@@ -8,7 +8,6 @@ if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -34,7 +33,6 @@ BUILT_SOURCES = \
 	pyvshadow_libbfio.h \
 	pyvshadow_libcerror.h \
 	pyvshadow_libclocale.h \
-	pyvshadow_libcstring.h \
 	pyvshadow_libfguid.h \
 	pyvshadow_libvshadow.h \
 	pyvshadow_python.h \
@@ -48,7 +46,6 @@ pyexec_LTLIBRARIES = pyvshadow.la
 nodist_pyvshadow_la_SOURCES = $(BUILT_SOURCES)
 
 pyvshadow_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCDATA_LIBADD@ \

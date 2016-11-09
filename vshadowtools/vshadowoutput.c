@@ -31,7 +31,6 @@
 #include "vshadowtools_libcerror.h"
 #include "vshadowtools_libclocale.h"
 #include "vshadowtools_libcnotify.h"
-#include "vshadowtools_libcstring.h"
 #include "vshadowtools_libcsystem.h"
 #include "vshadowtools_libfdatetime.h"
 #include "vshadowtools_libfguid.h"
