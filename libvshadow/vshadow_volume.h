@@ -220,5 +220,5 @@ struct vshadow_ntfs_volume_header
 }
 #endif
 
-#endif
+#endif /* !defined( _VSHADOW_VOLUME_H ) */
 

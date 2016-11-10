@@ -67,5 +67,5 @@ int libvshadow_block_range_descriptor_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_BLOCK_RANGE_DESCRIPTOR_H ) */
 

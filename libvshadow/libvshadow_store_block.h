@@ -84,5 +84,5 @@ int libvshadow_store_block_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_STORE_BLOCK_H ) */
 

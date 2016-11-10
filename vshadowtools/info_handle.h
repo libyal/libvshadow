@@ -109,5 +109,5 @@ int info_handle_volume_fprint(
 }
 #endif
 
-#endif
+#endif /* !defined( _INFO_HANDLE_H ) */
 

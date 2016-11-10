@@ -44,5 +44,5 @@ int libvshadow_block_tree_insert(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_BLOCK_TREE_H ) */
 

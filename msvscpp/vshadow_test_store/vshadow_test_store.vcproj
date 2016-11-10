@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="vshadow_test_support"
-	ProjectGUID="{AEBC5A29-D69A-4D8B-BCE8-E5AFAF5EB2E3}"
-	RootNamespace="vshadow_test_support"
+	Name="vshadow_test_store"
+	ProjectGUID="{8636BDDB-6E5F-4E8D-9A3F-8DA7EDFC09F6}"
+	RootNamespace="vshadow_test_store"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\vshadow_test_support.c"
+				RelativePath="..\..\tests\vshadow_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_store.c"
 				>
 			</File>
 		</Filter>
@@ -190,23 +194,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\vshadow_test_libclocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\vshadow_test_libcsystem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\vshadow_test_libuna.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\vshadow_test_libvshadow.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\vshadow_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_unused.h"
 				>
 			</File>
 		</Filter>

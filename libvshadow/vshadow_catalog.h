@@ -74,5 +74,5 @@ struct vshadow_catalog_header
 }
 #endif
 
-#endif
+#endif /* !defined( _VSHADOW_CATALOG_H ) */
 

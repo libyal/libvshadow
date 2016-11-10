@@ -59,5 +59,5 @@ void pyvshadow_block_flags_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_BLOCK_FLAGS_H ) */
 

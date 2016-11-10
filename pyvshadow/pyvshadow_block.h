@@ -79,5 +79,5 @@ PyObject *pyvshadow_block_get_offset(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_BLOCK_H ) */
 

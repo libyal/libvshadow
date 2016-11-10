@@ -111,5 +111,5 @@ PyObject *pyvshadow_volume_get_stores(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_FILE_H ) */
 

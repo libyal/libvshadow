@@ -92,5 +92,5 @@ PyObject *pyvshadow_blocks_iternext(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_BLOCKS_H ) */
 

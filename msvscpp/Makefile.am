@@ -15,12 +15,14 @@ MSVSCPP_FILES = \
 	libuna/libuna.vcproj \
 	libvshadow/libvshadow.vcproj \
 	pyvshadow/pyvshadow.vcproj \
+	vshadow_test_block/vshadow_test_block.vcproj \
 	vshadow_test_error/vshadow_test_error.vcproj \
 	vshadow_test_notify/vshadow_test_notify.vcproj \
-	vshadow_test_open_close/vshadow_test_open_close.vcproj \
 	vshadow_test_read/vshadow_test_read.vcproj \
 	vshadow_test_seek/vshadow_test_seek.vcproj \
+	vshadow_test_store/vshadow_test_store.vcproj \
 	vshadow_test_support/vshadow_test_support.vcproj \
+	vshadow_test_volume/vshadow_test_volume.vcproj \
 	vshadowinfo/vshadowinfo.vcproj \
 	vshadowmount/vshadowmount.vcproj \
 	libvshadow.sln

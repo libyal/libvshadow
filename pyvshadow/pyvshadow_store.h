@@ -135,5 +135,5 @@ PyObject *pyvshadow_store_get_blocks(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_STORE_H ) */
 

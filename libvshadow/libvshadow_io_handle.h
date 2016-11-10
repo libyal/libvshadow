@@ -85,5 +85,5 @@ int libvshadow_io_handle_read_catalog(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_IO_HANDLE_H ) */
 

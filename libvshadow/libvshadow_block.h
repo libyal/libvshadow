@@ -85,5 +85,5 @@ int libvshadow_block_get_values(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_INTERNAL_BLOCK_H ) */
 

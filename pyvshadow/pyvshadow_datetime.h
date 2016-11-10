@@ -44,5 +44,5 @@ PyObject *pyvshadow_datetime_new_from_posix_time(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_DATETIME_H ) */
 

@@ -153,5 +153,5 @@ int libvshadow_volume_get_store_identifier(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_INTERNAL_VOLUME_H ) */
 

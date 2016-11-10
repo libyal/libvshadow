@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="vshadow_test_open_close"
-	ProjectGUID="{9EEBB28D-7E1A-4C4C-A36D-71647B9DACAA}"
-	RootNamespace="vshadow_test_open_close"
+	Name="vshadow_test_block"
+	ProjectGUID="{069DB106-FA82-44F3-994C-DE6894DDB8F5}"
+	RootNamespace="vshadow_test_block"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\vshadow_test_open_close.c"
+				RelativePath="..\..\tests\vshadow_test_block.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -190,11 +194,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\vshadow_test_libcsystem.h"
+				RelativePath="..\..\tests\vshadow_test_libvshadow.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\vshadow_test_libvshadow.h"
+				RelativePath="..\..\tests\vshadow_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_memory.h"
 				>
 			</File>
 			<File

@@ -121,5 +121,5 @@ int libvshadow_block_descriptor_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_BLOCK_DESCRIPTOR_H ) */
 

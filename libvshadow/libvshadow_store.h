@@ -196,5 +196,5 @@ int libvshadow_store_get_block_by_index(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_INTERNAL_STORE_H ) */
 

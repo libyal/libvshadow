@@ -39,5 +39,5 @@ PyObject *pyvshadow_string_new_from_guid(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_GUID_H ) */
 

@@ -92,5 +92,5 @@ PyObject *pyvshadow_stores_iternext(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_STORES_H ) */
 

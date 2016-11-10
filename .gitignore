@@ -125,12 +125,14 @@ stamp-h[1-9]
 /vshadowtools/vshadowmount
 /tests/input
 /tests/tmp*
+/tests/vshadow_test_block
 /tests/vshadow_test_error
 /tests/vshadow_test_notify
-/tests/vshadow_test_open_close
 /tests/vshadow_test_read
 /tests/vshadow_test_seek
+/tests/vshadow_test_store
 /tests/vshadow_test_support
+/tests/vshadow_test_volume
 
 # Local library dependencies specific files
 /libbfio

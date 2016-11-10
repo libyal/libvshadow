@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="vshadow_test_support"
-	ProjectGUID="{AEBC5A29-D69A-4D8B-BCE8-E5AFAF5EB2E3}"
-	RootNamespace="vshadow_test_support"
+	Name="vshadow_test_volume"
+	ProjectGUID="{944A3CA7-E501-48AD-BF8B-61B53AB0FF50}"
+	RootNamespace="vshadow_test_volume"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\vshadow_test_support.c"
+				RelativePath="..\..\tests\vshadow_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_volume.c"
 				>
 			</File>
 		</Filter>
@@ -207,6 +211,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\vshadow_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_memory.h"
 				>
 			</File>
 		</Filter>

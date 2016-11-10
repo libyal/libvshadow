@@ -270,5 +270,5 @@ int libvshadow_store_descriptor_get_block_descriptor_by_index(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBVSHADOW_STORE_DESCRIPTOR_H ) */
 

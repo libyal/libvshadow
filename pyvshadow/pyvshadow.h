@@ -57,5 +57,5 @@ PyMODINIT_FUNC initpyvshadow(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYVSHADOW_H ) */
 

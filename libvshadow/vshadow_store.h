@@ -215,5 +215,5 @@ struct vshadow_store_block_range_list_entry
 }
 #endif
 
-#endif
+#endif /* !defined( _VSHADOW_STORE_H ) */
 
