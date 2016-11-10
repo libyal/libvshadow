@@ -71,7 +71,7 @@ int libvshadow_block_range_descriptor_initialize(
 	*block_range_descriptor = memory_allocate_structure(
 	                     libvshadow_block_range_descriptor_t );
 
-	if( block_range_descriptor == NULL )
+	if( *block_range_descriptor == NULL )
 	{
 		libcerror_error_set(
 		 error,

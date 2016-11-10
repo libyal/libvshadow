@@ -21,10 +21,7 @@
 
 #include <common.h>
 #include <memory.h>
-#include <narrow_string.h>
-#include <system_string.h>
 #include <types.h>
-#include <wide_string.h>
 
 #include "libvshadow_block_descriptor.h"
 #include "libvshadow_block_range_descriptor.h"
@@ -80,7 +77,7 @@ int libvshadow_store_descriptor_initialize(
 	*store_descriptor = memory_allocate_structure(
 	                     libvshadow_store_descriptor_t );
 
-	if( store_descriptor == NULL )
+	if( *store_descriptor == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -484,16 +481,10 @@ int libvshadow_store_descriptor_read_catalog_entry(
      uint64_t *entry_type,
      libcerror_error_t **error )
 {
-	static char *function             = "libvshadow_store_descriptor_read_catalog_entry";
+	static char *function = "libvshadow_store_descriptor_read_catalog_entry";
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t filetime_string[ 32 ];
-	system_character_t guid_string[ 48 ];
-
-	libfdatetime_filetime_t *filetime = NULL;
-	libfguid_identifier_t *guid       = NULL;
-	uint64_t value_64bit              = 0;
-	int result                        = 0;
+	uint64_t value_64bit  = 0;
 #endif
 
 	if( store_descriptor == NULL )
@@ -650,75 +641,20 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			 function,
 			 store_descriptor->volume_size );
 
-			if( libfguid_identifier_initialize(
-			     &guid,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create GUID.",
-				 function );
-
-				goto on_error;
-			}
-			if( libfguid_identifier_copy_from_byte_stream(
-			     guid,
+			if( libvshadow_debug_print_guid_value(
+			     function,
+			     "store identifier\t\t",
 			     &( catalog_block_data[ 16 ] ),
 			     16,
 			     LIBFGUID_ENDIAN_LITTLE,
+			     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-				 "%s: unable to copy byte stream to GUID.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libfguid_identifier_copy_to_utf16_string(
-				  guid,
-				  (uint16_t *) guid_string,
-				  48,
-				  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-				  error );
-#else
-			result = libfguid_identifier_copy_to_utf8_string(
-				  guid,
-				  (uint8_t *) guid_string,
-				  48,
-				  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-				 "%s: unable to copy GUID to string.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "%s: store identifier\t\t: %" PRIs_SYSTEM "\n",
-			 function,
-			 guid_string );
-
-			if( libfguid_identifier_free(
-			     &guid,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free GUID.",
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print GUID value.",
 				 function );
 
 				goto on_error;
@@ -739,75 +675,20 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			 function,
 			 value_64bit );
 
-			if( libfdatetime_filetime_initialize(
-			     &filetime,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create filetime.",
-				 function );
-
-				goto on_error;
-			}
-			if( libfdatetime_filetime_copy_from_byte_stream(
-			     filetime,
+			if( libvshadow_debug_print_filetime_value(
+			     function,
+			     "creation time\t\t\t",
 			     &( catalog_block_data[ 48 ] ),
 			     8,
 			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to copy filetime from byte stream.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libfdatetime_filetime_copy_to_utf16_string(
-				  filetime,
-				  (uint16_t *) filetime_string,
-				  32,
-				  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-				  error );
-#else
-			result = libfdatetime_filetime_copy_to_utf8_string(
-				  filetime,
-				  (uint8_t *) filetime_string,
-				  32,
-				  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to copy filetime to string.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "%s: creation time\t\t\t: %" PRIs_SYSTEM " UTC\n",
-			 function,
-			 filetime_string );
-
-			if( libfdatetime_filetime_free(
-			     &filetime,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free filetime.",
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print filetime value.",
 				 function );
 
 				goto on_error;
@@ -852,75 +733,20 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			 function,
 			 store_descriptor->store_block_list_offset );
 
-			if( libfguid_identifier_initialize(
-			     &guid,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create GUID.",
-				 function );
-
-				goto on_error;
-			}
-			if( libfguid_identifier_copy_from_byte_stream(
-			     guid,
+			if( libvshadow_debug_print_guid_value(
+			     function,
+			     "store identifier\t\t",
 			     &( catalog_block_data[ 16 ] ),
 			     16,
 			     LIBFGUID_ENDIAN_LITTLE,
+			     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-				 "%s: unable to copy byte stream to GUID.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libfguid_identifier_copy_to_utf16_string(
-				  guid,
-				  (uint16_t *) guid_string,
-				  48,
-				  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-				  error );
-#else
-			result = libfguid_identifier_copy_to_utf8_string(
-				  guid,
-				  (uint8_t *) guid_string,
-				  48,
-				  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-				 "%s: unable to copy GUID to string.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "%s: store identifier\t\t: %" PRIs_SYSTEM "\n",
-			 function,
-			 guid_string );
-
-			if( libfguid_identifier_free(
-			     &guid,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free GUID.",
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print GUID value.",
 				 function );
 
 				goto on_error;
@@ -998,20 +824,6 @@ int libvshadow_store_descriptor_read_catalog_entry(
 	return( 1 );
 
 on_error:
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( filetime != NULL )
-	{
-		libfdatetime_filetime_free(
-		 &filetime,
-		 NULL );
-	}
-	if( guid != NULL )
-	{
-		libfguid_identifier_free(
-		 &guid,
-		 NULL );
-	}
-#endif
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 store_descriptor->read_write_lock,
@@ -1034,13 +846,7 @@ int libvshadow_store_descriptor_read_store_header(
 	size_t store_header_data_offset       = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t guid_string[ 48 ];
-
-	libfguid_identifier_t *guid           = NULL;
-	system_character_t *value_string      = NULL;
-	size_t value_string_size              = 0;
 	uint32_t value_32bit                  = 0;
-	int result                            = 0;
 #endif
 
 	if( store_descriptor == NULL )
@@ -1160,169 +966,56 @@ int libvshadow_store_descriptor_read_store_header(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( libfguid_identifier_initialize(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create GUID.",
-			 function );
-
-			goto on_error;
-		}
-		if( libfguid_identifier_copy_from_byte_stream(
-		     guid,
+		if( libvshadow_debug_print_guid_value(
+		     function,
+		     "unknown5\t\t\t",
 		     ( (vshadow_store_information_t *) store_header_data )->unknown5,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
+		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy byte stream to GUID.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print GUID value.",
 			 function );
 
 			goto on_error;
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfguid_identifier_copy_to_utf16_string(
-			  guid,
-			  (uint16_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#else
-		result = libfguid_identifier_copy_to_utf8_string(
-			  guid,
-			  (uint8_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy GUID to string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: unknown5\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 guid_string );
-
-		if( libfguid_identifier_copy_from_byte_stream(
-		     guid,
+		if( libvshadow_debug_print_guid_value(
+		     function,
+		     "copy identifier\t\t",
 		     ( (vshadow_store_information_t *) store_header_data )->copy_identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
+		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy byte stream to GUID.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print GUID value.",
 			 function );
 
 			goto on_error;
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfguid_identifier_copy_to_utf16_string(
-			  guid,
-			  (uint16_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#else
-		result = libfguid_identifier_copy_to_utf8_string(
-			  guid,
-			  (uint8_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy GUID to string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: copy identifier\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 guid_string );
-
-		if( libfguid_identifier_copy_from_byte_stream(
-		     guid,
+		if( libvshadow_debug_print_guid_value(
+		     function,
+		     "copy set identifier\t",
 		     ( (vshadow_store_information_t *) store_header_data )->copy_set_identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
+		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy byte stream to GUID.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfguid_identifier_copy_to_utf16_string(
-			  guid,
-			  (uint16_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#else
-		result = libfguid_identifier_copy_to_utf8_string(
-			  guid,
-			  (uint8_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy GUID to string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: copy set identifier\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 guid_string );
-
-		if( libfguid_identifier_free(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free GUID.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print GUID value.",
 			 function );
 
 			goto on_error;
@@ -1413,85 +1106,23 @@ int libvshadow_store_descriptor_read_store_header(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libuna_utf16_string_size_from_utf16_stream(
-			  store_descriptor->operating_machine_string,
-			  (size_t) store_descriptor->operating_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  &value_string_size,
-			  error );
-#else
-		result = libuna_utf8_string_size_from_utf16_stream(
-			  store_descriptor->operating_machine_string,
-			  (size_t) store_descriptor->operating_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  &value_string_size,
-			  error );
-#endif
-		if( result != 1 )
+		if( libvshadow_debug_print_utf16_string_value(
+		     function,
+		     "operating machine string\t",
+		     store_descriptor->operating_machine_string,
+		     (size_t) store_descriptor->operating_machine_string_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine value string size.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print UTF-16 string value.",
 			 function );
 
 			goto on_error;
 		}
-		value_string = system_string_allocate(
-		                value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create value string.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libuna_utf16_string_copy_from_utf16_stream(
-			  (libuna_utf16_character_t *) value_string,
-			  value_string_size,
-			  store_descriptor->operating_machine_string,
-			  (size_t) store_descriptor->operating_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  error );
-#else
-		result = libuna_utf8_string_copy_from_utf16_stream(
-			  (libuna_utf8_character_t *) value_string,
-			  value_string_size,
-			  store_descriptor->operating_machine_string,
-			  (size_t) store_descriptor->operating_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  error );
-#endif
-
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set value string.",
-			 function );
-
-			memory_free(
-			 value_string );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: operating machine string\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 value_string );
-
-		memory_free(
-		 value_string );
 	}
 #endif
 	byte_stream_copy_to_uint16_little_endian(
@@ -1544,85 +1175,23 @@ int libvshadow_store_descriptor_read_store_header(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libuna_utf16_string_size_from_utf16_stream(
-			  store_descriptor->service_machine_string,
-			  (size_t) store_descriptor->service_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  &value_string_size,
-			  error );
-#else
-		result = libuna_utf8_string_size_from_utf16_stream(
-			  store_descriptor->service_machine_string,
-			  (size_t) store_descriptor->service_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  &value_string_size,
-			  error );
-#endif
-		if( result != 1 )
+		if( libvshadow_debug_print_utf16_string_value(
+		     function,
+		     "service machine string\t",
+		     store_descriptor->service_machine_string,
+		     (size_t) store_descriptor->service_machine_string_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine value string size.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print UTF-16 string value.",
 			 function );
 
 			goto on_error;
 		}
-		value_string = system_string_allocate(
-		                value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create value string.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libuna_utf16_string_copy_from_utf16_stream(
-			  (libuna_utf16_character_t *) value_string,
-			  value_string_size,
-			  store_descriptor->service_machine_string,
-			  (size_t) store_descriptor->service_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  error );
-#else
-		result = libuna_utf8_string_copy_from_utf16_stream(
-			  (libuna_utf8_character_t *) value_string,
-			  value_string_size,
-			  store_descriptor->service_machine_string,
-			  (size_t) store_descriptor->service_machine_string_size,
-			  LIBUNA_ENDIAN_LITTLE,
-			  error );
-#endif
-
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set value string.",
-			 function );
-
-			memory_free(
-			 value_string );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: service machine string\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 value_string );
-
-		memory_free(
-		 value_string );
 	}
 #endif
 #if defined( HAVE_DEBUG_OUTPUT )

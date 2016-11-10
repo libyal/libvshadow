@@ -22,9 +22,9 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
-#include <system_string.h>
 #include <types.h>
 
+#include "libvshadow_debug.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
@@ -67,13 +67,14 @@ int libvshadow_store_block_initialize(
 
 		return( -1 );
 	}
-	if( block_size > (size_t) SSIZE_MAX )
+	if( ( block_size == 0 )
+	 || ( block_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid block size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid block size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -81,7 +82,7 @@ int libvshadow_store_block_initialize(
 	*store_block = memory_allocate_structure(
 	                libvshadow_store_block_t );
 
-	if( store_block == NULL )
+	if( *store_block == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -104,7 +105,12 @@ int libvshadow_store_block_initialize(
 		 "%s: unable to clear store block.",
 		 function );
 
-		goto on_error;
+		memory_free(
+		 *store_block );
+
+		*store_block = NULL;
+
+		return( -1 );
 	}
 	( *store_block )->data = (uint8_t *) memory_allocate(
 	                                      sizeof( uint8_t ) * block_size );
@@ -176,15 +182,11 @@ int libvshadow_store_block_read(
      off64_t file_offset,
      libcerror_error_t **error )
 {
-	static char *function       = "libvshadow_store_block_read";
-	ssize_t read_count          = 0;
+	static char *function = "libvshadow_store_block_read";
+	ssize_t read_count    = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t guid_string[ 48 ];
-
-	libfguid_identifier_t *guid = NULL;
-	uint64_t value_64bit        = 0;
-	int result                  = 0;
+	uint64_t value_64bit  = 0;
 #endif
 
 	if( store_block == NULL )
@@ -301,66 +303,24 @@ int libvshadow_store_block_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( libfguid_identifier_initialize(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create GUID.",
-			 function );
-
-			return( -1 );
-		}
-		if( libfguid_identifier_copy_from_byte_stream(
-		     guid,
+		if( libvshadow_debug_print_guid_value(
+		     function,
+		     "identifier\t\t\t\t\t",
 		     ( (vshadow_store_block_header_t *) store_block->data )->identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
+		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy byte stream to GUID.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print GUID value.",
 			 function );
 
 			return( -1 );
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfguid_identifier_copy_to_utf16_string(
-			  guid,
-			  (uint16_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#else
-		result = libfguid_identifier_copy_to_utf8_string(
-			  guid,
-			  (uint8_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy GUID to string.",
-			 function );
-
-			return( -1 );
-		}
-		libcnotify_printf(
-		 "%s: identifier\t\t\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 guid_string );
-
 		libcnotify_printf(
 		 "%s: version\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
@@ -401,20 +361,6 @@ int libvshadow_store_block_read(
 		 ( (vshadow_store_block_header_t *) store_block->data )->unknown2,
 		 72,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-
-		if( libfguid_identifier_free(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free GUID.",
-			 function );
-
-			return( -1 );
-		}
 	}
 #endif
 	if( store_block->version != 1 )

@@ -12,9 +12,27 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_block", "vshad
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_block_descriptor", "vshadow_test_block_descriptor\vshadow_test_block_descriptor.vcproj", "{5E4B3EB2-E7C9-4731-A19C-A0270246D66E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_block_range_descriptor", "vshadow_test_block_range_descriptor\vshadow_test_block_range_descriptor.vcproj", "{D7784C65-8AB2-4060-9EB0-610F98C92869}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_error", "vshadow_test_error\vshadow_test_error.vcproj", "{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_io_handle", "vshadow_test_io_handle\vshadow_test_io_handle.vcproj", "{87CC1925-FB91-4CC9-BE46-6D7D77EF8CA6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_notify", "vshadow_test_notify\vshadow_test_notify.vcproj", "{232D4E58-3057-49EC-B44C-5B06BC3238AD}"
@@ -39,6 +57,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_seek", "vshado
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_store", "vshadow_test_store\vshadow_test_store.vcproj", "{8636BDDB-6E5F-4E8D-9A3F-8DA7EDFC09F6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_store_block", "vshadow_test_store_block\vshadow_test_store_block.vcproj", "{11A98D18-621B-495A-9E30-27FE86F3476B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_store_descriptor", "vshadow_test_store_descriptor\vshadow_test_store_descriptor.vcproj", "{E816889D-48AA-4067-9D44-5C961631085C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
@@ -223,10 +253,22 @@ Global
 		{069DB106-FA82-44F3-994C-DE6894DDB8F5}.Release|Win32.Build.0 = Release|Win32
 		{069DB106-FA82-44F3-994C-DE6894DDB8F5}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{069DB106-FA82-44F3-994C-DE6894DDB8F5}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{5E4B3EB2-E7C9-4731-A19C-A0270246D66E}.Release|Win32.ActiveCfg = Release|Win32
+		{5E4B3EB2-E7C9-4731-A19C-A0270246D66E}.Release|Win32.Build.0 = Release|Win32
+		{5E4B3EB2-E7C9-4731-A19C-A0270246D66E}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{5E4B3EB2-E7C9-4731-A19C-A0270246D66E}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{D7784C65-8AB2-4060-9EB0-610F98C92869}.Release|Win32.ActiveCfg = Release|Win32
+		{D7784C65-8AB2-4060-9EB0-610F98C92869}.Release|Win32.Build.0 = Release|Win32
+		{D7784C65-8AB2-4060-9EB0-610F98C92869}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{D7784C65-8AB2-4060-9EB0-610F98C92869}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.Release|Win32.ActiveCfg = Release|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.Release|Win32.Build.0 = Release|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{87CC1925-FB91-4CC9-BE46-6D7D77EF8CA6}.Release|Win32.ActiveCfg = Release|Win32
+		{87CC1925-FB91-4CC9-BE46-6D7D77EF8CA6}.Release|Win32.Build.0 = Release|Win32
+		{87CC1925-FB91-4CC9-BE46-6D7D77EF8CA6}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{87CC1925-FB91-4CC9-BE46-6D7D77EF8CA6}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{232D4E58-3057-49EC-B44C-5B06BC3238AD}.Release|Win32.ActiveCfg = Release|Win32
 		{232D4E58-3057-49EC-B44C-5B06BC3238AD}.Release|Win32.Build.0 = Release|Win32
 		{232D4E58-3057-49EC-B44C-5B06BC3238AD}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
@@ -243,6 +285,14 @@ Global
 		{8636BDDB-6E5F-4E8D-9A3F-8DA7EDFC09F6}.Release|Win32.Build.0 = Release|Win32
 		{8636BDDB-6E5F-4E8D-9A3F-8DA7EDFC09F6}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{8636BDDB-6E5F-4E8D-9A3F-8DA7EDFC09F6}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{11A98D18-621B-495A-9E30-27FE86F3476B}.Release|Win32.ActiveCfg = Release|Win32
+		{11A98D18-621B-495A-9E30-27FE86F3476B}.Release|Win32.Build.0 = Release|Win32
+		{11A98D18-621B-495A-9E30-27FE86F3476B}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{11A98D18-621B-495A-9E30-27FE86F3476B}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{E816889D-48AA-4067-9D44-5C961631085C}.Release|Win32.ActiveCfg = Release|Win32
+		{E816889D-48AA-4067-9D44-5C961631085C}.Release|Win32.Build.0 = Release|Win32
+		{E816889D-48AA-4067-9D44-5C961631085C}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{E816889D-48AA-4067-9D44-5C961631085C}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{AEBC5A29-D69A-4D8B-BCE8-E5AFAF5EB2E3}.Release|Win32.ActiveCfg = Release|Win32
 		{AEBC5A29-D69A-4D8B-BCE8-E5AFAF5EB2E3}.Release|Win32.Build.0 = Release|Win32
 		{AEBC5A29-D69A-4D8B-BCE8-E5AFAF5EB2E3}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

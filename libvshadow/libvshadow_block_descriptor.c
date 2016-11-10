@@ -72,7 +72,7 @@ int libvshadow_block_descriptor_initialize(
 	*block_descriptor = memory_allocate_structure(
 	                     libvshadow_block_descriptor_t );
 
-	if( block_descriptor == NULL )
+	if( *block_descriptor == NULL )
 	{
 		libcerror_error_set(
 		 error,

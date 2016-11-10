@@ -11,8 +11,8 @@ TEST_PREFIX=`dirname ${PWD}`;
 TEST_PREFIX=`basename ${TEST_PREFIX} | sed 's/^lib\([^-]*\).*$/\1/'`;
 
 TEST_PROFILE="lib${TEST_PREFIX}";
-TEST_FUNCTIONS="error notify support";
-TEST_FUNCTIONS_WITH_INPUT="seek read";
+TEST_FUNCTIONS="error notify";
+TEST_FUNCTIONS_WITH_INPUT="support";
 OPTION_SETS="";
 
 TEST_TOOL_DIRECTORY=".";
@@ -97,8 +97,14 @@ fi
 
 for TEST_FUNCTION in ${TEST_FUNCTIONS_WITH_INPUT};
 do
-	test_api_function_with_input "${TEST_FUNCTION}";
-	RESULT=$?;
+	if test -d ${INPUT_DIRECTORY};
+	then
+		test_api_function_with_input "${TEST_FUNCTION}";
+		RESULT=$?;
+	else
+		test_api_function "${TEST_FUNCTION}";
+		RESULT=$?;
+	fi
 
 	if test ${RESULT} -ne ${EXIT_SUCCESS};
 	then

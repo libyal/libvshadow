@@ -10,7 +10,7 @@ $TestPrefix = Split-Path -path ${Pwd}.Path -parent
 $TestPrefix = Split-Path -path ${TestPrefix} -leaf
 $TestPrefix = ${TestPrefix}.Substring(3)
 
-$TestTypes = "store block"
+$TestTypes = "block block_descriptor block_range_descriptor io_handle store store_block store_descriptor"
 $TestTypesWithInput = "volume"
 
 $TestToolDirectory = "..\msvscpp\Release"

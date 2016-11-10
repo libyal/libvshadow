@@ -42,11 +42,16 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	vshadow_test_block \
+	vshadow_test_block_descriptor \
+	vshadow_test_block_range_descriptor \
 	vshadow_test_error \
+	vshadow_test_io_handle \
 	vshadow_test_notify \
 	vshadow_test_read \
 	vshadow_test_seek \
 	vshadow_test_store \
+	vshadow_test_store_block \
+	vshadow_test_store_descriptor \
 	vshadow_test_support \
 	vshadow_test_volume
 
@@ -62,6 +67,30 @@ vshadow_test_block_LDADD = \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 
+vshadow_test_block_descriptor_SOURCES = \
+	vshadow_test_block_descriptor.c \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_unused.h
+
+vshadow_test_block_descriptor_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
+
+vshadow_test_block_range_descriptor_SOURCES = \
+	vshadow_test_block_range_descriptor.c \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_unused.h
+
+vshadow_test_block_range_descriptor_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
+
 vshadow_test_error_SOURCES = \
 	vshadow_test_error.c \
 	vshadow_test_libvshadow.h \
@@ -70,6 +99,18 @@ vshadow_test_error_SOURCES = \
 
 vshadow_test_error_LDADD = \
 	../libvshadow/libvshadow.la
+
+vshadow_test_io_handle_SOURCES = \
+	vshadow_test_io_handle.c \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_unused.h
+
+vshadow_test_io_handle_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
 
 vshadow_test_notify_SOURCES = \
 	vshadow_test_libvshadow.h \
@@ -118,6 +159,30 @@ vshadow_test_store_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_store_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
+
+vshadow_test_store_block_SOURCES = \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_store_block.c \
+	vshadow_test_unused.h
+
+vshadow_test_store_block_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
+
+vshadow_test_store_descriptor_SOURCES = \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_store_descriptor.c \
+	vshadow_test_unused.h
+
+vshadow_test_store_descriptor_LDADD = \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 
