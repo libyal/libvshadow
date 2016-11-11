@@ -58,6 +58,7 @@ vshadowdebug_LDADD = \
 	@LIBINTL@
 
 vshadowinfo_SOURCES = \
+	byte_size_string.c byte_size_string.h \
 	info_handle.c info_handle.h \
 	vshadowinfo.c \
 	vshadowoutput.c vshadowoutput.h \

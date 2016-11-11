@@ -28,6 +28,7 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include "byte_size_string.h"
 #include "info_handle.h"
 #include "vshadowtools_libbfio.h"
 #include "vshadowtools_libcerror.h"
@@ -536,10 +537,10 @@ int info_handle_store_fprint(
      libvshadow_store_t *store,
      libcerror_error_t **error )
 {
-	uint8_t guid_buffer[ 16 ];
-
+	system_character_t byte_size_string[ 16 ];
 	system_character_t filetime_string[ 32 ];
 	system_character_t guid_string[ 48 ];
+	uint8_t guid_buffer[ 16 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	libfguid_identifier_t *guid       = NULL;
@@ -889,11 +890,28 @@ int info_handle_store_fprint(
 
 		goto on_error;
 	}
-	fprintf(
-	 info_handle->notify_stream,
-	 "\tVolume size\t\t: %" PRIu64 " bytes\n",
-	 volume_size );
+	result = byte_size_string_create(
+	          byte_size_string,
+	          16,
+	          volume_size,
+	          BYTE_SIZE_STRING_UNIT_MEBIBYTE,
+	          NULL );
 
+	if( result == 1 )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tVolume size\t\t: %" PRIs_SYSTEM " (%" PRIu64 " bytes)\n",
+		 byte_size_string,
+		 volume_size );
+	}
+	else
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tVolume size\t\t: %" PRIu64 " bytes\n",
+		 volume_size );
+	}
 	result = libvshadow_store_get_attribute_flags(
 	          store,
 	          &attribute_flags,
