@@ -373,7 +373,6 @@ int vshadow_test_block_tree_insert(
          "error",
          error );
 
-#ifdef TODO 
 	/* Test insert of block descriptor: is forwarder flag, replaces existing forwarder
 	 */
 	block_descriptor->original_offset = 0xb7f44000;
@@ -397,7 +396,6 @@ int vshadow_test_block_tree_insert(
         VSHADOW_TEST_ASSERT_IS_NULL(
          "error",
          error );
-#endif
 
 	/* Test insert of block descriptor: not used flag
 	 */
