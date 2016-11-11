@@ -179,7 +179,7 @@ int mount_handle_free(
 	}
 	if( *mount_handle != NULL )
 	{
-		if( ( *mount_handle )->input_stores != NULL )
+		if( ( *mount_handle )->inputs != NULL )
 		{
 			if( mount_handle_close_input(
 			     *mount_handle,
@@ -356,9 +356,9 @@ int mount_handle_open_input(
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to set file name.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set filename.",
 		 function );
 
 		return( -1 );
@@ -412,7 +412,7 @@ int mount_handle_open_input(
 		}
 		if( libvshadow_volume_get_number_of_stores(
 		     mount_handle->input_volume,
-		     &( mount_handle->number_of_input_stores ),
+		     &( mount_handle->number_of_inputs ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -424,30 +424,30 @@ int mount_handle_open_input(
 
 			return( -1 );
 		}
-		mount_handle->input_stores = (libvshadow_store_t **) memory_allocate(
-		                                                      sizeof( libvshadow_store_t * ) * mount_handle->number_of_input_stores );
+		mount_handle->inputs = (libvshadow_store_t **) memory_allocate(
+		                                                sizeof( libvshadow_store_t * ) * mount_handle->number_of_inputs );
 
-		if( mount_handle->input_stores == NULL )
+		if( mount_handle->inputs == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_MEMORY,
 			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create input stores.",
+			 "%s: unable to create inputs.",
 			 function );
 
 			goto on_error;
 		}
 		if( memory_set(
-		     mount_handle->input_stores,
+		     mount_handle->inputs,
 		     0,
-		     sizeof( libvshadow_store_t * ) * mount_handle->number_of_input_stores ) == NULL )
+		     sizeof( libvshadow_store_t * ) * mount_handle->number_of_inputs ) == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_MEMORY,
 			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear input stores.",
+			 "%s: unable to clear inputs.",
 			 function );
 
 			goto on_error;
@@ -456,10 +456,10 @@ int mount_handle_open_input(
 	return( result );
 
 on_error:
-	if( mount_handle->input_stores != NULL )
+	if( mount_handle->inputs != NULL )
 	{
 		memory_free(
-		 mount_handle->input_stores );
+		 mount_handle->inputs );
 	}
 	return( -1 );
 }
@@ -486,23 +486,23 @@ int mount_handle_close_input(
 
 		return( -1 );
 	}
-	if( mount_handle->input_stores != NULL )
+	if( mount_handle->inputs != NULL )
 	{
 		for( store_index = 0;
-		     store_index < mount_handle->number_of_input_stores;
+		     store_index < mount_handle->number_of_inputs;
 		     store_index++ )
 		{
-			if( mount_handle->input_stores[ store_index ] != NULL )
+			if( mount_handle->inputs[ store_index ] != NULL )
 			{
 				if( libvshadow_store_free(
-			             &( mount_handle->input_stores[ store_index ] ),
+			             &( mount_handle->inputs[ store_index ] ),
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free input store: %d.",
+					 "%s: unable to free input: %d.",
 					 function,
 					 store_index );
 
@@ -511,7 +511,7 @@ int mount_handle_close_input(
 			}
 		}
 		memory_free(
-		 mount_handle->input_stores );
+		 mount_handle->inputs );
 	}
 	if( libvshadow_volume_close(
 	     mount_handle->input_volume,
@@ -529,8 +529,8 @@ int mount_handle_close_input(
 	return( result );
 }
 
-/* Read a buffer from the specified input store
- [*] Returns the number of bytes read if successful or -1 on error
+/* Read a buffer from the specified input
+ * Returns the number of bytes read if successful or -1 on error
  */
 ssize_t mount_handle_read_buffer(
          mount_handle_t *mount_handle,
@@ -554,7 +554,7 @@ ssize_t mount_handle_read_buffer(
 		return( -1 );
 	}
 	if( ( store_index < 0 )
-	 || ( store_index >= mount_handle->number_of_input_stores ) )
+	 || ( store_index >= mount_handle->number_of_inputs ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -565,19 +565,19 @@ ssize_t mount_handle_read_buffer(
 
 		return( -1 );
 	}
-	if( mount_handle->input_stores[ store_index ] == NULL )
+	if( mount_handle->inputs[ store_index ] == NULL )
 	{
 		if( libvshadow_volume_get_store(
 		     mount_handle->input_volume,
 		     store_index,
-		     &( mount_handle->input_stores[ store_index ] ),
+		     &( mount_handle->inputs[ store_index ] ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: unable to retrieve input store: %d from input volume.",
+			 "%s: unable to retrieve input: %d from input volume.",
 			 function,
 			 store_index );
 
@@ -585,7 +585,7 @@ ssize_t mount_handle_read_buffer(
 		}
 	}
 	read_count = libvshadow_store_read_buffer(
-	              mount_handle->input_stores[ store_index ],
+	              mount_handle->inputs[ store_index ],
 	              buffer,
 	              size,
 	              error );
@@ -596,7 +596,7 @@ ssize_t mount_handle_read_buffer(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer from input store: %d.",
+		 "%s: unable to read buffer from input: %d.",
 		 function,
 		 store_index );
 
@@ -605,8 +605,8 @@ ssize_t mount_handle_read_buffer(
 	return( read_count );
 }
 
-/* Seeks a specific offset from the specified input store
- [*] Returns the offset if successful or -1 on error
+/* Seeks a specific offset from the specified input
+ * Returns the offset if successful or -1 on error
  */
 off64_t mount_handle_seek_offset(
          mount_handle_t *mount_handle,
@@ -629,7 +629,7 @@ off64_t mount_handle_seek_offset(
 		return( -1 );
 	}
 	if( ( store_index < 0 )
-	 || ( store_index >= mount_handle->number_of_input_stores ) )
+	 || ( store_index >= mount_handle->number_of_inputs ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -641,19 +641,19 @@ off64_t mount_handle_seek_offset(
 
 		return( -1 );
 	}
-	if( mount_handle->input_stores[ store_index ] == NULL )
+	if( mount_handle->inputs[ store_index ] == NULL )
 	{
 		if( libvshadow_volume_get_store(
 		     mount_handle->input_volume,
 		     store_index,
-		     &( mount_handle->input_stores[ store_index ] ),
+		     &( mount_handle->inputs[ store_index ] ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: unable to retrieve input store: %d from input volume.",
+			 "%s: unable to retrieve input: %d from input volume.",
 			 function,
 			 store_index );
 
@@ -661,7 +661,7 @@ off64_t mount_handle_seek_offset(
 		}
 	}
 	offset = libvshadow_store_seek_offset(
-	          mount_handle->input_stores[ store_index ],
+	          mount_handle->inputs[ store_index ],
 	          offset,
 	          whence,
 	          error );
@@ -672,7 +672,7 @@ off64_t mount_handle_seek_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset in input store: %d.",
+		 "%s: unable to seek offset in input: %d.",
 		 function,
 		 store_index );
 
@@ -719,15 +719,15 @@ int mount_handle_get_size(
 	return( 1 );
 }
 
-/* Retrieves the number of stores of the input volume
+/* Retrieves the number of inputs of the input volume
  * Returns 1 if successful or -1 on error
  */
-int mount_handle_get_number_of_stores(
+int mount_handle_get_number_of_inputs(
      mount_handle_t *mount_handle,
-     int *number_of_stores,
+     int *number_of_inputs,
      libcerror_error_t **error )
 {
-	static char *function = "mount_handle_get_number_of_stores";
+	static char *function = "mount_handle_get_number_of_inputs";
 
 	if( mount_handle == NULL )
 	{
@@ -740,18 +740,18 @@ int mount_handle_get_number_of_stores(
 
 		return( -1 );
 	}
-	if( number_of_stores == NULL )
+	if( number_of_inputs == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid number of stores.",
+		 "%s: invalid number of inputs.",
 		 function );
 
 		return( -1 );
 	}
-	*number_of_stores = mount_handle->number_of_input_stores;
+	*number_of_inputs = mount_handle->number_of_inputs;
 
 	return( 1 );
 }

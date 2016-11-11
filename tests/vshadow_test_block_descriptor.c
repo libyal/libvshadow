@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #endif
 
+#include "vshadow_test_libcdata.h"
 #include "vshadow_test_libcerror.h"
 #include "vshadow_test_libvshadow.h"
 #include "vshadow_test_macros.h"
@@ -34,6 +35,21 @@
 #include "vshadow_test_unused.h"
 
 #include "../libvshadow/libvshadow_block_descriptor.h"
+
+uint8_t vshadow_test_block_descriptor_data[ 32 ] = {
+	0x00, 0x80, 0xfc, 0xb7, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x80, 0x2c, 0x7e, 0x03, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00
+};
+
+uint8_t vshadow_test_block_descriptor_empty_data[ 32 ] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+uint8_t vshadow_test_block_descriptor_error_data[ 32 ] = {
+	0x00, 0x80, 0xfc, 0xb7, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x80, 0x2c, 0x7e, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00
+};
 
 #if defined( __GNUC__ )
 
@@ -47,7 +63,7 @@ int vshadow_test_block_descriptor_initialize(
 	libvshadow_block_descriptor_t *block_descriptor = NULL;
 	int result                                      = 0;
 
-	/* Test block_descriptor initialization
+	/* Test regular cases
 	 */
 	result = libvshadow_block_descriptor_initialize(
 	          &block_descriptor,
@@ -222,8 +238,58 @@ on_error:
 int vshadow_test_block_descriptor_free(
      void )
 {
-	libcerror_error_t *error = NULL;
-	int result               = 0;
+	libcerror_error_t *error                        = NULL;
+	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	int result                                      = 0;
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_initialize(
+	          &( block_descriptor->overlay ),
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor->overlay",
+         block_descriptor->overlay );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_free(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
 
 	/* Test error cases
 	 */
@@ -250,6 +316,1160 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_free_reverse function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_free_reverse(
+     void )
+{
+	libcerror_error_t *error                        = NULL;
+	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	int result                                      = 0;
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_initialize(
+	          &( block_descriptor->overlay ),
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor->overlay",
+         block_descriptor->overlay );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_free_reverse(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_free_reverse(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_clone function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_clone(
+     void )
+{
+	libcerror_error_t *error                                    = NULL;
+	libvshadow_block_descriptor_t *destination_block_descriptor = NULL;
+	libvshadow_block_descriptor_t *source_block_descriptor      = NULL;
+	int result                                                  = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &source_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "source_block_descriptor",
+         source_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_clone(
+	          &destination_block_descriptor,
+	          source_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "destination_block_descriptor",
+         destination_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_free(
+	          &destination_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "destination_block_descriptor",
+         destination_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_clone(
+	          &destination_block_descriptor,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "destination_block_descriptor",
+         destination_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_clone(
+	          NULL,
+	          source_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &source_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "source_block_descriptor",
+         source_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( destination_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &destination_block_descriptor,
+		 NULL );
+	}
+	if( source_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &source_block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_compare_by_original_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_compare_by_original_offset(
+     void )
+{
+	libcerror_error_t *error                               = NULL;
+	libvshadow_block_descriptor_t *first_block_descriptor  = NULL;
+	libvshadow_block_descriptor_t *second_block_descriptor = NULL;
+	int result                                             = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &first_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "first_block_descriptor",
+         first_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_initialize(
+	          &second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "second_block_descriptor",
+         second_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_compare_by_original_offset(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_compare_by_original_offset(
+	          NULL,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_compare_by_original_offset(
+	          first_block_descriptor,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "second_block_descriptor",
+         second_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_free(
+	          &first_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "first_block_descriptor",
+         first_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( second_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &second_block_descriptor,
+		 NULL );
+	}
+	if( first_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &first_block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_compare_by_relative_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_compare_by_relative_offset(
+     void )
+{
+	libcerror_error_t *error                               = NULL;
+	libvshadow_block_descriptor_t *first_block_descriptor  = NULL;
+	libvshadow_block_descriptor_t *second_block_descriptor = NULL;
+	int result                                             = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &first_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "first_block_descriptor",
+         first_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_initialize(
+	          &second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "second_block_descriptor",
+         second_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_compare_by_relative_offset(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_compare_by_relative_offset(
+	          NULL,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_compare_by_relative_offset(
+	          first_block_descriptor,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "second_block_descriptor",
+         second_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_free(
+	          &first_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "first_block_descriptor",
+         first_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( second_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &second_block_descriptor,
+		 NULL );
+	}
+	if( first_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &first_block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_compare_reverse function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_compare_reverse(
+     void )
+{
+	libcerror_error_t *error                               = NULL;
+	libvshadow_block_descriptor_t *first_block_descriptor  = NULL;
+	libvshadow_block_descriptor_t *second_block_descriptor = NULL;
+	int result                                             = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &first_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "first_block_descriptor",
+         first_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_initialize(
+	          &second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "second_block_descriptor",
+         second_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_compare_reverse(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_compare_reverse(
+	          NULL,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_compare_reverse(
+	          first_block_descriptor,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "second_block_descriptor",
+         second_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_free(
+	          &first_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "first_block_descriptor",
+         first_block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( second_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &second_block_descriptor,
+		 NULL );
+	}
+	if( first_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &first_block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_compare_range_by_original_offset_value function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
+     void )
+{
+	libcerror_error_t *error                        = NULL;
+	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	off64_t original_offset                         = 0;
+	int result                                      = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_compare_range_by_original_offset_value(
+	          &original_offset,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_compare_range_by_original_offset_value(
+	          NULL,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_compare_range_by_original_offset_value(
+	          &original_offset,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_compare_range_by_relative_offset_value function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
+     void )
+{
+	libcerror_error_t *error                        = NULL;
+	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	off64_t relative_offset                         = 0;
+	int result                                      = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_compare_range_by_relative_offset_value(
+	          &relative_offset,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_compare_range_by_relative_offset_value(
+	          NULL,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_compare_range_by_relative_offset_value(
+	          &relative_offset,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &block_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_descriptor_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_descriptor_read_data(
+     void )
+{
+	libcerror_error_t *error                        = NULL;
+	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	int result                                      = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_descriptor_read_data(
+	          block_descriptor,
+	          vshadow_test_block_descriptor_data,
+	          32,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_descriptor_read_data(
+	          block_descriptor,
+	          vshadow_test_block_descriptor_empty_data,
+	          32,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_descriptor_read_data(
+	          NULL,
+	          vshadow_test_block_descriptor_data,
+	          32,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_read_data(
+	          block_descriptor,
+	          NULL,
+	          32,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_read_data(
+	          block_descriptor,
+	          vshadow_test_block_descriptor_data,
+	          31,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_descriptor_read_data(
+	          block_descriptor,
+	          vshadow_test_block_descriptor_data,
+	          (size_t) SSIZE_MAX + 1,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Test error case where forwarder flag is set and offset is not 0
+	 */
+	result = libvshadow_block_descriptor_read_data(
+	          block_descriptor,
+	          vshadow_test_block_descriptor_error_data,
+	          32,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "block_descriptor",
+         block_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &block_descriptor,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -280,6 +1500,38 @@ int main(
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_descriptor_free",
 	 vshadow_test_block_descriptor_free );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_free_reverse",
+	 vshadow_test_block_descriptor_free_reverse );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_clone",
+	 vshadow_test_block_descriptor_clone );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_compare_by_original_offset",
+	 vshadow_test_block_descriptor_compare_by_original_offset );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_compare_by_relative_offset",
+	 vshadow_test_block_descriptor_compare_by_relative_offset );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_compare_reverse",
+	 vshadow_test_block_descriptor_compare_reverse );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_compare_range_by_original_offset_value",
+	 vshadow_test_block_descriptor_compare_range_by_original_offset_value );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_compare_range_by_relative_offset_value",
+	 vshadow_test_block_descriptor_compare_range_by_relative_offset_value );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_descriptor_read_data",
+	 vshadow_test_block_descriptor_read_data );
 
 #endif /* defined( __GNUC__ ) */
 

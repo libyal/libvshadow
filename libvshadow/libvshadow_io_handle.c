@@ -200,6 +200,7 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 
 	static char *function                    = "libvshadow_io_handle_read_ntfs_volume_header";
 	size64_t backup_volume_size              = 0;
+	size64_t primary_volume_size             = 0;
 	ssize_t read_count                       = 0;
 	off64_t backup_ntfs_volume_header_offset = 0;
 	uint64_t total_number_of_sectors         = 0;
@@ -229,6 +230,8 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 
 		return( -1 );
 	}
+	*volume_size = 0;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -274,8 +277,6 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	     vshadow_ntfs_volume_file_system_signature,
 	     8 ) != 0 )
 	{
-		*volume_size = 0;
-
 		return( 0 );
 	}
 	byte_stream_copy_to_uint16_little_endian(
@@ -302,18 +303,16 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	}
 	if( total_number_of_sectors == 0 )
 	{
-		*volume_size = 0;
-
 		return( 0 );
 	}
 	cluster_block_size = sectors_per_cluster_block * bytes_per_sector;
 
-	*volume_size  = total_number_of_sectors * bytes_per_sector;
-	*volume_size /= cluster_block_size;
-	*volume_size += 1;
-	*volume_size *= cluster_block_size;
+	primary_volume_size  = total_number_of_sectors * bytes_per_sector;
+	primary_volume_size /= cluster_block_size;
+	primary_volume_size += 1;
+	primary_volume_size *= cluster_block_size;
 
-	backup_ntfs_volume_header_offset = *volume_size - 512;
+	backup_ntfs_volume_header_offset = primary_volume_size - 512;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -349,8 +348,6 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 
 	if( read_count == 0 )
 	{
-		*volume_size = 0;
-
 		return( 0 );
 	}
 	else if( read_count != (ssize_t) sizeof( vshadow_ntfs_volume_header_t ) )
@@ -369,8 +366,6 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	     vshadow_ntfs_volume_file_system_signature,
 	     8 ) != 0 )
 	{
-		*volume_size = 0;
-
 		return( 0 );
 	}
 	byte_stream_copy_to_uint16_little_endian(
@@ -397,8 +392,6 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	}
 	if( total_number_of_sectors == 0 )
 	{
-		*volume_size = 0;
-
 		return( 0 );
 	}
 	backup_volume_size  = total_number_of_sectors * bytes_per_sector;
@@ -406,16 +399,16 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	backup_volume_size += 1;
 	backup_volume_size *= cluster_block_size;
 
-	if( *volume_size != backup_volume_size )
+	if( primary_volume_size != backup_volume_size )
 	{
-		*volume_size = 0;
-
 		return( 0 );
 	}
+	*volume_size = primary_volume_size;
+
 	return( 1 );
 }
 
-/* Reads the volume
+/* Reads the volume header
  * Returns 1 if successful or -1 on error
  */
 int libvshadow_io_handle_read_volume_header(
@@ -429,13 +422,6 @@ int libvshadow_io_handle_read_volume_header(
 
 	static char *function = "libvshadow_io_handle_read_volume_header";
 	ssize_t read_count    = 0;
-	uint32_t record_type  = 0;
-	uint32_t version      = 0;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
-	uint32_t value_32bit  = 0;
-#endif
 
 	if( io_handle == NULL )
 	{
@@ -444,17 +430,6 @@ int libvshadow_io_handle_read_volume_header(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( catalog_offset == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid catalog offset.",
 		 function );
 
 		return( -1 );
@@ -502,6 +477,99 @@ int libvshadow_io_handle_read_volume_header(
 
 		return( -1 );
 	}
+	if( libvshadow_io_handle_read_volume_header_data(
+	     io_handle,
+	     (uint8_t *) &volume_header,
+	     sizeof( vshadow_volume_header_t ),
+	     catalog_offset,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read volume header.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Reads the volume header
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_io_handle_read_volume_header_data(
+     libvshadow_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     off64_t *catalog_offset,
+     libcerror_error_t **error )
+{
+	static char *function = "libvshadow_io_handle_read_volume_header_data";
+	uint32_t record_type  = 0;
+	uint32_t version      = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint64_t value_64bit  = 0;
+	uint32_t value_32bit  = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size < sizeof( vshadow_volume_header_t ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( catalog_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid catalog offset.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -509,13 +577,13 @@ int libvshadow_io_handle_read_volume_header(
 		 "%s: volume header data:\n",
 		 function );
 		libcnotify_print_data(
-		 (uint8_t *) &volume_header,
-		 sizeof( vshadow_volume_header_t ),
+		 data,
+		 data_size,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	if( memory_compare(
-	     volume_header.identifier,
+	     ( (vshadow_volume_header_t *) data )->identifier,
 	     vshadow_vss_identifier,
 	     8 ) != 0 )
 	{
@@ -529,15 +597,15 @@ int libvshadow_io_handle_read_volume_header(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_little_endian(
-	 volume_header.version,
+	 ( (vshadow_volume_header_t *) data )->version,
 	 version );
 
 	byte_stream_copy_to_uint32_little_endian(
-	 volume_header.record_type,
+	 ( (vshadow_volume_header_t *) data )->record_type,
 	 record_type );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 volume_header.catalog_offset,
+	 ( (vshadow_volume_header_t *) data )->catalog_offset,
 	 *catalog_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -546,7 +614,7 @@ int libvshadow_io_handle_read_volume_header(
 		if( libvshadow_debug_print_guid_value(
 		     function,
 		     "identifier\t\t\t",
-		     volume_header.identifier,
+		     ( (vshadow_volume_header_t *) data )->identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
 		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
@@ -572,7 +640,7 @@ int libvshadow_io_handle_read_volume_header(
 		 record_type );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 volume_header.offset,
+		 ( (vshadow_volume_header_t *) data )->offset,
 		 value_64bit );
 		libcnotify_printf(
 		 "%s: offset\t\t\t\t: 0x%08" PRIx64 "\n",
@@ -580,7 +648,7 @@ int libvshadow_io_handle_read_volume_header(
 		 value_64bit );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 volume_header.unknown1,
+		 ( (vshadow_volume_header_t *) data )->unknown1,
 		 value_64bit );
 		libcnotify_printf(
 		 "%s: unknown1\t\t\t: 0x%08" PRIx64 "\n",
@@ -588,7 +656,7 @@ int libvshadow_io_handle_read_volume_header(
 		 value_64bit );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 volume_header.unknown2,
+		 ( (vshadow_volume_header_t *) data )->unknown2,
 		 value_64bit );
 		libcnotify_printf(
 		 "%s: unknown2\t\t\t: 0x%08" PRIx64 "\n",
@@ -601,7 +669,7 @@ int libvshadow_io_handle_read_volume_header(
 		 *catalog_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 volume_header.maximum_size,
+		 ( (vshadow_volume_header_t *) data )->maximum_size,
 		 value_64bit );
 		libcnotify_printf(
 		 "%s: maximum size\t\t\t: %" PRIu64 "\n",
@@ -611,7 +679,7 @@ int libvshadow_io_handle_read_volume_header(
 		if( libvshadow_debug_print_guid_value(
 		     function,
 		     "volume identifier\t\t",
-		     volume_header.volume_identifier,
+		     ( (vshadow_volume_header_t *) data )->volume_identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
 		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
@@ -629,7 +697,7 @@ int libvshadow_io_handle_read_volume_header(
 		if( libvshadow_debug_print_guid_value(
 		     function,
 		     "store volume identifier\t",
-		     volume_header.store_volume_identifier,
+		     ( (vshadow_volume_header_t *) data )->store_volume_identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
 		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
@@ -645,7 +713,7 @@ int libvshadow_io_handle_read_volume_header(
 			return( -1 );
 		}
 		byte_stream_copy_to_uint32_little_endian(
-		 volume_header.unknown3,
+		 ( (vshadow_volume_header_t *) data )->unknown3,
 		 value_32bit );
 		libcnotify_printf(
 		 "%s: unknown3\t\t\t: 0x%08" PRIx64 "\n",
@@ -656,7 +724,7 @@ int libvshadow_io_handle_read_volume_header(
 		 "%s: unknown4:\n",
 		 function );
 		libcnotify_print_data(
-		 volume_header.unknown4,
+		 ( (vshadow_volume_header_t *) data )->unknown4,
 		 412,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
@@ -709,14 +777,8 @@ int libvshadow_io_handle_read_catalog(
 	size_t catalog_block_size                            = 0;
 	ssize_t read_count                                   = 0;
 	uint64_t catalog_entry_type                          = 0;
-	uint32_t record_type                                 = 0;
-	uint32_t version                                     = 0;
 	int result                                           = 0;
 	int store_descriptor_index                           = 0;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit                                 = 0;
-#endif
 
 	if( io_handle == NULL )
 	{
@@ -801,128 +863,21 @@ int libvshadow_io_handle_read_catalog(
 
 			goto on_error;
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: catalog header data:\n",
-			 function );
-			libcnotify_print_data(
-			 catalog_block_data,
-			 sizeof( vshadow_catalog_header_t ),
-			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-		}
-#endif
-		if( memory_compare(
-		     ( (vshadow_catalog_header_t *) catalog_block_data )->identifier,
-		     vshadow_vss_identifier,
-		     8 ) != 0 )
+		if( libvshadow_io_handle_read_catalog_header_data(
+		     io_handle,
+		     catalog_block_data,
+		     catalog_block_size,
+		     &next_offset,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: invalid catalog header identifier.",
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read catalog block header.",
 			 function );
 
 			goto on_error;
-		}
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (vshadow_catalog_header_t *) catalog_block_data )->version,
-		 version );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (vshadow_catalog_header_t *) catalog_block_data )->record_type,
-		 record_type );
-
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (vshadow_catalog_header_t *) catalog_block_data )->next_offset,
-		 next_offset );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			if( libvshadow_debug_print_guid_value(
-			     function,
-			     "identifier\t\t\t\t",
-			     ( (vshadow_catalog_header_t *) catalog_block_data )->identifier,
-			     16,
-			     LIBFGUID_ENDIAN_LITTLE,
-			     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print GUID value.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "%s: version\t\t\t\t: %" PRIu32 "\n",
-			 function,
-			 version );
-
-			libcnotify_printf(
-			 "%s: record type\t\t\t\t: %" PRIu32 "\n",
-			 function,
-			 record_type );
-
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (vshadow_catalog_header_t *) catalog_block_data )->relative_offset,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: relative offset\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			byte_stream_copy_to_uint64_little_endian(
-			 ( (vshadow_catalog_header_t *) catalog_block_data )->offset,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: offset\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 value_64bit );
-
-			libcnotify_printf(
-			 "%s: next offset\t\t\t\t: 0x%08" PRIx64 "\n",
-			 function,
-			 next_offset );
-
-			libcnotify_printf(
-			 "%s: unknown1:\n",
-			 function );
-			libcnotify_print_data(
-			 ( (vshadow_catalog_header_t *) catalog_block_data )->unknown1,
-			 80,
-			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-		}
-#endif
-		if( version != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported version: %" PRIu32 ".",
-			 function,
-			 version );
-
-			return( -1 );
-		}
-		if( record_type != LIBVSHADOW_RECORD_TYPE_CATALOG )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported record type: %" PRIu32 ".",
-			 function,
-			 version );
-
-			return( -1 );
 		}
 		catalog_block_offset = sizeof( vshadow_catalog_header_t );
 		catalog_block_size  -= sizeof( vshadow_catalog_header_t );
@@ -1091,5 +1046,204 @@ on_error:
 		 catalog_block_data );
 	}
 	return( -1 );
+}
+
+/* Reads the catalog header
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_io_handle_read_catalog_header_data(
+     libvshadow_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     off64_t *next_offset,
+     libcerror_error_t **error )
+{
+	static char *function = "libvshadow_io_handle_read_catalog_header_data";
+	uint32_t record_type  = 0;
+	uint32_t version      = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint64_t value_64bit  = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size < sizeof( vshadow_catalog_header_t ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( next_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid next offset.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: catalog header data:\n",
+		 function );
+		libcnotify_print_data(
+		 data,
+		 data_size,
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+	}
+#endif
+	if( memory_compare(
+	     ( (vshadow_catalog_header_t *) data )->identifier,
+	     vshadow_vss_identifier,
+	     8 ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid catalog header identifier.",
+		 function );
+
+		return( -1 );
+	}
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (vshadow_catalog_header_t *) data )->version,
+	 version );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (vshadow_catalog_header_t *) data )->record_type,
+	 record_type );
+
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (vshadow_catalog_header_t *) data )->next_offset,
+	 *next_offset );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		if( libvshadow_debug_print_guid_value(
+		     function,
+		     "identifier\t\t\t\t",
+		     ( (vshadow_catalog_header_t *) data )->identifier,
+		     16,
+		     LIBFGUID_ENDIAN_LITTLE,
+		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print GUID value.",
+			 function );
+
+			return( -1 );
+		}
+		libcnotify_printf(
+		 "%s: version\t\t\t\t: %" PRIu32 "\n",
+		 function,
+		 version );
+
+		libcnotify_printf(
+		 "%s: record type\t\t\t\t: %" PRIu32 "\n",
+		 function,
+		 record_type );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (vshadow_catalog_header_t *) data )->relative_offset,
+		 value_64bit );
+		libcnotify_printf(
+		 "%s: relative offset\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (vshadow_catalog_header_t *) data )->offset,
+		 value_64bit );
+		libcnotify_printf(
+		 "%s: offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 value_64bit );
+
+		libcnotify_printf(
+		 "%s: next offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 function,
+		 *next_offset );
+
+		libcnotify_printf(
+		 "%s: unknown1:\n",
+		 function );
+		libcnotify_print_data(
+		 ( (vshadow_catalog_header_t *) data )->unknown1,
+		 80,
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+	}
+#endif
+	if( version != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported version: %" PRIu32 ".",
+		 function,
+		 version );
+
+		return( -1 );
+	}
+	if( record_type != LIBVSHADOW_RECORD_TYPE_CATALOG )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported record type: %" PRIu32 ".",
+		 function,
+		 version );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 

@@ -110,10 +110,10 @@ int libvshadow_block_descriptor_compare_range_by_relative_offset_value(
      libvshadow_block_descriptor_t *block_descriptor,
      libcerror_error_t **error );
 
-int libvshadow_block_descriptor_read(
+int libvshadow_block_descriptor_read_data(
      libvshadow_block_descriptor_t *block_descriptor,
-     const uint8_t *block_list_entry_data,
-     size_t block_list_entry_size,
+     const uint8_t *data,
+     size_t data_size,
      int store_index,
      libcerror_error_t **error );
 

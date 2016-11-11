@@ -80,6 +80,12 @@ int libvshadow_store_block_read(
      off64_t file_offset,
      libcerror_error_t **error );
 
+int libvshadow_store_block_read_header_data(
+     libvshadow_store_block_t *store_block,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

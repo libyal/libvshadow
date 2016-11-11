@@ -1342,6 +1342,8 @@ int main(
 	 "libvshadow_volume_free",
 	 vshadow_test_volume_free );
 
+	/* TODO add tests for libvshadow_volume_signal_abort */
+
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
@@ -1394,10 +1396,16 @@ int main(
 	         "error",
 	         error );
 
+		/* TODO add tests for libvshadow_volume_open_read */
+		/* TODO add tests for libvshadow_volume_get_size */
+
 		VSHADOW_TEST_RUN_WITH_ARGS(
 		 "libvshadow_volume_get_number_of_stores",
 		 vshadow_test_volume_get_number_of_stores,
 		 volume );
+
+		/* TODO add tests for libvshadow_volume_get_store */
+		/* TODO add tests for libvshadow_volume_get_store_identifier */
 
 		/* Clean up
 		 */

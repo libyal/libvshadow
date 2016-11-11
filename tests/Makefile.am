@@ -44,6 +44,7 @@ check_PROGRAMS = \
 	vshadow_test_block \
 	vshadow_test_block_descriptor \
 	vshadow_test_block_range_descriptor \
+	vshadow_test_block_tree \
 	vshadow_test_error \
 	vshadow_test_io_handle \
 	vshadow_test_notify \
@@ -88,6 +89,20 @@ vshadow_test_block_range_descriptor_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_block_range_descriptor_LDADD = \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
+
+vshadow_test_block_tree_SOURCES = \
+	vshadow_test_block_tree.c \
+	vshadow_test_libcdata.h \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_unused.h
+
+vshadow_test_block_tree_LDADD = \
+	@LIBCDATA_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 
@@ -163,6 +178,7 @@ vshadow_test_store_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_store_block_SOURCES = \
+	vshadow_test_libbfio.h \
 	vshadow_test_libcerror.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
@@ -171,6 +187,13 @@ vshadow_test_store_block_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_store_block_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 

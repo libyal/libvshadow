@@ -69,7 +69,7 @@ int libvshadow_block_range_descriptor_initialize(
 		return( -1 );
 	}
 	*block_range_descriptor = memory_allocate_structure(
-	                     libvshadow_block_range_descriptor_t );
+	                           libvshadow_block_range_descriptor_t );
 
 	if( *block_range_descriptor == NULL )
 	{
@@ -143,14 +143,14 @@ int libvshadow_block_range_descriptor_free(
 /* Reads the block descriptor
  * Returns 1 if successful, 0 if block list entry is empty or -1 on error
  */
-int libvshadow_block_range_descriptor_read(
+int libvshadow_block_range_descriptor_read_data(
      libvshadow_block_range_descriptor_t *block_range_descriptor,
-     const uint8_t *block_list_entry_data,
-     size_t block_list_entry_size,
+     const uint8_t *data,
+     size_t data_size,
      int store_index LIBVSHADOW_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
-	static char *function = "libvshadow_block_range_descriptor_read";
+	static char *function = "libvshadow_block_range_descriptor_read_data";
 
 	LIBVSHADOW_UNREFERENCED_PARAMETER( store_index )
 
@@ -165,30 +165,41 @@ int libvshadow_block_range_descriptor_read(
 
 		return( -1 );
 	}
-	if( block_list_entry_data == NULL )
+	if( data == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid block list entry data.",
+		 "%s: invalid data.",
 		 function );
 
 		return( -1 );
 	}
-	if( block_list_entry_size > (size_t) SSIZE_MAX )
+	if( data_size < sizeof( vshadow_store_block_range_list_entry_t ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid block list entry size value exceeds maximum.",
+		 "%s: invalid data size value exceeds maximum.",
 		 function );
 
 		return( -1 );
 	}
 	if( memory_compare(
-	     block_list_entry_data,
+	     data,
              vshadow_empty_store_block_range_list_entry,
              sizeof( vshadow_store_block_range_list_entry_t ) ) == 0 )
 	{
@@ -202,21 +213,21 @@ int libvshadow_block_range_descriptor_read(
 		 function,
 		 store_index );
 		libcnotify_print_data(
-		 block_list_entry_data,
+		 data,
 		 sizeof( vshadow_store_block_range_list_entry_t ),
 		 0 );
 	}
 #endif
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (vshadow_store_block_range_list_entry_t *) block_list_entry_data )->offset,
+	 ( (vshadow_store_block_range_list_entry_t *) data )->offset,
 	 block_range_descriptor->offset );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (vshadow_store_block_range_list_entry_t *) block_list_entry_data )->relative_offset,
+	 ( (vshadow_store_block_range_list_entry_t *) data )->relative_offset,
 	 block_range_descriptor->relative_offset );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (vshadow_store_block_range_list_entry_t *) block_list_entry_data )->size,
+	 ( (vshadow_store_block_range_list_entry_t *) data )->size,
 	 block_range_descriptor->size );
 
 #if defined( HAVE_DEBUG_OUTPUT )

@@ -253,8 +253,8 @@ int vshadowmount_fuse_read(
 	static char *function    = "vshadowmount_fuse_read";
 	size_t path_length       = 0;
 	ssize_t read_count       = 0;
+	int input_index          = 0;
 	int result               = 0;
-	int store_index          = 0;
 	int string_index         = 0;
 
 	if( path == NULL )
@@ -319,23 +319,23 @@ int vshadowmount_fuse_read(
 	}
 	string_index = vshadowmount_fuse_path_prefix_length;
 
-	store_index = path[ string_index++ ] - '0';
+	input_index = path[ string_index++ ] - '0';
 
 	if( string_index < (int) path_length )
 	{
-		store_index *= 10;
-		store_index += path[ string_index++ ] - '0';
+		input_index *= 10;
+		input_index += path[ string_index++ ] - '0';
 	}
 	if( string_index < (int) path_length )
 	{
-		store_index *= 10;
-		store_index += path[ string_index++ ] - '0';
+		input_index *= 10;
+		input_index += path[ string_index++ ] - '0';
 	}
-	store_index -= 1;
+	input_index -= 1;
 
 	if( mount_handle_seek_offset(
 	     vshadowmount_mount_handle,
-	     store_index,
+	     input_index,
 	     (off64_t) offset,
 	     SEEK_SET,
 	     &error ) == -1 )
@@ -353,7 +353,7 @@ int vshadowmount_fuse_read(
 	}
 	read_count = mount_handle_read_buffer(
 	              vshadowmount_mount_handle,
-	              store_index,
+	              input_index,
 	              (uint8_t *) buffer,
 	              size,
 	              &error );
@@ -575,9 +575,9 @@ int vshadowmount_fuse_readdir(
 	struct stat *stat_info   = NULL;
 	static char *function    = "vshadowmount_fuse_readdir";
 	size_t path_length       = 0;
-	int number_of_stores     = 0;
+	int input_index          = 0;
+	int number_of_inputs     = 0;
 	int result               = 0;
-	int store_index          = 0;
 	int string_index         = 0;
 
 	LIBCSYSTEM_UNREFERENCED_PARAMETER( offset )
@@ -629,30 +629,30 @@ int vshadowmount_fuse_readdir(
 
 		goto on_error;
 	}
-	if( mount_handle_get_number_of_stores(
+	if( mount_handle_get_number_of_inputs(
 	     vshadowmount_mount_handle,
-	     &number_of_stores,
+	     &number_of_inputs,
 	     &error ) != 1 )
 	{
 		libcerror_error_set(
 		 &error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of stores.",
+		 "%s: unable to retrieve number of inputs.",
 		 function );
 
 		result = -EIO;
 
 		goto on_error;
 	}
-	if( ( number_of_stores < 0 )
-	 || ( number_of_stores > 255 ) )
+	if( ( number_of_inputs < 0 )
+	 || ( number_of_inputs > 255 ) )
 	{
 		libcerror_error_set(
 		 &error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported number of stores.",
+		 "%s: unsupported number of inputs.",
 		 function );
 
 		result = -ENOENT;
@@ -717,21 +717,21 @@ int vshadowmount_fuse_readdir(
 
 		goto on_error;
 	}
-	for( store_index = 1;
-	     store_index <= number_of_stores;
-	     store_index++ )
+	for( input_index = 1;
+	     input_index <= number_of_inputs;
+	     input_index++ )
 	{
 		string_index = vshadowmount_fuse_path_prefix_length;
 
-		if( store_index >= 100 )
+		if( input_index >= 100 )
 		{
-			vshadowmount_fuse_path[ string_index++ ] = '0' + (char) ( store_index / 100 );
+			vshadowmount_fuse_path[ string_index++ ] = '0' + (char) ( input_index / 100 );
 		}
-		if( store_index >= 10 )
+		if( input_index >= 10 )
 		{
-			vshadowmount_fuse_path[ string_index++ ] = '0' + (char) ( store_index / 10 );
+			vshadowmount_fuse_path[ string_index++ ] = '0' + (char) ( input_index / 10 );
 		}
-		vshadowmount_fuse_path[ string_index++ ] = '0' + (char) ( store_index % 10 );
+		vshadowmount_fuse_path[ string_index++ ] = '0' + (char) ( input_index % 10 );
 		vshadowmount_fuse_path[ string_index++ ] = 0;
 
 		if( vshadowmount_fuse_filldir(
@@ -788,9 +788,9 @@ int vshadowmount_fuse_getattr(
 	static char *function    = "vshadowmount_fuse_getattr";
 	size64_t volume_size     = 0;
 	size_t path_length       = 0;
+	uint8_t use_mount_time   = 0;
 	int number_of_sub_items  = 0;
 	int result               = -ENOENT;
-	uint8_t use_mount_time   = 0;
 
 	if( path == NULL )
 	{
@@ -1198,8 +1198,8 @@ int __stdcall vshadowmount_dokan_ReadFile(
 	static char *function    = "vshadowmount_dokan_ReadFile";
 	size_t path_length       = 0;
 	ssize_t read_count       = 0;
+	int input_index          = 0;
 	int result               = 0;
-	int store_index          = 0;
 	int string_index         = 0;
 
 	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
@@ -1269,23 +1269,23 @@ int __stdcall vshadowmount_dokan_ReadFile(
 	}
 	string_index = (int) vshadowmount_dokan_path_prefix_length;
 
-	store_index = path[ string_index++ ] - (wchar_t) '0';
+	input_index = path[ string_index++ ] - (wchar_t) '0';
 
 	if( string_index < (int) path_length )
 	{
-		store_index *= 10;
-		store_index += path[ string_index++ ] - (wchar_t) '0';
+		input_index *= 10;
+		input_index += path[ string_index++ ] - (wchar_t) '0';
 	}
 	if( string_index < (int) path_length )
 	{
-		store_index *= 10;
-		store_index += path[ string_index++ ] - (wchar_t) '0';
+		input_index *= 10;
+		input_index += path[ string_index++ ] - (wchar_t) '0';
 	}
-	store_index -= 1;
+	input_index -= 1;
 
 	if( mount_handle_seek_offset(
 	     vshadowmount_mount_handle,
-	     store_index,
+	     input_index,
 	     (off64_t) offset,
 	     SEEK_SET,
 	     &error ) == -1 )
@@ -1303,7 +1303,7 @@ int __stdcall vshadowmount_dokan_ReadFile(
 	}
 	read_count = mount_handle_read_buffer(
 		      vshadowmount_mount_handle,
-		      store_index,
+		      input_index,
 		      (uint8_t *) buffer,
 		      (size_t) number_of_bytes_to_read,
 		      &error );
@@ -1558,9 +1558,9 @@ int __stdcall vshadowmount_dokan_FindFiles(
 	static char *function    = "vshadowmount_dokan_FindFiles";
 	size64_t volume_size     = 0;
 	size_t path_length       = 0;
-	int number_of_stores     = 0;
+	int input_index          = 0;
+	int number_of_inputs     = 0;
 	int result               = 0;
-	int store_index          = 0;
 	int string_index         = 0;
 
 	if( path == NULL )
@@ -1610,9 +1610,9 @@ int __stdcall vshadowmount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( mount_handle_get_number_of_stores(
+	if( mount_handle_get_number_of_inputs(
 	     vshadowmount_mount_handle,
-	     &number_of_stores,
+	     &number_of_inputs,
 	     &error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1626,8 +1626,8 @@ int __stdcall vshadowmount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	if( ( number_of_stores < 0 )
-	 || ( number_of_stores > 255 ) )
+	if( ( number_of_inputs < 0 )
+	 || ( number_of_inputs > 255 ) )
 	{
 		libcerror_error_set(
 		 &error,
@@ -1682,21 +1682,21 @@ int __stdcall vshadowmount_dokan_FindFiles(
 
 		goto on_error;
 	}
-	for( store_index = 1;
-	     store_index <= number_of_stores;
-	     store_index++ )
+	for( input_index = 1;
+	     input_index <= number_of_inputs;
+	     input_index++ )
 	{
 		string_index = vshadowmount_dokan_path_prefix_length;
 
-		if( store_index >= 100 )
+		if( input_index >= 100 )
 		{
-			vshadowmount_dokan_path[ string_index++ ] = (wchar_t) ( '0' + ( store_index / 100 ) );
+			vshadowmount_dokan_path[ string_index++ ] = (wchar_t) ( '0' + ( input_index / 100 ) );
 		}
-		if( store_index >= 10 )
+		if( input_index >= 10 )
 		{
-			vshadowmount_dokan_path[ string_index++ ] = (wchar_t) ( '0' + ( store_index / 10 ) );
+			vshadowmount_dokan_path[ string_index++ ] = (wchar_t) ( '0' + ( input_index / 10 ) );
 		}
-		vshadowmount_dokan_path[ string_index++ ] = (wchar_t) ( '0' + ( store_index % 10 ) );
+		vshadowmount_dokan_path[ string_index++ ] = (wchar_t) ( '0' + ( input_index % 10 ) );
 		vshadowmount_dokan_path[ string_index++ ] = 0;
 
 		if( vshadowmount_dokan_filldir(
@@ -1788,11 +1788,11 @@ int __stdcall vshadowmount_dokan_GetFileInformation(
 	static char *function    = "vshadowmount_dokan_GetFileInformation";
 	size64_t volume_size     = 0;
 	size_t path_length       = 0;
+	uint8_t use_mount_time   = 0;
+	int input_index          = 0;
 	int number_of_sub_items  = 0;
 	int result               = 0;
-	int store_index          = 0;
 	int string_index         = 0;
-	uint8_t use_mount_time   = 0;
 
 	if( path == NULL )
 	{
@@ -1865,19 +1865,19 @@ int __stdcall vshadowmount_dokan_GetFileInformation(
 		}
 		string_index = (int) vshadowmount_dokan_path_prefix_length;
 
-		store_index = path[ string_index++ ] - (wchar_t) '0';
+		input_index = path[ string_index++ ] - (wchar_t) '0';
 
 		if( string_index < (int) path_length )
 		{
-			store_index *= 10;
-			store_index += path[ string_index++ ] - (wchar_t) '0';
+			input_index *= 10;
+			input_index += path[ string_index++ ] - (wchar_t) '0';
 		}
 		if( string_index < (int) path_length )
 		{
-			store_index *= 10;
-			store_index += path[ string_index++ ] - (wchar_t) '0';
+			input_index *= 10;
+			input_index += path[ string_index++ ] - (wchar_t) '0';
 		}
-		store_index -= 1;
+		input_index -= 1;
 
 /* TODO get creation time */
 		if( mount_handle_get_size(

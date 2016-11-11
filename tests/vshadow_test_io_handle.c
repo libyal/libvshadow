@@ -254,6 +254,104 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libvshadow_io_handle_clear function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_io_handle_clear(
+     void )
+{
+	libcerror_error_t *error          = NULL;
+	libvshadow_io_handle_t *io_handle = NULL;
+	int result                        = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_io_handle_initialize(
+	          &io_handle,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "io_handle",
+         io_handle );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_io_handle_clear(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_io_handle_free(
+	          &io_handle,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "io_handle",
+         io_handle );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( io_handle != NULL )
+	{
+		libvshadow_io_handle_free(
+		 &io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) */
 
 /* The main program
@@ -280,6 +378,16 @@ int main(
 	VSHADOW_TEST_RUN(
 	 "libvshadow_io_handle_free",
 	 vshadow_test_io_handle_free );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_io_handle_clear",
+	 vshadow_test_io_handle_clear );
+
+	/* TODO add tests for libvshadow_io_handle_read_ntfs_volume_header */
+	/* TODO add tests for libvshadow_io_handle_read_volume_header */
+	/* TODO add tests for libvshadow_io_handle_read_volume_header_data */
+	/* TODO add tests for libvshadow_io_handle_read_catalog */
+	/* TODO add tests for libvshadow_io_handle_read_catalog_header_data */
 
 #endif /* defined( __GNUC__ ) */
 

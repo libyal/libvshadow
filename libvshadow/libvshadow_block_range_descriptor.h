@@ -56,10 +56,10 @@ int libvshadow_block_range_descriptor_free(
      libvshadow_block_range_descriptor_t **block_range_descriptor,
      libcerror_error_t **error );
 
-int libvshadow_block_range_descriptor_read(
+int libvshadow_block_range_descriptor_read_data(
      libvshadow_block_range_descriptor_t *block_range_descriptor,
-     const uint8_t *block_list_entry_data,
-     size_t block_list_entry_size,
+     const uint8_t *data,
+     size_t data_size,
      int store_index,
      libcerror_error_t **error );
 

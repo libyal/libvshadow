@@ -35,6 +35,16 @@
 
 #include "../libvshadow/libvshadow_block_range_descriptor.h"
 
+uint8_t vshadow_test_block_range_descriptor_data[ 24 ] = {
+	0x00, 0xc0, 0x28, 0x7e, 0x03, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x40, 0xff, 0x55, 0x00, 0x00, 0x00, 0x00
+};
+
+uint8_t vshadow_test_block_range_descriptor_empty_data[ 24 ] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
 #if defined( __GNUC__ )
 
 /* Tests the libvshadow_block_range_descriptor_initialize function
@@ -254,6 +264,183 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libvshadow_block_range_descriptor_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_range_descriptor_read_data(
+     void )
+{
+	libcerror_error_t *error                                    = NULL;
+	libvshadow_block_range_descriptor_t *block_range_descriptor = NULL;
+	int result                                                  = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_range_descriptor_initialize(
+	          &block_range_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "block_range_descriptor",
+         block_range_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_range_descriptor_read_data(
+	          block_range_descriptor,
+	          vshadow_test_block_range_descriptor_data,
+	          24,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libvshadow_block_range_descriptor_read_data(
+	          block_range_descriptor,
+	          vshadow_test_block_range_descriptor_empty_data,
+	          24,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_range_descriptor_read_data(
+	          NULL,
+	          vshadow_test_block_range_descriptor_data,
+	          24,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_range_descriptor_read_data(
+	          block_range_descriptor,
+	          NULL,
+	          24,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_range_descriptor_read_data(
+	          block_range_descriptor,
+	          vshadow_test_block_range_descriptor_data,
+	          23,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_range_descriptor_read_data(
+	          block_range_descriptor,
+	          vshadow_test_block_range_descriptor_data,
+	          (size_t) SSIZE_MAX + 1,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_range_descriptor_free(
+	          &block_range_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "block_range_descriptor",
+         block_range_descriptor );
+
+        VSHADOW_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_range_descriptor != NULL )
+	{
+		libvshadow_block_range_descriptor_free(
+		 &block_range_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) */
 
 /* The main program
@@ -280,6 +467,10 @@ int main(
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_range_descriptor_free",
 	 vshadow_test_block_range_descriptor_free );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_range_descriptor_read_data",
+	 vshadow_test_block_range_descriptor_read_data );
 
 #endif /* defined( __GNUC__ ) */
 

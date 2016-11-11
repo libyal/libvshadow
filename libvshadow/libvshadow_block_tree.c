@@ -157,11 +157,7 @@ int libvshadow_block_tree_insert(
 				 function,
 				 store_index,
 				 reverse_block_descriptor->original_offset );
-			}
-#endif
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
+
 				libcnotify_printf(
 				 "%s: store: %02d swapping original offset.\n",
 				 function,

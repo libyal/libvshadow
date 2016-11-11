@@ -21,8 +21,41 @@ AM_CPPFLAGS = \
 AM_LDFLAGS = @STATIC_LDFLAGS@
 
 bin_PROGRAMS = \
+	vshadowdebug \
 	vshadowinfo \
 	vshadowmount
+
+vshadowdebug_SOURCES = \
+	debug_handle.c debug_handle.h \
+	vshadowdebug.c \
+	vshadowoutput.c vshadowoutput.h \
+	vshadowtools_libbfio.h \
+	vshadowtools_libcerror.h \
+	vshadowtools_libcfile.h \
+	vshadowtools_libclocale.h \
+	vshadowtools_libcnotify.h \
+	vshadowtools_libcpath.h \
+	vshadowtools_libcsystem.h \
+	vshadowtools_libfdatetime.h \
+	vshadowtools_libfguid.h \
+	vshadowtools_libuna.h \
+	vshadowtools_libvshadow.h
+
+vshadowdebug_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libvshadow/libvshadow.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
 
 vshadowinfo_SOURCES = \
 	info_handle.c info_handle.h \

@@ -185,10 +185,6 @@ int libvshadow_store_block_read(
 	static char *function = "libvshadow_store_block_read";
 	ssize_t read_count    = 0;
 
-#if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
-#endif
-
 	if( store_block == NULL )
 	{
 		libcerror_error_set(
@@ -249,7 +245,84 @@ int libvshadow_store_block_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read block data.",
+		 "%s: unable to read store block data.",
+		 function );
+
+		return( -1 );
+	}
+	if( libvshadow_store_block_read_header_data(
+	     store_block,
+	     store_block->data,
+	     store_block->data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read store block header.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Reads the store block header
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_store_block_read_header_data(
+     libvshadow_store_block_t *store_block,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libvshadow_store_block_read_data";
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint64_t value_64bit  = 0;
+#endif
+
+	if( store_block == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid store block.",
+		 function );
+
+		return( -1 );
+	}
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size < sizeof( vshadow_store_block_header_t ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -258,7 +331,7 @@ int libvshadow_store_block_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: store block header:\n",
+		 "%s: store block header data:\n",
 		 function );
 		libcnotify_print_data(
 		 store_block->data,
@@ -267,9 +340,9 @@ int libvshadow_store_block_read(
 	}
 #endif
 	if( memory_compare(
-	     ( (vshadow_store_block_header_t *) store_block->data )->identifier,
+	     ( (vshadow_store_block_header_t *) data )->identifier,
 	     vshadow_vss_identifier,
-	     8 ) != 0 )
+	     16 ) != 0 )
 	{
 		libcerror_error_set(
 		 error,
@@ -281,23 +354,23 @@ int libvshadow_store_block_read(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_little_endian(
-	 ( (vshadow_store_block_header_t *) store_block->data )->version,
+	 ( (vshadow_store_block_header_t *) data )->version,
 	 store_block->version );
 
 	byte_stream_copy_to_uint32_little_endian(
-	 ( (vshadow_store_block_header_t *) store_block->data )->record_type,
+	 ( (vshadow_store_block_header_t *) data )->record_type,
 	 store_block->record_type );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (vshadow_store_block_header_t *) store_block->data )->relative_offset,
+	 ( (vshadow_store_block_header_t *) data )->relative_offset,
 	 store_block->relative_offset );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (vshadow_store_block_header_t *) store_block->data )->offset,
+	 ( (vshadow_store_block_header_t *) data )->offset,
 	 store_block->offset );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (vshadow_store_block_header_t *) store_block->data )->next_offset,
+	 ( (vshadow_store_block_header_t *) data )->next_offset,
 	 store_block->next_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -306,7 +379,7 @@ int libvshadow_store_block_read(
 		if( libvshadow_debug_print_guid_value(
 		     function,
 		     "identifier\t\t\t\t\t",
-		     ( (vshadow_store_block_header_t *) store_block->data )->identifier,
+		     ( (vshadow_store_block_header_t *) data )->identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
 		     LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE,
@@ -347,7 +420,7 @@ int libvshadow_store_block_read(
 		 store_block->next_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (vshadow_store_block_header_t *) store_block->data )->unknown1,
+		 ( (vshadow_store_block_header_t *) data )->unknown1,
 		 value_64bit );
 		libcnotify_printf(
 		 "%s: unknown1\t\t\t\t\t: %" PRIu64 "\n",
@@ -358,7 +431,7 @@ int libvshadow_store_block_read(
 		 "%s: unknown2:\n",
 		 function );
 		libcnotify_print_data(
-		 ( (vshadow_store_block_header_t *) store_block->data )->unknown2,
+		 ( (vshadow_store_block_header_t *) data )->unknown2,
 		 72,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}

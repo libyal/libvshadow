@@ -281,6 +281,25 @@ int main(
 	 "libvshadow_store_descriptor_free",
 	 vshadow_test_store_descriptor_free );
 
+	/* TODO add tests for libvshadow_store_descriptor_has_in_volume_data */
+	/* TODO add tests for libvshadow_store_descriptor_compare_by_creation_time */
+	/* TODO add tests for libvshadow_store_descriptor_compare_by_identifier */
+	/* TODO add tests for libvshadow_store_descriptor_read_catalog_entry */
+	/* TODO add tests for libvshadow_store_descriptor_read_store_header */
+	/* TODO add tests for libvshadow_store_descriptor_read_store_bitmap */
+	/* TODO add tests for libvshadow_store_descriptor_read_store_block_list */
+	/* TODO add tests for libvshadow_store_descriptor_read_store_block_range_list */
+	/* TODO add tests for libvshadow_store_descriptor_read_block_descriptors */
+	/* TODO add tests for libvshadow_store_descriptor_read_buffer */
+	/* TODO add tests for libvshadow_store_descriptor_get_volume_size */
+	/* TODO add tests for libvshadow_store_descriptor_get_identifier */
+	/* TODO add tests for libvshadow_store_descriptor_get_creation_time */
+	/* TODO add tests for libvshadow_store_descriptor_get_copy_identifier */
+	/* TODO add tests for libvshadow_store_descriptor_get_copy_set_identifier */
+	/* TODO add tests for libvshadow_store_descriptor_get_attribute_flags */
+	/* TODO add tests for libvshadow_store_descriptor_get_number_of_blocks */
+	/* TODO add tests for libvshadow_store_descriptor_get_block_descriptor_by_index */
+
 #endif /* defined( __GNUC__ ) */
 
 	return( EXIT_SUCCESS );

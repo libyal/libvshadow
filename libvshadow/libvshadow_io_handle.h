@@ -73,12 +73,26 @@ int libvshadow_io_handle_read_volume_header(
      off64_t *catalog_offset,
      libcerror_error_t **error );
 
+int libvshadow_io_handle_read_volume_header_data(
+     libvshadow_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     off64_t *catalog_offset,
+     libcerror_error_t **error );
+
 int libvshadow_io_handle_read_catalog(
      libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
      size64_t *volume_size,
      libcdata_array_t *store_descriptors_array,
+     libcerror_error_t **error );
+
+int libvshadow_io_handle_read_catalog_header_data(
+     libvshadow_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     off64_t *next_offset,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

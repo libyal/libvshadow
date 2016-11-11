@@ -1,5 +1,5 @@
 /*
- * Mount handle
+ * Debug handle
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _MOUNT_HANDLE_H )
-#define _MOUNT_HANDLE_H
+#if !defined( _DEBUG_HANDLE_H )
+#define _DEBUG_HANDLE_H
 
 #include <common.h>
 #include <file_stream.h>
@@ -34,9 +34,9 @@
 extern "C" {
 #endif
 
-typedef struct mount_handle mount_handle_t;
+typedef struct debug_handle debug_handle_t;
 
-struct mount_handle
+struct debug_handle
 {
 	/* The volume offset
 	 */
@@ -50,13 +50,9 @@ struct mount_handle
 	 */
 	libvshadow_volume_t *input_volume;
 
-	/* The inputs
+	/* Value to indicate the allocation info should be printed
 	 */
-	libvshadow_store_t **inputs;
-
-	/* The number of inputs
-	 */
-	int number_of_inputs;
+	uint8_t show_allocation_information;
 
 	/* The notification output stream
 	 */
@@ -67,59 +63,39 @@ struct mount_handle
 	int abort;
 };
 
-int mount_handle_initialize(
-     mount_handle_t **mount_handle,
+int debug_handle_initialize(
+     debug_handle_t **debug_handle,
      libcerror_error_t **error );
 
-int mount_handle_free(
-     mount_handle_t **mount_handle,
+int debug_handle_free(
+     debug_handle_t **debug_handle,
      libcerror_error_t **error );
 
-int mount_handle_signal_abort(
-     mount_handle_t *mount_handle,
+int debug_handle_signal_abort(
+     debug_handle_t *debug_handle,
      libcerror_error_t **error );
 
-int mount_handle_set_volume_offset(
-     mount_handle_t *mount_handle,
+int debug_handle_set_volume_offset(
+     debug_handle_t *debug_handle,
      const system_character_t *string,
      libcerror_error_t **error );
 
-int mount_handle_open_input(
-     mount_handle_t *mount_handle,
+int debug_handle_open_input(
+     debug_handle_t *debug_handle,
      const system_character_t *filename,
      libcerror_error_t **error );
 
-int mount_handle_close_input(
-     mount_handle_t *mount_handle,
+int debug_handle_close(
+     debug_handle_t *debug_handle,
      libcerror_error_t **error );
 
-ssize_t mount_handle_read_buffer(
-         mount_handle_t *mount_handle,
-         int store_index,
-         uint8_t *buffer,
-         size_t size,
-         libcerror_error_t **error );
-
-off64_t mount_handle_seek_offset(
-         mount_handle_t *mount_handle,
-         int store_index,
-         off64_t offset,
-         int whence,
-         libcerror_error_t **error );
-
-int mount_handle_get_size(
-     mount_handle_t *mount_handle,
-     size64_t *size,
-     libcerror_error_t **error );
-
-int mount_handle_get_number_of_inputs(
-     mount_handle_t *mount_handle,
-     int *number_of_inputs,
+int debug_handle_test_read(
+     debug_handle_t *debug_handle,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _MOUNT_HANDLE_H ) */
+#endif /* !defined( _DEBUG_HANDLE_H ) */
 

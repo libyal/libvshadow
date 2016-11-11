@@ -1605,7 +1605,7 @@ int libvshadow_store_descriptor_read_store_block_list(
 
 			goto on_error;
 		}
-		result = libvshadow_block_descriptor_read(
+		result = libvshadow_block_descriptor_read_data(
 			  block_descriptor,
 			  block_data,
 			  block_size,
@@ -1812,7 +1812,7 @@ int libvshadow_store_descriptor_read_store_block_range_list(
 
 			goto on_error;
 		}
-		result = libvshadow_block_range_descriptor_read(
+		result = libvshadow_block_range_descriptor_read_data(
 			  block_range_descriptor,
 			  block_data,
 			  block_size,

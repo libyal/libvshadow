@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="vshadow_test_store_block"
-	ProjectGUID="{11A98D18-621B-495A-9E30-27FE86F3476B}"
-	RootNamespace="vshadow_test_store_block"
+	Name="vshadow_test_block_tree"
+	ProjectGUID="{F7BF24C3-7242-4108-BE05-F8D80FD5E742}"
+	RootNamespace="vshadow_test_block_tree"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,11 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\vshadow_test_memory.c"
+				RelativePath="..\..\tests\vshadow_test_block_tree.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\vshadow_test_store_block.c"
+				RelativePath="..\..\tests\vshadow_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -190,7 +190,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\vshadow_test_libbfio.h"
+				RelativePath="..\..\tests\vshadow_test_libcdata.h"
 				>
 			</File>
 			<File
