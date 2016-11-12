@@ -449,14 +449,15 @@ int debug_handle_test_read(
 {
 	uint8_t buffer[ 8000 ];
 
-	libvshadow_store_t *store = NULL;
-	static char *function     = "debug_handle_test_read";
-	off64_t volume_offset     = 0;
-	size64_t volume_size      = 0;
-	size_t read_size          = 8000;
-	ssize_t read_count        = 0;
-	int number_of_stores      = 0;
-	int store_index           = 0;
+	libvshadow_store_t *store    = NULL;
+	static char *function        = "debug_handle_test_read";
+	size64_t volume_size         = 0;
+	size_t read_size             = 8000;
+	ssize_t read_count           = 0;
+	off64_t volume_offset        = 0;
+	int has_in_volume_store_data = 0;
+	int number_of_stores         = 0;
+	int store_index              = 0;
 
 	if( debug_handle == NULL )
 	{
@@ -491,12 +492,6 @@ int debug_handle_test_read(
 	     store_index >= 0;
 	     store_index-- )
 	{
-		fprintf(
-		 debug_handle->notify_stream,
-		 "Reading data from store %d out of %d\n",
-		 store_index + 1,
-		 number_of_stores );
-
 		if( libvshadow_volume_get_store(
 		     debug_handle->input_volume,
 		     store_index,
@@ -513,60 +508,93 @@ int debug_handle_test_read(
 
 			goto on_error;
 		}
-		if( libvshadow_store_get_volume_size(
-		     store,
-		     &volume_size,
-		     error ) != 1 )
+		has_in_volume_store_data = libvshadow_store_has_in_volume_data(
+		                            store,
+		                            error );
+
+		if( has_in_volume_store_data == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve store: %d volume size.",
+			 "%s: unable to determine if store: %d has in-volume data.",
 			 function,
 			 store_index );
 
 			goto on_error;
 		}
-		volume_offset = 0;
-
-		if( libvshadow_store_seek_offset(
-		     store,
-		     volume_offset,
-		     SEEK_SET,
-		     error ) == -1 )
+		else if( has_in_volume_store_data == 0 )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek offset in store: %d.",
-			 function,
-			 store_index );
-
-			return( -1 );
+			fprintf(
+			 debug_handle->notify_stream,
+			 "Skipping store %d out of %d\n",
+			 store_index + 1,
+			 number_of_stores );
 		}
-		while( (size64_t) volume_offset < volume_size )
+		else
 		{
-			read_count = libvshadow_store_read_buffer(
-			              store,
-			              buffer,
-			              read_size,
-			              error );
+			fprintf(
+			 debug_handle->notify_stream,
+			 "Reading store %d out of %d\n",
+			 store_index + 1,
+			 number_of_stores );
 
-			if( read_count == -1 )
+			if( libvshadow_store_get_volume_size(
+			     store,
+			     &volume_size,
+			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read buffer from store: %d.",
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve store: %d volume size.",
 				 function,
 				 store_index );
 
 				goto on_error;
 			}
-			volume_offset += read_size;
+			volume_offset = 0;
+
+			if( libvshadow_store_seek_offset(
+			     store,
+			     volume_offset,
+			     SEEK_SET,
+			     error ) == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_SEEK_FAILED,
+				 "%s: unable to seek offset in store: %d.",
+				 function,
+				 store_index );
+
+				return( -1 );
+			}
+			while( (size64_t) volume_offset < volume_size )
+			{
+				read_count = libvshadow_store_read_buffer(
+				              store,
+				              buffer,
+				              read_size,
+				              error );
+
+				if( read_count == -1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read buffer from store: %d.",
+					 function,
+					 store_index );
+
+					goto on_error;
+				}
+				volume_offset += read_size;
+			}
 		}
 		if( libvshadow_store_free(
 		     &store,

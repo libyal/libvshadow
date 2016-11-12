@@ -277,7 +277,7 @@ int libvshadow_store_block_read_header_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libvshadow_store_block_read_data";
+	static char *function = "libvshadow_store_block_read_header_data";
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit  = 0;
@@ -378,7 +378,7 @@ int libvshadow_store_block_read_header_data(
 	{
 		if( libvshadow_debug_print_guid_value(
 		     function,
-		     "identifier\t\t\t\t\t",
+		     "identifier\t\t\t",
 		     ( (vshadow_store_block_header_t *) data )->identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
@@ -395,27 +395,27 @@ int libvshadow_store_block_read_header_data(
 			return( -1 );
 		}
 		libcnotify_printf(
-		 "%s: version\t\t\t\t\t: %" PRIu32 "\n",
+		 "%s: version\t\t\t: %" PRIu32 "\n",
 		 function,
 		 store_block->version );
 
 		libcnotify_printf(
-		 "%s: record type\t\t\t\t: %" PRIu32 "\n",
+		 "%s: record type\t\t\t: %" PRIu32 "\n",
 		 function,
 		 store_block->record_type );
 
 		libcnotify_printf(
-		 "%s: relative offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: relative offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_block->relative_offset );
 
 		libcnotify_printf(
-		 "%s: offset\t\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: offset\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_block->offset );
 
 		libcnotify_printf(
-		 "%s: next offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: next offset\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_block->next_offset );
 
@@ -423,7 +423,7 @@ int libvshadow_store_block_read_header_data(
 		 ( (vshadow_store_block_header_t *) data )->unknown1,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t\t: %" PRIu64 "\n",
+		 "%s: unknown1\t\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
 

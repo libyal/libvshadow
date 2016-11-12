@@ -2,8 +2,6 @@ TODO
 * fix issue with multi threaded read test
   - store descriptor initialization?
 * add error tolerance for missing NTFS backup volume header
-* pyvshadow
-  - work on store
 * remove hard coded 0x4000 block size
   - use or pass io handle block size instead
 * add tests
@@ -37,8 +35,6 @@ Format:
   also seen in BDE, so likely something of NTFS
 
 Tools:
-* vshadowexport
-  - create tool to export a VSS volume ?
 * vshadowinfo
   - print attribute flags description
 * vshadowmount

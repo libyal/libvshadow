@@ -613,7 +613,7 @@ int libvshadow_io_handle_read_volume_header_data(
 	{
 		if( libvshadow_debug_print_guid_value(
 		     function,
-		     "identifier\t\t\t",
+		     "identifier\t\t",
 		     ( (vshadow_volume_header_t *) data )->identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
@@ -635,7 +635,7 @@ int libvshadow_io_handle_read_volume_header_data(
 		 version );
 
 		libcnotify_printf(
-		 "%s: record type\t\t\t: %" PRIu32 "\n",
+		 "%s: record type\t\t: %" PRIu32 "\n",
 		 function,
 		 record_type );
 
@@ -643,7 +643,7 @@ int libvshadow_io_handle_read_volume_header_data(
 		 ( (vshadow_volume_header_t *) data )->offset,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: offset\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
@@ -664,7 +664,7 @@ int libvshadow_io_handle_read_volume_header_data(
 		 value_64bit );
 
 		libcnotify_printf(
-		 "%s: catalog offset\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: catalog offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 *catalog_offset );
 
@@ -672,7 +672,7 @@ int libvshadow_io_handle_read_volume_header_data(
 		 ( (vshadow_volume_header_t *) data )->maximum_size,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: maximum size\t\t\t: %" PRIu64 "\n",
+		 "%s: maximum size\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
 
@@ -1164,7 +1164,7 @@ int libvshadow_io_handle_read_catalog_header_data(
 	{
 		if( libvshadow_debug_print_guid_value(
 		     function,
-		     "identifier\t\t\t\t",
+		     "identifier\t\t",
 		     ( (vshadow_catalog_header_t *) data )->identifier,
 		     16,
 		     LIBFGUID_ENDIAN_LITTLE,
@@ -1181,12 +1181,12 @@ int libvshadow_io_handle_read_catalog_header_data(
 			return( -1 );
 		}
 		libcnotify_printf(
-		 "%s: version\t\t\t\t: %" PRIu32 "\n",
+		 "%s: version\t\t\t: %" PRIu32 "\n",
 		 function,
 		 version );
 
 		libcnotify_printf(
-		 "%s: record type\t\t\t\t: %" PRIu32 "\n",
+		 "%s: record type\t\t: %" PRIu32 "\n",
 		 function,
 		 record_type );
 
@@ -1194,7 +1194,7 @@ int libvshadow_io_handle_read_catalog_header_data(
 		 ( (vshadow_catalog_header_t *) data )->relative_offset,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: relative offset\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: relative offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
@@ -1202,12 +1202,12 @@ int libvshadow_io_handle_read_catalog_header_data(
 		 ( (vshadow_catalog_header_t *) data )->offset,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: offset\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
 		libcnotify_printf(
-		 "%s: next offset\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: next offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 *next_offset );
 
