@@ -20,7 +20,7 @@
  */
 
 #if !defined( _LIBVSHADOW_BLOCK_TREE_H )
-#define _LIBVSHADOW_PAGE_BLOCK_H
+#define _LIBVSHADOW_BLOCK_TREE_H
 
 #include <common.h>
 #include <types.h>
