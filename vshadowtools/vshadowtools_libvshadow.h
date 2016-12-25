@@ -27,11 +27,11 @@
 /* If Cygwin libtool DLL support is enabled set LIBVSHADOW_DLL_IMPORT
  * before including libvshadow.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBVSHADOW_DLL_IMPORT
 #endif
 
 #include <libvshadow.h>
 
-#endif
+#endif /* !defined( _VSHADOWTOOLS_LIBVSHADOW_H ) */
 

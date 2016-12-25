@@ -232,7 +232,7 @@ def pyvshadow_test_read_file(filename):
 
   result = True
   for vshadow_store in vshadow_volume.stores:
-    result = pyvshadow_test_seek(vshadow_store)
+    result = pyvshadow_test_read(vshadow_store)
     if not result:
       break
 
@@ -249,7 +249,7 @@ def pyvshadow_test_read_file_object(filename):
 
   result = True
   for vshadow_store in vshadow_volume.stores:
-    result = pyvshadow_test_seek(vshadow_store)
+    result = pyvshadow_test_read(vshadow_store)
     if not result:
       break
 

@@ -12,7 +12,7 @@ TEST_PREFIX=`basename ${TEST_PREFIX} | sed 's/^lib\([^-]*\).*$/\1/'`;
 
 TEST_PROFILE="lib${TEST_PREFIX}";
 TEST_TYPES="block block_descriptor block_range_descriptor io_handle store store_block store_descriptor";
-TEST_TYPES_WITH_INPUT="read seek volume";
+TEST_TYPES_WITH_INPUT="volume";
 OPTION_SETS="";
 
 TEST_TOOL_DIRECTORY=".";
@@ -96,8 +96,14 @@ fi
 
 for TEST_TYPE in ${TEST_TYPES_WITH_INPUT};
 do
-	test_api_type_with_input "${TEST_TYPE}";
-	RESULT=$?;
+	if test -d ${INPUT_DIRECTORY};
+	then
+		test_api_type_with_input "${TEST_TYPE}";
+		RESULT=$?;
+	else
+		test_api_type "${TEST_TYPE}";
+		RESULT=$?;
+	fi
 
 	if test ${RESULT} -ne ${EXIT_SUCCESS};
 	then

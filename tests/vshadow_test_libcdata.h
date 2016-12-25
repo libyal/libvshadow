@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _VSHADOW_TOOLS_LIBCDATA_H )
-#define _VSHADOW_TOOLS_LIBCDATA_H
+#if !defined( _VSHADOW_TEST_LIBCDATA_H )
+#define _VSHADOW_TEST_LIBCDATA_H
 
 #include <common.h>
 
@@ -50,5 +50,5 @@
 
 #endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 
-#endif /* !defined( _LIBVSHADOW_LIBCDATA_H ) */
+#endif /* !defined( _VSHADOW_TEST_LIBCDATA_H ) */
 

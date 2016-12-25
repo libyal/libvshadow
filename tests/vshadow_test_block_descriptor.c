@@ -1,5 +1,5 @@
 /*
- * Library block_descriptor type testing program
+ * Library block_descriptor type test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *

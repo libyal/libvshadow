@@ -1,5 +1,5 @@
 /*
- * Library store_descriptor type testing program
+ * Library store_descriptor type test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *

@@ -1,5 +1,5 @@
 /*
- * Library volume type testing program
+ * Library volume type test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,9 +30,9 @@
 #include <stdlib.h>
 #endif
 
+#include "vshadow_test_getopt.h"
 #include "vshadow_test_libcerror.h"
 #include "vshadow_test_libclocale.h"
-#include "vshadow_test_libcsystem.h"
 #include "vshadow_test_libuna.h"
 #include "vshadow_test_libvshadow.h"
 #include "vshadow_test_macros.h"
@@ -584,11 +584,17 @@ int vshadow_test_volume_close_source(
 int vshadow_test_volume_initialize(
      void )
 {
-	libcerror_error_t *error    = NULL;
-	libvshadow_volume_t *volume = NULL;
-	int result                  = 0;
+	libcerror_error_t *error        = NULL;
+	libvshadow_volume_t *volume     = NULL;
+	int result                      = 0;
 
-	/* Test volume initialization
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libvshadow_volume_initialize(
 	          &volume,
@@ -664,79 +670,89 @@ int vshadow_test_volume_initialize(
 
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
 
-	/* Test libvshadow_volume_initialize with malloc failing
-	 */
-	vshadow_test_malloc_attempts_before_fail = 0;
-
-	result = libvshadow_volume_initialize(
-	          &volume,
-	          &error );
-
-	if( vshadow_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		vshadow_test_malloc_attempts_before_fail = -1;
+		/* Test libvshadow_volume_initialize with malloc failing
+		 */
+		vshadow_test_malloc_attempts_before_fail = test_number;
 
-		if( volume != NULL )
+		result = libvshadow_volume_initialize(
+		          &volume,
+		          &error );
+
+		if( vshadow_test_malloc_attempts_before_fail != -1 )
 		{
-			libvshadow_volume_free(
-			 &volume,
-			 NULL );
+			vshadow_test_malloc_attempts_before_fail = -1;
+
+			if( volume != NULL )
+			{
+				libvshadow_volume_free(
+				 &volume,
+				 NULL );
+			}
+		}
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "volume",
+			 volume );
+
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		VSHADOW_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libvshadow_volume_initialize with memset failing
+		 */
+		vshadow_test_memset_attempts_before_fail = test_number;
 
-		VSHADOW_TEST_ASSERT_IS_NULL(
-		 "volume",
-		 volume );
+		result = libvshadow_volume_initialize(
+		          &volume,
+		          &error );
 
-		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libvshadow_volume_initialize with memset failing
-	 */
-	vshadow_test_memset_attempts_before_fail = 0;
-
-	result = libvshadow_volume_initialize(
-	          &volume,
-	          &error );
-
-	if( vshadow_test_memset_attempts_before_fail != -1 )
-	{
-		vshadow_test_memset_attempts_before_fail = -1;
-
-		if( volume != NULL )
+		if( vshadow_test_memset_attempts_before_fail != -1 )
 		{
-			libvshadow_volume_free(
-			 &volume,
-			 NULL );
+			vshadow_test_memset_attempts_before_fail = -1;
+
+			if( volume != NULL )
+			{
+				libvshadow_volume_free(
+				 &volume,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		VSHADOW_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		VSHADOW_TEST_ASSERT_IS_NULL(
-		 "volume",
-		 volume );
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "volume",
+			 volume );
 
-		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
 
@@ -1216,19 +1232,19 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libvshadow_volume_get_number_of_stores functions
+/* Tests the libvshadow_volume_signal_abort function
  * Returns 1 if successful or 0 if not
  */
-int vshadow_test_volume_get_number_of_stores(
+int vshadow_test_volume_signal_abort(
      libvshadow_volume_t *volume )
 {
 	libcerror_error_t *error = NULL;
-	int number_of_stores     = 0;
 	int result               = 0;
 
-	result = libvshadow_volume_get_number_of_stores(
+	/* Test regular cases
+	 */
+	result = libvshadow_volume_signal_abort(
 	          volume,
-	          &number_of_stores,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -1242,6 +1258,142 @@ int vshadow_test_volume_get_number_of_stores(
 
 	/* Test error cases
 	 */
+	result = libvshadow_volume_signal_abort(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_volume_get_size function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_volume_get_size(
+     libvshadow_volume_t *volume )
+{
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	int result               = 0;
+	int size_is_set          = 0;
+
+	/* Test regular cases
+	 */
+	result = libvshadow_volume_get_size(
+	          volume,
+	          &size,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libvshadow_volume_get_size(
+	          NULL,
+	          &size,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( size_is_set != 0 )
+	{
+		result = libvshadow_volume_get_size(
+		          volume,
+		          NULL,
+		          &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_volume_get_number_of_stores function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_volume_get_number_of_stores(
+     libvshadow_volume_t *volume )
+{
+	libcerror_error_t *error    = NULL;
+	int number_of_stores        = 0;
+	int number_of_stores_is_set = 0;
+	int result                  = 0;
+
+	/* Test regular cases
+	 */
+	result = libvshadow_volume_get_number_of_stores(
+	          volume,
+	          &number_of_stores,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_stores_is_set = result;
+
+	/* Test error cases
+	 */
 	result = libvshadow_volume_get_number_of_stores(
 	          NULL,
 	          &number_of_stores,
@@ -1252,30 +1404,32 @@ int vshadow_test_volume_get_number_of_stores(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libvshadow_volume_get_number_of_stores(
-	          volume,
-	          NULL,
-	          &error );
+	if( number_of_stores_is_set != 0 )
+	{
+		result = libvshadow_volume_get_number_of_stores(
+		          volume,
+		          NULL,
+		          &error );
 
-	VSHADOW_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1305,7 +1459,7 @@ int main(
 	system_integer_t option     = 0;
 	int result                  = 0;
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = vshadow_test_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )
@@ -1341,8 +1495,6 @@ int main(
 	VSHADOW_TEST_RUN(
 	 "libvshadow_volume_free",
 	 vshadow_test_volume_free );
-
-	/* TODO add tests for libvshadow_volume_signal_abort */
 
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
@@ -1396,16 +1548,30 @@ int main(
 	         "error",
 	         error );
 
-		/* TODO add tests for libvshadow_volume_open_read */
-		/* TODO add tests for libvshadow_volume_get_size */
+		VSHADOW_TEST_RUN_WITH_ARGS(
+		 "libvshadow_volume_signal_abort",
+		 vshadow_test_volume_signal_abort,
+		 volume );
+
+#if defined( __GNUC__ )
+
+		/* TODO: add tests for libvshadow_volume_open_read */
+
+#endif /* defined( __GNUC__ ) */
+
+		VSHADOW_TEST_RUN_WITH_ARGS(
+		 "libvshadow_volume_get_size",
+		 vshadow_test_volume_get_size,
+		 volume );
 
 		VSHADOW_TEST_RUN_WITH_ARGS(
 		 "libvshadow_volume_get_number_of_stores",
 		 vshadow_test_volume_get_number_of_stores,
 		 volume );
 
-		/* TODO add tests for libvshadow_volume_get_store */
-		/* TODO add tests for libvshadow_volume_get_store_identifier */
+		/* TODO: add tests for libvshadow_volume_get_store */
+
+		/* TODO: add tests for libvshadow_volume_get_store_identifier */
 
 		/* Clean up
 		 */

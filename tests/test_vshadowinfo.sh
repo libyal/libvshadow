@@ -55,7 +55,7 @@ fi
 
 source ${TEST_RUNNER};
 
-run_test_on_input_directory "${TEST_PROFILE}" "${TEST_DESCRIPTION}" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_DIRECTORY}" "${INPUT_GLOB}";
+run_test_on_input_directory "${TEST_PROFILE}" "${TEST_DESCRIPTION}" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_DIRECTORY}" "${INPUT_GLOB}" -a;
 RESULT=$?;
 
 exit ${RESULT};

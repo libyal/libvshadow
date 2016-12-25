@@ -38,9 +38,9 @@
 #include <libvshadow/extern.h>
 
 #else
-#define LIBVSHADOW_EXTERN	extern
+#define LIBVSHADOW_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBVSHADOW ) */
 
 #endif /* !defined( _LIBVSHADOW_INTERNAL_EXTERN_H ) */
 

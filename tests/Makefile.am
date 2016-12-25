@@ -11,7 +11,6 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBVSHADOW_DLL_IMPORT@
 
@@ -27,10 +26,9 @@ TESTS = \
 	$(TESTS_PYVSHADOW)
 
 check_SCRIPTS = \
-	pyvshadow_test_get_version.py \
-	pyvshadow_test_open_close.py \
 	pyvshadow_test_read.py \
-	pyvshadow_test_seek.py \
+	pyvshadow_test_support.py \
+	pyvshadow_test_volume.py \
 	test_api_functions.sh \
 	test_api_types.sh \
 	test_python_functions.sh \
@@ -48,8 +46,6 @@ check_PROGRAMS = \
 	vshadow_test_error \
 	vshadow_test_io_handle \
 	vshadow_test_notify \
-	vshadow_test_read \
-	vshadow_test_seek \
 	vshadow_test_store \
 	vshadow_test_store_block \
 	vshadow_test_store_descriptor \
@@ -136,35 +132,6 @@ vshadow_test_notify_SOURCES = \
 vshadow_test_notify_LDADD = \
 	../libvshadow/libvshadow.la
 
-vshadow_test_read_SOURCES = \
-	vshadow_test_libcerror.h \
-	vshadow_test_libcthreads.h \
-	vshadow_test_libcsystem.h \
-	vshadow_test_libvshadow.h \
-	vshadow_test_read.c \
-	vshadow_test_unused.h
-
-vshadow_test_read_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	../libvshadow/libvshadow.la \
-	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@
-	@PTHREAD_LIBADD@
-
-vshadow_test_seek_SOURCES = \
-	vshadow_test_libcerror.h \
-	vshadow_test_libcsystem.h \
-	vshadow_test_libvshadow.h \
-	vshadow_test_seek.c \
-	vshadow_test_unused.h
-
-vshadow_test_seek_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	../libvshadow/libvshadow.la \
-	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@
-	@PTHREAD_LIBADD@
-
 vshadow_test_store_SOURCES = \
 	vshadow_test_libcerror.h \
 	vshadow_test_libvshadow.h \
@@ -210,16 +177,16 @@ vshadow_test_store_descriptor_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_support_SOURCES = \
+	vshadow_test_getopt.c vshadow_test_getopt.h \
 	vshadow_test_libcerror.h \
 	vshadow_test_libclocale.h \
-	vshadow_test_libcsystem.h \
+	vshadow_test_libcnotify.h \
 	vshadow_test_libuna.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
 	vshadow_test_support.c
 
 vshadow_test_support_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
@@ -228,9 +195,11 @@ vshadow_test_support_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_volume_SOURCES = \
+	vshadow_test_getopt.c vshadow_test_getopt.h \
+	vshadow_test_libbfio.h \
 	vshadow_test_libcerror.h \
 	vshadow_test_libclocale.h \
-	vshadow_test_libcsystem.h \
+	vshadow_test_libcnotify.h \
 	vshadow_test_libuna.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
@@ -238,7 +207,9 @@ vshadow_test_volume_SOURCES = \
 	vshadow_test_volume.c
 
 vshadow_test_volume_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \

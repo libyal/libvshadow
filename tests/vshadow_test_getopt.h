@@ -1,5 +1,5 @@
 /*
- * Byte size string functions
+ * GetOpt functions
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,40 +19,50 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _BYTE_SIZE_STRING_H )
-#define _BYTE_SIZE_STRING_H
+#if !defined( _VSHADOW_TEST_GETOPT_H )
+#define _VSHADOW_TEST_GETOPT_H
 
 #include <common.h>
 #include <types.h>
 
-#include "vshadowtools_libcerror.h"
+/* unistd.h is included here to export getopt, optarg, optind and optopt
+ */
+#if defined( HAVE_UNISTD_H )
+#include <unistd.h>
+#endif
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-enum BYTE_SIZE_STRING_UNITS
-{
-	BYTE_SIZE_STRING_UNIT_MEGABYTE	= 1000,
-	BYTE_SIZE_STRING_UNIT_MEBIBYTE	= 1024
-};
+#if defined( HAVE_GETOPT )
+#define vshadow_test_getopt( argument_count, argument_values, options_string ) \
+	getopt( argument_count, argument_values, options_string )
 
-int byte_size_string_create(
-     system_character_t *byte_size_string,
-     size_t byte_size_string_length,
-     uint64_t size,
-     int units,
-     libcerror_error_t **error );
+#else
 
-int byte_size_string_convert(
-     const system_character_t *byte_size_string,
-     size_t byte_size_string_length,
-     uint64_t *size,
-     libcerror_error_t **error );
+#if !defined( __CYGWIN__ )
+extern int optind;
+extern system_character_t *optarg;
+extern system_integer_t optopt;
+
+#else
+int optind;
+system_character_t *optarg;
+system_integer_t optopt;
+
+#endif /* !defined( __CYGWIN__ ) */
+
+system_integer_t vshadow_test_getopt(
+                  int argument_count,
+                  system_character_t * const argument_values[],
+                  const system_character_t *options_string );
+
+#endif /* defined( HAVE_GETOPT ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _BYTE_SIZE_STRING_H ) */
+#endif /* !defined( _VSHADOW_TEST_GETOPT_H ) */
 

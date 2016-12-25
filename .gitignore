@@ -133,8 +133,6 @@ stamp-h[1-9]
 /tests/vshadow_test_error
 /tests/vshadow_test_io_handle
 /tests/vshadow_test_notify
-/tests/vshadow_test_read
-/tests/vshadow_test_seek
 /tests/vshadow_test_store
 /tests/vshadow_test_store_block
 /tests/vshadow_test_store_descriptor

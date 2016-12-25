@@ -22,8 +22,6 @@ MSVSCPP_FILES = \
 	vshadow_test_error/vshadow_test_error.vcproj \
 	vshadow_test_io_handle/vshadow_test_io_handle.vcproj \
 	vshadow_test_notify/vshadow_test_notify.vcproj \
-	vshadow_test_read/vshadow_test_read.vcproj \
-	vshadow_test_seek/vshadow_test_seek.vcproj \
 	vshadow_test_store/vshadow_test_store.vcproj \
 	vshadow_test_store_block/vshadow_test_store_block.vcproj \
 	vshadow_test_store_descriptor/vshadow_test_store_descriptor.vcproj \
