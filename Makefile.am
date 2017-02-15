@@ -16,7 +16,6 @@ SUBDIRS = \
 	libfdatetime \
 	libfguid \
 	libvshadow \
-	libcsystem \
 	vshadowtools \
 	pyvshadow \
 	pyvshadow-python2 \
@@ -118,7 +117,6 @@ splint:
 	(cd $(srcdir)/libfdatetime && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfguid && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libvshadow && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/vshadowtools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pyvshadow && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))

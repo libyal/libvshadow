@@ -30,6 +30,12 @@ import pyvshadow
 class VolumeTypeTests(unittest.TestCase):
   """Tests the volume type."""
 
+  def test_signal_abort(self):
+    """Tests the signal_abort function."""
+    vshadow_volume = pyvshadow.volume()
+
+    vshadow_volume.signal_abort()
+
   def test_open(self):
     """Tests the open function."""
     if not unittest.source:
@@ -61,7 +67,7 @@ class VolumeTypeTests(unittest.TestCase):
 
     vshadow_volume.open_file_object(file_object)
 
-    # TODO: change MemoryError into IOError
+    # with self.assertRaises(IOError):
     with self.assertRaises(MemoryError):
       vshadow_volume.open_file_object(file_object)
 
@@ -81,8 +87,8 @@ class VolumeTypeTests(unittest.TestCase):
 
     vshadow_volume = pyvshadow.volume()
 
-    with self.assertRaises(IOError):
-      vshadow_volume.close()
+    # with self.assertRaises(IOError):
+    #   vshadow_volume.close()
 
   def test_open_close(self):
     """Tests the open and close functions."""

@@ -13,7 +13,6 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBFUSE_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBVSHADOW_DLL_IMPORT@
@@ -28,21 +27,23 @@ bin_PROGRAMS = \
 vshadowdebug_SOURCES = \
 	debug_handle.c debug_handle.h \
 	vshadowdebug.c \
-	vshadowoutput.c vshadowoutput.h \
+	vshadowtools_getopt.c vshadowtools_getopt.h \
+	vshadowtools_i18n.h \
 	vshadowtools_libbfio.h \
 	vshadowtools_libcerror.h \
 	vshadowtools_libcfile.h \
 	vshadowtools_libclocale.h \
 	vshadowtools_libcnotify.h \
 	vshadowtools_libcpath.h \
-	vshadowtools_libcsystem.h \
 	vshadowtools_libfdatetime.h \
 	vshadowtools_libfguid.h \
 	vshadowtools_libuna.h \
-	vshadowtools_libvshadow.h
+	vshadowtools_libvshadow.h \
+	vshadowtools_output.c vshadowtools_output.h \
+	vshadowtools_signal.c vshadowtools_signal.h \
+	vshadowtools_unused.h
 
 vshadowdebug_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
@@ -51,9 +52,9 @@ vshadowdebug_LDADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
-	../libvshadow/libvshadow.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 
@@ -61,21 +62,23 @@ vshadowinfo_SOURCES = \
 	byte_size_string.c byte_size_string.h \
 	info_handle.c info_handle.h \
 	vshadowinfo.c \
-	vshadowoutput.c vshadowoutput.h \
+	vshadowtools_getopt.c vshadowtools_getopt.h \
+	vshadowtools_i18n.h \
 	vshadowtools_libbfio.h \
 	vshadowtools_libcerror.h \
 	vshadowtools_libcfile.h \
 	vshadowtools_libclocale.h \
 	vshadowtools_libcnotify.h \
 	vshadowtools_libcpath.h \
-	vshadowtools_libcsystem.h \
 	vshadowtools_libfdatetime.h \
 	vshadowtools_libfguid.h \
 	vshadowtools_libuna.h \
-	vshadowtools_libvshadow.h
+	vshadowtools_libvshadow.h \
+	vshadowtools_output.c vshadowtools_output.h \
+	vshadowtools_signal.c vshadowtools_signal.h \
+	vshadowtools_unused.h
 
 vshadowinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
@@ -84,31 +87,33 @@ vshadowinfo_LDADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
-	../libvshadow/libvshadow.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 
 vshadowmount_SOURCES = \
 	mount_handle.c mount_handle.h \
 	vshadowmount.c \
-	vshadowoutput.c vshadowoutput.h \
+	vshadowtools_getopt.c vshadowtools_getopt.h \
+	vshadowtools_i18n.h \
 	vshadowtools_libbfio.h \
 	vshadowtools_libcerror.h \
 	vshadowtools_libcfile.h \
 	vshadowtools_libclocale.h \
 	vshadowtools_libcnotify.h \
 	vshadowtools_libcpath.h \
-	vshadowtools_libcsystem.h \
 	vshadowtools_libfdatetime.h \
 	vshadowtools_libfguid.h \
 	vshadowtools_libuna.h \
-	vshadowtools_libvshadow.h
+	vshadowtools_libvshadow.h \
+	vshadowtools_output.c vshadowtools_output.h \
+	vshadowtools_signal.c vshadowtools_signal.h \
+	vshadowtools_unused.h
 
 vshadowmount_LDADD = \
 	@LIBFUSE_LIBADD@ \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
@@ -117,9 +122,9 @@ vshadowmount_LDADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
-	../libvshadow/libvshadow.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 

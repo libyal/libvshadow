@@ -11,17 +11,18 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBFDATETIME_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBVSHADOW_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
 TESTS_PYVSHADOW = \
-	test_python_functions.sh
+	test_python_module.sh
 endif
 
 TESTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	test_vshadowinfo.sh \
 	$(TESTS_PYVSHADOW)
 
@@ -29,9 +30,8 @@ check_SCRIPTS = \
 	pyvshadow_test_read.py \
 	pyvshadow_test_support.py \
 	pyvshadow_test_volume.py \
-	test_api_functions.sh \
-	test_api_types.sh \
-	test_python_functions.sh \
+	test_library.sh \
+	test_python_module.sh \
 	test_runner.sh \
 	test_vshadowinfo.sh
 
@@ -178,6 +178,7 @@ vshadow_test_store_descriptor_LDADD = \
 
 vshadow_test_support_SOURCES = \
 	vshadow_test_getopt.c vshadow_test_getopt.h \
+	vshadow_test_libbfio.h \
 	vshadow_test_libcerror.h \
 	vshadow_test_libclocale.h \
 	vshadow_test_libcnotify.h \
@@ -187,6 +188,9 @@ vshadow_test_support_SOURCES = \
 	vshadow_test_support.c
 
 vshadow_test_support_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \

@@ -943,8 +943,6 @@ int vshadow_test_check_volume_signature_file_io_handle(
 	          file_io_handle,
 	          &error );
 
-	VSHADOW_TEST_FPRINT_ERROR( error );
-
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,

@@ -35,12 +35,14 @@
 #endif
 
 #include "info_handle.h"
-#include "vshadowoutput.h"
+#include "vshadowtools_getopt.h"
 #include "vshadowtools_libcerror.h"
 #include "vshadowtools_libclocale.h"
 #include "vshadowtools_libcnotify.h"
-#include "vshadowtools_libcsystem.h"
 #include "vshadowtools_libvshadow.h"
+#include "vshadowtools_output.h"
+#include "vshadowtools_signal.h"
+#include "vshadowtools_unused.h"
 
 info_handle_t *vshadowinfo_info_handle = NULL;
 int vshadowinfo_abort                  = 0;
@@ -71,12 +73,12 @@ void usage_fprint(
 /* Signal handler for vshadowinfo
  */
 void vshadowinfo_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      vshadowtools_signal_t signal VSHADOWTOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function   = "vshadowinfo_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	VSHADOWTOOLS_UNREFERENCED_PARAMETER( signal )
 
 	vshadowinfo_abort = 1;
 
@@ -98,8 +100,13 @@ void vshadowinfo_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -140,13 +147,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-        if( libcsystem_initialize(
+        if( vshadowtools_output_initialize(
              _IONBF,
              &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -154,7 +161,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = vshadowtools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "aho:vV" ) ) ) != (system_integer_t) -1 )

@@ -63,6 +63,12 @@ struct debug_handle
 	int abort;
 };
 
+int vshadowtools_system_string_copy_from_64_bit_in_decimal(
+     const system_character_t *string,
+     size_t string_size,
+     uint64_t *value_64bit,
+     libcerror_error_t **error );
+
 int debug_handle_initialize(
      debug_handle_t **debug_handle,
      libcerror_error_t **error );
