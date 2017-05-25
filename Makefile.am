@@ -31,13 +31,12 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libvshadow.docs \
-	dpkg/libvshadow-dev.docs \
-	dpkg/libvshadow-python.docs \
-	dpkg/libvshadow-python3.docs \
-	dpkg/libvshadow-tools.docs \
+	dpkg/libvshadow.install \
+	dpkg/libvshadow-dev.install \
+	dpkg/libvshadow-python.install \
+	dpkg/libvshadow-python3.install \
+	dpkg/libvshadow-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
