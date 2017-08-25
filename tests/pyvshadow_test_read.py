@@ -162,18 +162,18 @@ def pyvshadow_test_read(vshadow_store):
 
   # Case 1: test buffer at offset read
 
-  # Test: offset: <file_size / 7> size: <file_size / 2>
-  # Expected result: offset: <file_size / 7> size: <file_size / 2>
+  # Test: offset: <file_size // 7> size: <file_size // 2>
+  # Expected result: offset: <file_size // 7> size: <file_size // 2>
   if not pyvshadow_test_seek_offset_and_read_buffer(
-      vshadow_store, file_size / 7, os.SEEK_SET, file_size / 2,
-      file_size / 7, file_size / 2):
+      vshadow_store, file_size // 7, os.SEEK_SET, file_size // 2,
+      file_size // 7, file_size // 2):
     return False
 
-  # Test: offset: <file_size / 7> size: <file_size / 2>
-  # Expected result: offset: <file_size / 7> size: <file_size / 2>
+  # Test: offset: <file_size // 7> size: <file_size // 2>
+  # Expected result: offset: <file_size // 7> size: <file_size // 2>
   if not pyvshadow_test_seek_offset_and_read_buffer(
-      vshadow_store, file_size / 7, os.SEEK_SET, file_size / 2,
-      file_size / 7, file_size / 2):
+      vshadow_store, file_size // 7, os.SEEK_SET, file_size // 2,
+      file_size // 7, file_size // 2):
     return False
 
   # Case 2: test read beyond media size
@@ -208,18 +208,18 @@ def pyvshadow_test_read(vshadow_store):
 
   # Case 3: test buffer at offset read
 
-  # Test: offset: <file_size / 7> size: <file_size / 2>
-  # Expected result: offset: < ( file_size / 7 ) + ( file_size / 2 ) > size: <file_size / 2>
+  # Test: offset: <file_size // 7> size: <file_size // 2>
+  # Expected result: offset: < ( file_size // 7 ) + ( file_size // 2 ) > size: <file_size // 2>
   if not pyvshadow_test_read_buffer_at_offset(
-      vshadow_store, file_size / 7, file_size / 2,
-      (file_size / 7) + (file_size / 2), file_size / 2):
+      vshadow_store, file_size // 7, file_size // 2,
+      (file_size // 7) + (file_size // 2), file_size // 2):
     return False
 
-  # Test: offset: <file_size / 7> size: <file_size / 2>
-  # Expected result: offset: < ( file_size / 7 ) + ( file_size / 2 ) > size: <file_size / 2>
+  # Test: offset: <file_size // 7> size: <file_size // 2>
+  # Expected result: offset: < ( file_size // 7 ) + ( file_size // 2 ) > size: <file_size // 2>
   if not pyvshadow_test_read_buffer_at_offset(
-      vshadow_store, file_size / 7, file_size / 2,
-      (file_size / 7) + (file_size / 2), file_size / 2):
+      vshadow_store, file_size // 7, file_size // 2,
+      (file_size // 7) + (file_size // 2), file_size // 2):
     return False
 
   return True
