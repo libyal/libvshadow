@@ -36,7 +36,7 @@
 #include "../libvshadow/libvshadow_block.h"
 #include "../libvshadow/libvshadow_block_descriptor.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_block_initialize function
  * Returns 1 if successful or 0 if not
@@ -284,7 +284,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* Tests the libvshadow_block_free function
  * Returns 1 if successful or 0 if not
@@ -324,7 +324,7 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_block_get_original_offset function
  * Returns 1 if successful or 0 if not
@@ -1154,7 +1154,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -1171,19 +1171,19 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_initialize",
 	 vshadow_test_block_initialize );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_free",
 	 vshadow_test_block_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_get_original_offset",
@@ -1201,7 +1201,7 @@ int main(
 	 "libvshadow_block_get_values",
 	 vshadow_test_block_get_values );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

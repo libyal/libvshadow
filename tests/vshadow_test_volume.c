@@ -1553,11 +1553,11 @@ int main(
 		 vshadow_test_volume_signal_abort,
 		 volume );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 		/* TODO: add tests for libvshadow_volume_open_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 		VSHADOW_TEST_RUN_WITH_ARGS(
 		 "libvshadow_volume_get_size",

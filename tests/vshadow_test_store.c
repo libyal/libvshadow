@@ -216,7 +216,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* Tests the libvshadow_store_free function
  * Returns 1 if successful or 0 if not
@@ -277,13 +277,13 @@ int main(
 	 "libvshadow_store_initialize",
 	 vshadow_test_store_initialize );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_store_free",
 	 vshadow_test_store_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	/* TODO add tests for libvshadow_store_has_in_volume_data */
 	/* TODO add tests for libvshadow_internal_store_read_buffer_from_file_io_handle */
@@ -303,7 +303,7 @@ int main(
 	/* TODO add tests for libvshadow_store_get_number_of_blocks */
 	/* TODO add tests for libvshadow_store_get_block_by_index */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

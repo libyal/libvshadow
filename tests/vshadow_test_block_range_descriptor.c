@@ -45,7 +45,7 @@ uint8_t vshadow_test_block_range_descriptor_empty_data[ 24 ] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_block_range_descriptor_initialize function
  * Returns 1 if successful or 0 if not
@@ -441,7 +441,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -458,7 +458,7 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_range_descriptor_initialize",
@@ -472,7 +472,7 @@ int main(
 	 "libvshadow_block_range_descriptor_read_data",
 	 vshadow_test_block_range_descriptor_read_data );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

@@ -38,7 +38,7 @@
 #include "../libvshadow/libvshadow_block_tree.h"
 #include "../libvshadow/libvshadow_definitions.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_block_tree_insert function
  * Returns 1 if successful or 0 if not
@@ -549,7 +549,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -566,13 +566,13 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_tree_insert",
 	 vshadow_test_block_tree_insert );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

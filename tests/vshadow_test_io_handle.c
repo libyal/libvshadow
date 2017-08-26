@@ -35,7 +35,7 @@
 
 #include "../libvshadow/libvshadow_io_handle.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_io_handle_initialize function
  * Returns 1 if successful or 0 if not
@@ -352,7 +352,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -369,7 +369,7 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_io_handle_initialize",
@@ -389,7 +389,7 @@ int main(
 	/* TODO add tests for libvshadow_io_handle_read_catalog */
 	/* TODO add tests for libvshadow_io_handle_read_catalog_header_data */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

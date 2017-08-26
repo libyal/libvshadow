@@ -35,7 +35,7 @@
 
 #include "../libvshadow/libvshadow_store_descriptor.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_store_descriptor_initialize function
  * Returns 1 if successful or 0 if not
@@ -254,7 +254,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -271,7 +271,7 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_store_descriptor_initialize",
@@ -300,7 +300,7 @@ int main(
 	/* TODO add tests for libvshadow_store_descriptor_get_number_of_blocks */
 	/* TODO add tests for libvshadow_store_descriptor_get_block_descriptor_by_index */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
