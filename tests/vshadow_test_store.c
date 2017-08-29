@@ -58,13 +58,13 @@ int vshadow_test_store_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "store",
-         store );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "store",
+	 store );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_store_free(
 	          &store,
@@ -75,13 +75,13 @@ int vshadow_test_store_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "store",
-         store );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "store",
+	 store );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -94,9 +94,9 @@ int vshadow_test_store_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -112,9 +112,9 @@ int vshadow_test_store_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -238,9 +238,9 @@ int vshadow_test_store_free(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

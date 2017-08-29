@@ -64,13 +64,13 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "forward_block_tree",
-         forward_block_tree );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "forward_block_tree",
+	 forward_block_tree );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libcdata_btree_initialize(
 	          &reverse_block_tree,
@@ -82,13 +82,13 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "reverse_block_tree",
-         reverse_block_tree );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "reverse_block_tree",
+	 reverse_block_tree );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -101,13 +101,13 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor
 	 */
@@ -129,9 +129,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: flags 0x00000088
 	 */
@@ -153,9 +153,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is overlay flag
 	 */
@@ -177,9 +177,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is overlay flag, overlapping offset range, alternating bitmap
 	 */
@@ -201,9 +201,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: replace existing
 	 */
@@ -225,9 +225,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: extend existing with overlay
 	 */
@@ -249,9 +249,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: extend existing with overlay
 	 */
@@ -273,9 +273,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is forwarder flag, original_offset equals relative_offset
 	 */
@@ -297,9 +297,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is forwarder flag
 	 */
@@ -321,9 +321,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is forwarder flag, override existing forwarder
 	 */
@@ -345,9 +345,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is forwarder flag
 	 */
@@ -369,9 +369,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: is forwarder flag, replaces existing forwarder
 	 */
@@ -393,9 +393,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test insert of block descriptor: not used flag
 	 */
@@ -417,9 +417,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -435,9 +435,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -454,9 +454,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -473,9 +473,9 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -492,13 +492,13 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "reverse_block_tree",
-         reverse_block_tree );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "reverse_block_tree",
+	 reverse_block_tree );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libcdata_btree_free(
 	          &forward_block_tree,
@@ -510,13 +510,13 @@ int vshadow_test_block_tree_insert(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "forward_block_tree",
-         forward_block_tree );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "forward_block_tree",
+	 forward_block_tree );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 

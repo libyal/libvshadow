@@ -58,13 +58,13 @@ int vshadow_test_io_handle_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "io_handle",
-         io_handle );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_io_handle_free(
 	          &io_handle,
@@ -75,13 +75,13 @@ int vshadow_test_io_handle_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "io_handle",
-         io_handle );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "io_handle",
+	 io_handle );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -94,9 +94,9 @@ int vshadow_test_io_handle_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -112,9 +112,9 @@ int vshadow_test_io_handle_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -236,9 +236,9 @@ int vshadow_test_io_handle_free(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -275,13 +275,13 @@ int vshadow_test_io_handle_clear(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "io_handle",
-         io_handle );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -294,9 +294,9 @@ int vshadow_test_io_handle_clear(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -309,9 +309,9 @@ int vshadow_test_io_handle_clear(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -327,13 +327,13 @@ int vshadow_test_io_handle_clear(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "io_handle",
-         io_handle );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "io_handle",
+	 io_handle );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 

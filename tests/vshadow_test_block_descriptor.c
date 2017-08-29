@@ -74,13 +74,13 @@ int vshadow_test_block_descriptor_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free(
 	          &block_descriptor,
@@ -91,13 +91,13 @@ int vshadow_test_block_descriptor_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -110,9 +110,9 @@ int vshadow_test_block_descriptor_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -128,9 +128,9 @@ int vshadow_test_block_descriptor_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -253,13 +253,13 @@ int vshadow_test_block_descriptor_free(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_initialize(
 	          &( block_descriptor->overlay ),
@@ -270,13 +270,13 @@ int vshadow_test_block_descriptor_free(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor->overlay",
-         block_descriptor->overlay );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor->overlay",
+	 block_descriptor->overlay );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free(
 	          &block_descriptor,
@@ -287,9 +287,9 @@ int vshadow_test_block_descriptor_free(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -302,9 +302,9 @@ int vshadow_test_block_descriptor_free(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -347,13 +347,13 @@ int vshadow_test_block_descriptor_free_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_initialize(
 	          &( block_descriptor->overlay ),
@@ -364,13 +364,13 @@ int vshadow_test_block_descriptor_free_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor->overlay",
-         block_descriptor->overlay );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor->overlay",
+	 block_descriptor->overlay );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free_reverse(
 	          &block_descriptor,
@@ -381,9 +381,9 @@ int vshadow_test_block_descriptor_free_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -396,9 +396,9 @@ int vshadow_test_block_descriptor_free_reverse(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -442,13 +442,13 @@ int vshadow_test_block_descriptor_clone(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "source_block_descriptor",
-         source_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "source_block_descriptor",
+	 source_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -462,13 +462,13 @@ int vshadow_test_block_descriptor_clone(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "destination_block_descriptor",
-         destination_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "destination_block_descriptor",
+	 destination_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free(
 	          &destination_block_descriptor,
@@ -479,13 +479,13 @@ int vshadow_test_block_descriptor_clone(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "destination_block_descriptor",
-         destination_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "destination_block_descriptor",
+	 destination_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_clone(
 	          &destination_block_descriptor,
@@ -497,13 +497,13 @@ int vshadow_test_block_descriptor_clone(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "destination_block_descriptor",
-         destination_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "destination_block_descriptor",
+	 destination_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -517,9 +517,9 @@ int vshadow_test_block_descriptor_clone(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -535,13 +535,13 @@ int vshadow_test_block_descriptor_clone(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "source_block_descriptor",
-         source_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "source_block_descriptor",
+	 source_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -588,13 +588,13 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "first_block_descriptor",
-         first_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "first_block_descriptor",
+	 first_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_initialize(
 	          &second_block_descriptor,
@@ -605,13 +605,13 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 LIBCDATA_COMPARE_EQUAL );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "second_block_descriptor",
-         second_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "second_block_descriptor",
+	 second_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -625,9 +625,9 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -641,9 +641,9 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -658,9 +658,9 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -676,13 +676,13 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "second_block_descriptor",
-         second_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "second_block_descriptor",
+	 second_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free(
 	          &first_block_descriptor,
@@ -693,13 +693,13 @@ int vshadow_test_block_descriptor_compare_by_original_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "first_block_descriptor",
-         first_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "first_block_descriptor",
+	 first_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -746,13 +746,13 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "first_block_descriptor",
-         first_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "first_block_descriptor",
+	 first_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_initialize(
 	          &second_block_descriptor,
@@ -763,13 +763,13 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 LIBCDATA_COMPARE_EQUAL );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "second_block_descriptor",
-         second_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "second_block_descriptor",
+	 second_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -783,9 +783,9 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -799,9 +799,9 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -816,9 +816,9 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -834,13 +834,13 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "second_block_descriptor",
-         second_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "second_block_descriptor",
+	 second_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free(
 	          &first_block_descriptor,
@@ -851,13 +851,13 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "first_block_descriptor",
-         first_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "first_block_descriptor",
+	 first_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -904,13 +904,13 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "first_block_descriptor",
-         first_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "first_block_descriptor",
+	 first_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_initialize(
 	          &second_block_descriptor,
@@ -921,13 +921,13 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 LIBCDATA_COMPARE_EQUAL );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "second_block_descriptor",
-         second_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "second_block_descriptor",
+	 second_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -941,9 +941,9 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -957,9 +957,9 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -974,9 +974,9 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -992,13 +992,13 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "second_block_descriptor",
-         second_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "second_block_descriptor",
+	 second_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_free(
 	          &first_block_descriptor,
@@ -1009,13 +1009,13 @@ int vshadow_test_block_descriptor_compare_reverse(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "first_block_descriptor",
-         first_block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "first_block_descriptor",
+	 first_block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1062,13 +1062,13 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -1082,9 +1082,9 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -1098,9 +1098,9 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1115,9 +1115,9 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1133,13 +1133,13 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1180,13 +1180,13 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -1200,9 +1200,9 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -1216,9 +1216,9 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1233,9 +1233,9 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1251,13 +1251,13 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1297,13 +1297,13 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -1319,9 +1319,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_descriptor_read_data(
 	          block_descriptor,
@@ -1335,9 +1335,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 0 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -1353,9 +1353,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1372,9 +1372,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1391,9 +1391,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1410,9 +1410,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1431,9 +1431,9 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -1449,13 +1449,13 @@ int vshadow_test_block_descriptor_read_data(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "block_descriptor",
-         block_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 

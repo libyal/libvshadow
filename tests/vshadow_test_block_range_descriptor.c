@@ -68,13 +68,13 @@ int vshadow_test_block_range_descriptor_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_range_descriptor",
-         block_range_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_range_descriptor",
+	 block_range_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_range_descriptor_free(
 	          &block_range_descriptor,
@@ -85,13 +85,13 @@ int vshadow_test_block_range_descriptor_initialize(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "block_range_descriptor",
-         block_range_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_range_descriptor",
+	 block_range_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -104,9 +104,9 @@ int vshadow_test_block_range_descriptor_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -122,9 +122,9 @@ int vshadow_test_block_range_descriptor_initialize(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -246,9 +246,9 @@ int vshadow_test_block_range_descriptor_free(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -285,13 +285,13 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "block_range_descriptor",
-         block_range_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_range_descriptor",
+	 block_range_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -307,9 +307,9 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libvshadow_block_range_descriptor_read_data(
 	          block_range_descriptor,
@@ -323,9 +323,9 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 0 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -341,9 +341,9 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -360,9 +360,9 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -379,9 +379,9 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -398,9 +398,9 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 -1 );
 
-        VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -416,13 +416,13 @@ int vshadow_test_block_range_descriptor_read_data(
 	 result,
 	 1 );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "block_range_descriptor",
-         block_range_descriptor );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_range_descriptor",
+	 block_range_descriptor );
 
-        VSHADOW_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
