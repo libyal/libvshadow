@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "block block_descriptor block_range_descriptor error io_handle notify store store_block store_descriptor"
+$LibraryTests = "block block_descriptor block_range_descriptor block_tree error io_handle notify store store_block store_descriptor"
 $LibraryTestsWithInput = "support volume"
 
 $TestToolDirectory = "..\msvscpp\Release"

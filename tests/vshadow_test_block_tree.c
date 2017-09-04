@@ -90,8 +90,6 @@ int vshadow_test_block_tree_insert(
 	 "error",
 	 error );
 
-	/* Test regular cases
-	 */
 	result = libvshadow_block_descriptor_initialize(
 	          &block_descriptor,
 	          &error );
@@ -482,6 +480,23 @@ int vshadow_test_block_tree_insert(
 
 	/* Clean up
 	 */
+	result = libvshadow_block_descriptor_free(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libcdata_btree_free(
 	          &reverse_block_tree,
 	          (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free_reverse,

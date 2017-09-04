@@ -97,7 +97,8 @@ int libvshadow_block_descriptor_initialize(
 
 		goto on_error;
 	}
-	( *block_descriptor )->index = -1;
+	( *block_descriptor )->index         = -1;
+	( *block_descriptor )->reverse_index = -1;
 
 	return( 1 );
 
@@ -291,7 +292,8 @@ int libvshadow_block_descriptor_clone(
 			goto on_error;
 		}
 	}
-	( *destination_block_descriptor )->index = -1;
+	( *destination_block_descriptor )->index         = -1;
+	( *destination_block_descriptor )->reverse_index = -1;
 
 	return( 1 );
 
