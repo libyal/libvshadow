@@ -34,8 +34,9 @@
 #include "vshadow_test_unused.h"
 
 #include "../libvshadow/libvshadow_store.h"
+#include "../libvshadow/libvshadow_volume.h"
 
-#if defined( __GNUC__ ) && defined( TODO )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 /* Tests the libvshadow_store_initialize function
  * Returns 1 if successful or 0 if not
@@ -43,14 +44,41 @@
 int vshadow_test_store_initialize(
      void )
 {
-	libcerror_error_t *error  = NULL;
-	libvshadow_store_t *store = NULL;
-	int result                = 0;
+	libcerror_error_t *error    = NULL;
+	libvshadow_store_t *store   = NULL;
+	libvshadow_volume_t *volume = NULL;
+	int result                  = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_volume_initialize(
+	          &volume,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "volume",
+	 volume );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+#ifdef TODO
+/* TODO: add store descriptor for testing */
 
 	/* Test store initialization
 	 */
 	result = libvshadow_store_initialize(
 	          &store,
+	          NULL,
+	          NULL,
+	          (libvshadow_internal_volume_t *) volume,
+	          0,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -83,10 +111,16 @@ int vshadow_test_store_initialize(
 	 "error",
 	 error );
 
+#endif /* TODO */
+
 	/* Test error cases
 	 */
 	result = libvshadow_store_initialize(
 	          NULL,
+	          NULL,
+	          NULL,
+	          (libvshadow_internal_volume_t *) volume,
+	          0,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -105,6 +139,10 @@ int vshadow_test_store_initialize(
 
 	result = libvshadow_store_initialize(
 	          &store,
+	          NULL,
+	          NULL,
+	          (libvshadow_internal_volume_t *) volume,
+	          0,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -121,6 +159,28 @@ int vshadow_test_store_initialize(
 
 	store = NULL;
 
+	result = libvshadow_store_initialize(
+	          &store,
+	          NULL,
+	          NULL,
+	          NULL,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#ifdef TODO
+/* TODO: add store descriptor for testing */
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
 
 	/* Test libvshadow_store_initialize with malloc failing
@@ -129,6 +189,10 @@ int vshadow_test_store_initialize(
 
 	result = libvshadow_store_initialize(
 	          &store,
+	          NULL,
+	          NULL,
+	          (libvshadow_internal_volume_t *) volume,
+	          0,
 	          &error );
 
 	if( vshadow_test_malloc_attempts_before_fail != -1 )
@@ -166,6 +230,10 @@ int vshadow_test_store_initialize(
 
 	result = libvshadow_store_initialize(
 	          &store,
+	          NULL,
+	          NULL,
+	          (libvshadow_internal_volume_t *) volume,
+	          0,
 	          &error );
 
 	if( vshadow_test_memset_attempts_before_fail != -1 )
@@ -198,6 +266,26 @@ int vshadow_test_store_initialize(
 		 &error );
 	}
 #endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
+#endif /* TODO */
+
+	/* Clean up
+	 */
+	result = libvshadow_volume_free(
+	          &volume,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "volume",
+	 volume );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -211,6 +299,12 @@ on_error:
 	{
 		libvshadow_store_free(
 		 &store,
+		 NULL );
+	}
+	if( volume != NULL )
+	{
+		libvshadow_volume_free(
+		 &volume,
 		 NULL );
 	}
 	return( 0 );
@@ -271,7 +365,7 @@ int main(
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argc )
 	VSHADOW_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ ) && defined( TODO )
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_store_initialize",
