@@ -309,6 +309,8 @@ int vshadow_test_block_descriptor_free(
 	libcerror_error_free(
 	 &error );
 
+/* TODO cause free of overlay to fail */
+
 	return( 1 );
 
 on_error:
@@ -523,6 +525,110 @@ int vshadow_test_block_descriptor_clone(
 
 	libcerror_error_free(
 	 &error );
+
+	destination_block_descriptor = (libvshadow_block_descriptor_t *) 0x12345678UL;
+
+	result = libvshadow_block_descriptor_clone(
+	          &destination_block_descriptor,
+	          source_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	destination_block_descriptor = NULL;
+
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+
+	/* Test libvshadow_block_descriptor_clone with malloc failing
+	 */
+	vshadow_test_malloc_attempts_before_fail = 0;
+
+	result = libvshadow_block_descriptor_clone(
+	          &destination_block_descriptor,
+	          source_block_descriptor,
+	          &error );
+
+	if( vshadow_test_malloc_attempts_before_fail != -1 )
+	{
+		vshadow_test_malloc_attempts_before_fail = -1;
+
+		if( destination_block_descriptor != NULL )
+		{
+			libvshadow_block_descriptor_free(
+			 &destination_block_descriptor,
+			 NULL );
+		}
+	}
+	else
+	{
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "destination_block_descriptor",
+		 destination_block_descriptor );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libvshadow_block_descriptor_clone with memcpy failing
+	 */
+	vshadow_test_memcpy_attempts_before_fail = 0;
+
+	result = libvshadow_block_descriptor_clone(
+	          &destination_block_descriptor,
+	          source_block_descriptor,
+	          &error );
+
+	if( vshadow_test_memcpy_attempts_before_fail != -1 )
+	{
+		vshadow_test_memcpy_attempts_before_fail = -1;
+
+		if( destination_block_descriptor != NULL )
+		{
+			libvshadow_block_descriptor_free(
+			 &destination_block_descriptor,
+			 NULL );
+		}
+	}
+	else
+	{
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "destination_block_descriptor",
+		 destination_block_descriptor );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+
+/* TODO cause libvshadow_block_descriptor_clone of overlay to fail */
+
+#endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
 
 	/* Clean up
 	 */
@@ -773,6 +879,9 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 
 	/* Test regular cases
 	 */
+	first_block_descriptor->relative_offset  = 0;
+	second_block_descriptor->relative_offset = 100;
+
 	result = libvshadow_block_descriptor_compare_by_relative_offset(
 	          first_block_descriptor,
 	          second_block_descriptor,
@@ -781,7 +890,41 @@ int vshadow_test_block_descriptor_compare_by_relative_offset(
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 LIBCDATA_COMPARE_LESS );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	first_block_descriptor->relative_offset  = 100;
+	second_block_descriptor->relative_offset = 0;
+
+	result = libvshadow_block_descriptor_compare_by_relative_offset(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_GREATER );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	first_block_descriptor->relative_offset  = 50;
+	second_block_descriptor->relative_offset = 50;
+
+	result = libvshadow_block_descriptor_compare_by_relative_offset(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -931,6 +1074,9 @@ int vshadow_test_block_descriptor_compare_reverse(
 
 	/* Test regular cases
 	 */
+	first_block_descriptor->original_offset  = 0;
+	second_block_descriptor->relative_offset = 100;
+
 	result = libvshadow_block_descriptor_compare_reverse(
 	          first_block_descriptor,
 	          second_block_descriptor,
@@ -939,7 +1085,41 @@ int vshadow_test_block_descriptor_compare_reverse(
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 LIBCDATA_COMPARE_LESS );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	first_block_descriptor->original_offset  = 100;
+	second_block_descriptor->relative_offset = 0;
+
+	result = libvshadow_block_descriptor_compare_reverse(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_GREATER );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	first_block_descriptor->original_offset  = 50;
+	second_block_descriptor->relative_offset = 50;
+
+	result = libvshadow_block_descriptor_compare_reverse(
+	          first_block_descriptor,
+	          second_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1072,6 +1252,9 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 
 	/* Test regular cases
 	 */
+	original_offset                   = 0;
+	block_descriptor->original_offset = 0x4000;
+
 	result = libvshadow_block_descriptor_compare_range_by_original_offset_value(
 	          &original_offset,
 	          block_descriptor,
@@ -1080,7 +1263,41 @@ int vshadow_test_block_descriptor_compare_range_by_original_offset_value(
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 LIBCDATA_COMPARE_LESS );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	original_offset                   = 0x8000;
+	block_descriptor->original_offset = 0x4000;
+
+	result = libvshadow_block_descriptor_compare_range_by_original_offset_value(
+	          &original_offset,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_GREATER );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	original_offset                   = 0x4000;
+	block_descriptor->original_offset = 0x4000;
+
+	result = libvshadow_block_descriptor_compare_range_by_original_offset_value(
+	          &original_offset,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1190,6 +1407,9 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 
 	/* Test regular cases
 	 */
+	relative_offset                   = 0;
+	block_descriptor->relative_offset = 0x4000;
+
 	result = libvshadow_block_descriptor_compare_range_by_relative_offset_value(
 	          &relative_offset,
 	          block_descriptor,
@@ -1198,7 +1418,41 @@ int vshadow_test_block_descriptor_compare_range_by_relative_offset_value(
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 LIBCDATA_COMPARE_LESS );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	relative_offset                   = 0x8000;
+	block_descriptor->relative_offset = 0x4000;
+
+	result = libvshadow_block_descriptor_compare_range_by_relative_offset_value(
+	          &relative_offset,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_GREATER );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	relative_offset                   = 0x4000;
+	block_descriptor->relative_offset = 0x4000;
+
+	result = libvshadow_block_descriptor_compare_range_by_relative_offset_value(
+	          &relative_offset,
+	          block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 LIBCDATA_COMPARE_EQUAL );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",

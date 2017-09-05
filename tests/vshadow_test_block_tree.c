@@ -395,6 +395,30 @@ int vshadow_test_block_tree_insert(
 	 "error",
 	 error );
 
+	/* Test insert of block descriptor: is forwarder flag, points to itself
+	 */
+	block_descriptor->original_offset = 0xb7f48000;
+	block_descriptor->relative_offset = 0xb7f48000;
+	block_descriptor->offset          = 0xb7f48000;
+	block_descriptor->flags           = 0x00000001;
+	block_descriptor->bitmap          = 0x00000000;
+
+	result = libvshadow_block_tree_insert(
+	          forward_block_tree,
+	          reverse_block_tree,
+	          block_descriptor,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test insert of block descriptor: not used flag
 	 */
 	block_descriptor->original_offset = 0x00001000;
@@ -418,6 +442,8 @@ int vshadow_test_block_tree_insert(
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
+
+/* TODO test not overlay and forwarder block descriptorand free existing reverse_block_descriptor */
 
 	/* Test error cases
 	 */
@@ -477,6 +503,65 @@ int vshadow_test_block_tree_insert(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+
+	/* Test libvshadow_block_tree_insert with libvshadow_block_descriptor_clone failing
+	 */
+	vshadow_test_malloc_attempts_before_fail = 0;
+
+	result = libvshadow_block_tree_insert(
+	          forward_block_tree,
+	          reverse_block_tree,
+	          block_descriptor,
+	          0,
+	          &error );
+
+	if( vshadow_test_malloc_attempts_before_fail != -1 )
+	{
+		vshadow_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "block_descriptor",
+		 block_descriptor );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+
+/* TODO test libcdata_btree_insert_value failing */
+
+/* TODO test not overlay
+ * with libcdata_btree_get_value_by_value failing
+ */
+
+/* TODO test not overlay and forwarder block descriptor
+ * with reverse_block_descriptor == NULL
+ * with libcdata_btree_remove_value failing
+ */
+
+/* TODO test insert of block descriptor: is forwarder flag, points to itself
+ * with libvshadow_block_descriptor_free failing
+ */
+
+/* TODO test insert of block descriptor
+ * with existing_block_descriptor == NULL
+ * with is overlay and libvshadow_block_descriptor_free failing
+ * with libcdata_btree_replace_value failing
+ */
+
+#endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
 
 	/* Clean up
 	 */
