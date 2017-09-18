@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libvshadow],
- [20170902],
+ [20170918],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -14,9 +14,6 @@ AC_CONFIG_MACRO_DIR([m4])
 
 dnl Check for host type
 AC_CANONICAL_HOST
-
-dnl Check for large file support
-AC_SYS_LARGEFILE
 
 dnl Check for libtool DLL support
 AC_LIBTOOL_WIN32_DLL
@@ -42,6 +39,9 @@ dnl Check for compiler language support
 AC_C_CONST
 AC_C_VOLATILE
 
+dnl Check for large file support
+AC_SYS_LARGEFILE
+
 dnl Check if WINAPI support should be enabled
 AX_COMMON_CHECK_ENABLE_WINAPI
 
@@ -51,63 +51,76 @@ AX_COMMON_CHECK_ENABLE_WIDE_CHARACTER_TYPE
 dnl Check for type definitions
 AX_TYPES_CHECK_LOCAL
 
-dnl Checks for libraries and library functions
+dnl Check if common required headers and functions are available
 AX_COMMON_CHECK_LOCAL
 
-dnl Check for enabling libcerror for cross-platform C error functions
+dnl Check if libcerror or required headers and functions are available
 AX_LIBCERROR_CHECK_ENABLE
 
-dnl Check for enabling libcthreads for cross-platform C threads functions
+dnl Check if libcthreads or required headers and functions are available
 AX_LIBCTHREADS_CHECK_ENABLE
 
-dnl Check for enabling libcdata for cross-platform C generic data functions
+dnl Check if libcdata or required headers and functions are available
 AX_LIBCDATA_CHECK_ENABLE
 
-dnl Check for enabling libclocale for cross-platform C locale functions
+dnl Check if libclocale or required headers and functions are available
 AX_LIBCLOCALE_CHECK_ENABLE
 
-dnl Check for enabling libcnotify for cross-platform C notification functions
+dnl Check if libcnotify or required headers and functions are available
 AX_LIBCNOTIFY_CHECK_ENABLE
 
-dnl Check for enabling libcsplit for cross-platform C split string functions
+dnl Check if libcsplit or required headers and functions are available
 AX_LIBCSPLIT_CHECK_ENABLE
 
-dnl Check for enabling libuna for Unicode string support
+dnl Check if libuna or required headers and functions are available
 AX_LIBUNA_CHECK_ENABLE
 
-dnl Check for enabling libcfile for cross-platform C file functions
+dnl Check if libcfile or required headers and functions are available
 AX_LIBCFILE_CHECK_ENABLE
 
-dnl Check for enabling libcpath for cross-platform C path functions
+dnl Check if libcpath or required headers and functions are available
 AX_LIBCPATH_CHECK_ENABLE
 
-dnl Check for enabling libbfio for basic file IO support
+dnl Check if libbfio or required headers and functions are available
 AX_LIBBFIO_CHECK_ENABLE
 
-dnl Check for enabling libfdatetime for date and time formats support
+dnl Check if libfdatetime or required headers and functions are available
 AX_LIBFDATETIME_CHECK_ENABLE
 
-dnl Check for enabling libfguid for GUID/UUID format support
+dnl Check if libfguid or required headers and functions are available
 AX_LIBFGUID_CHECK_ENABLE
 
-dnl Check for library function support
+dnl Check if libvshadow required headers and functions are available
 AX_LIBVSHADOW_CHECK_LOCAL
 
-dnl Check for vshadowtools function support
-AX_VSHADOWTOOLS_CHECK_LOCAL
+dnl Check if libvshadow Python bindings (pyvshadow) required headers and functions are available
+AX_PYTHON_CHECK_PYPREFIX
+AX_PYTHON_CHECK_ENABLE
+AX_PYTHON2_CHECK_ENABLE
+AX_PYTHON3_CHECK_ENABLE
+
+AS_IF(
+  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
+  [dnl Headers included in pyvshadow/pyvshadow_error.c
+  AC_CHECK_HEADERS([stdarg.h varargs.h])
+
+  AS_IF(
+    [test "x$ac_cv_header_stdarg_h" != xyes && test "x$ac_cv_header_varargs_h" != xyes],
+    [AC_MSG_FAILURE(
+      [Missing headers: stdarg.h and varargs.h],
+      [1])
+    ])
+  ])
+
+AM_CONDITIONAL(
+  HAVE_PYTHON_TESTS,
+  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno])
 
 dnl Check for libfuse Filesystem in Userspace (FUSE) support
 AX_LIBFUSE_CHECK_ENABLE
 
-dnl Check for functions
-AS_IF(
- [test "x$ac_cv_enable_winapi" = xno],
- [AC_HEADER_TIME
- AC_CHECK_FUNCS([getegid geteuid time])
- ])
-
-dnl Check if vshadowtools should be build as static executables
-AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
+dnl Check if vshadowtools required headers and functions are available
+AX_VSHADOWTOOLS_CHECK_LOCAL
 
 dnl Check if libvshadow should be build with verbose output
 AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
@@ -115,27 +128,7 @@ AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
 dnl Check if libvshadow should be build with debug output
 AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
-dnl Check if libevt python bindings (pyvshadow) should be build
-AX_PYTHON_CHECK_PYPREFIX
-AX_PYTHON_CHECK_ENABLE
-AX_PYTHON2_CHECK_ENABLE
-AX_PYTHON3_CHECK_ENABLE
-
-AM_CONDITIONAL(
- HAVE_PYTHON_TESTS,
- [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno])
-
-dnl Headers included in various places
-AC_CHECK_HEADERS([stdarg.h varargs.h])
-
-AS_IF(
- [test "x$ac_cv_header_stdarg_h" != xyes && test "x$ac_cv_header_varargs_h" != xyes],
- [AC_MSG_FAILURE(
-  [Missing headers: stdarg.h and varargs.h],
-  [1])
- ])
-
-dnl Check for test function support
+dnl Check if tests required headers and functions are available
 AX_TESTS_CHECK_LOCAL
 
 dnl Check if DLL support is needed
@@ -152,12 +145,10 @@ AS_IF(
    [HAVE_DLLMAIN],
    [1])
 
-  AS_IF(
-   [test "x$ac_cv_enable_static_executables" = xno],
-   [AC_SUBST(
-    [LIBVSHADOW_DLL_IMPORT],
-    ["-DLIBVSHADOW_DLL_IMPORT"])
-   ])
+  dnl Used in tests
+  AC_SUBST(
+   [LIBVSHADOW_DLL_IMPORT],
+   ["-DLIBVSHADOW_DLL_IMPORT"])
   ])
  ])
 
@@ -166,7 +157,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes  || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_ac_libbfio" = xyes || test "x$ac_ac_libfdatetime" = xyes || test "x$ac_ac_libfguid" = xyes],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes],
  [AC_SUBST(
   [libvshadow_spec_requires],
   [Requires:])
@@ -192,12 +183,7 @@ AC_SUBST(
  [SPEC_DATE],
  [`date +"%a %b %e %Y" 2> /dev/null`])
 
-dnl Set the current working directory for PackageMaker files
-AC_SUBST(
- [PWD],
- [`pwd`])
-
-dnl Have configure make the Makefiles
+dnl Generate Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
@@ -214,28 +200,28 @@ AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libvshadow/Makefile])
-AC_CONFIG_FILES([vshadowtools/Makefile])
 AC_CONFIG_FILES([pyvshadow/Makefile])
 AC_CONFIG_FILES([pyvshadow-python2/Makefile])
 AC_CONFIG_FILES([pyvshadow-python3/Makefile])
+AC_CONFIG_FILES([vshadowtools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([tests/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])
-dnl Have configure make the include files
+dnl Generate header files
 AC_CONFIG_FILES([include/libvshadow.h])
 AC_CONFIG_FILES([include/libvshadow/definitions.h])
 AC_CONFIG_FILES([include/libvshadow/features.h])
 AC_CONFIG_FILES([include/libvshadow/types.h])
 AC_CONFIG_FILES([libvshadow/libvshadow_definitions.h])
-dnl Have configure make distribution specific files
+dnl Generate distribution specific files
 AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([libvshadow/libvshadow.rc])
 AC_CONFIG_FILES([libvshadow.pc])
 AC_CONFIG_FILES([libvshadow.spec])
-dnl Have configure write its configuration
+dnl Generate a source configuration file
 AC_CONFIG_HEADERS([common/config.h])
 
 AC_OUTPUT
@@ -267,5 +253,4 @@ Features:
    Verbose output:                               $ac_cv_enable_verbose_output
    Debug output:                                 $ac_cv_enable_debug_output
 ]);
-
 
