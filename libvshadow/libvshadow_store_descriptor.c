@@ -268,6 +268,11 @@ int libvshadow_store_descriptor_free(
 			result = -1;
 		}
 #endif
+		if( ( *store_descriptor )->copy_identifier_string != NULL )
+		{
+			memory_free(
+			 ( *store_descriptor )->copy_identifier_string );
+		}
 		if( ( *store_descriptor )->operating_machine_string != NULL )
 		{
 			memory_free(
@@ -1044,18 +1049,82 @@ int libvshadow_store_descriptor_read_store_header(
 		 store_descriptor->attribute_flags );
 		libcnotify_printf(
 		 "\n" );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (vshadow_store_information_t *) store_header_data )->unknown10,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown10\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
 	}
 #endif
 	store_header_data_offset = sizeof( vshadow_store_information_t );
+	/* read string copy identificator */
+	byte_stream_copy_to_uint16_little_endian(
+	 &( store_header_data[ store_header_data_offset ] ),
+	 store_descriptor->copy_identifier_string_size );
 
+	store_descriptor->copy_identifier_string_size += 2; /* with terminated char */
+
+	store_header_data_offset += 2;
+
+	if( ( store_header_data_offset + store_descriptor->copy_identifier_string_size ) > store_block->data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: copy identificator string size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	store_descriptor->copy_identifier_string = (uint8_t *) memory_allocate(
+	                                                          sizeof( uint8_t ) * store_descriptor->copy_identifier_string_size );
+
+	if( store_descriptor->copy_identifier_string == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create copy identificator string.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_copy(
+	     store_descriptor->copy_identifier_string,
+	     &( store_header_data[ store_header_data_offset ] ),
+	     (size_t) store_descriptor->copy_identifier_string_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy identificator string.",
+		 function );
+
+		goto on_error;
+	}
+	store_header_data_offset += store_descriptor->copy_identifier_string_size;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		if( libvshadow_debug_print_utf16_string_value(
+		     function,
+		     "copy identificator string\t",
+		     store_descriptor->copy_identifier_string,
+		     (size_t) store_descriptor->copy_identifier_string_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print UTF-16 string value.",
+			 function );
+
+			goto on_error;
+		}
+	}
+#endif
+	/* read operating_machine_string */
 	byte_stream_copy_to_uint16_little_endian(
 	 &( store_header_data[ store_header_data_offset ] ),
 	 store_descriptor->operating_machine_string_size );
@@ -1125,6 +1194,7 @@ int libvshadow_store_descriptor_read_store_header(
 		}
 	}
 #endif
+	/* read service_machine_string */
 	byte_stream_copy_to_uint16_little_endian(
 	 &( store_header_data[ store_header_data_offset ] ),
 	 store_descriptor->service_machine_string_size );
@@ -1137,7 +1207,7 @@ int libvshadow_store_descriptor_read_store_header(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: operating machine string size value out of bounds.",
+		 "%s: service machine string size value out of bounds.",
 		 function );
 
 		goto on_error;

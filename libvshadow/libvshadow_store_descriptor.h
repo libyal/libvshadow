@@ -86,6 +86,14 @@ struct libvshadow_store_descriptor
 	 */
 	uint32_t attribute_flags;
 
+	/* The copy identifier string
+	 */
+	uint8_t *copy_identifier_string;
+
+	/* The copy identifier string size
+	 */
+	uint16_t copy_identifier_string_size;
+
 	/* The operating machine string
 	 */
 	uint8_t *operating_machine_string;
