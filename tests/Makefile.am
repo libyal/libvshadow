@@ -177,6 +177,7 @@ vshadow_test_store_descriptor_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_support_SOURCES = \
+	vshadow_test_functions.c vshadow_test_functions.h \
 	vshadow_test_getopt.c vshadow_test_getopt.h \
 	vshadow_test_libbfio.h \
 	vshadow_test_libcerror.h \
@@ -185,7 +186,8 @@ vshadow_test_support_SOURCES = \
 	vshadow_test_libuna.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
-	vshadow_test_support.c
+	vshadow_test_support.c \
+	vshadow_test_unused.h
 
 vshadow_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \
@@ -200,6 +202,7 @@ vshadow_test_support_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_volume_SOURCES = \
+	vshadow_test_functions.c vshadow_test_functions.h \
 	vshadow_test_getopt.c vshadow_test_getopt.h \
 	vshadow_test_libbfio.h \
 	vshadow_test_libcerror.h \
@@ -209,6 +212,7 @@ vshadow_test_volume_SOURCES = \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
 	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_unused.h \
 	vshadow_test_volume.c
 
 vshadow_test_volume_LDADD = \
@@ -216,6 +220,7 @@ vshadow_test_volume_LDADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
