@@ -186,6 +186,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\tests\vshadow_test_libcerror.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\vshadow_test_libvshadow.h"
 				>
 			</File>

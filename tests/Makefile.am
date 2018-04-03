@@ -124,13 +124,15 @@ vshadow_test_io_handle_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_notify_SOURCES = \
+	vshadow_test_libcerror.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
 	vshadow_test_notify.c \
 	vshadow_test_unused.h
 
 vshadow_test_notify_LDADD = \
-	../libvshadow/libvshadow.la
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
 
 vshadow_test_store_SOURCES = \
 	vshadow_test_libcerror.h \
@@ -186,6 +188,7 @@ vshadow_test_support_SOURCES = \
 	vshadow_test_libuna.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
 	vshadow_test_support.c \
 	vshadow_test_unused.h
 
