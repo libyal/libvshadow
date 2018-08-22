@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBVSHADOW )
 
-/* If libtool DLL support is enabled set LIBVSHADOW_DLL_EXPORT
- * before including libvshadow/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBVSHADOW_DLL_EXPORT
-#endif
-
 #include <libvshadow/extern.h>
 
+#define LIBVSHADOW_EXTERN_VARIABLE	LIBVSHADOW_EXTERN
+
 #else
-#define LIBVSHADOW_EXTERN	/* extern */
+#define LIBVSHADOW_EXTERN		/* extern */
+#define LIBVSHADOW_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBVSHADOW ) */
 

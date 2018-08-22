@@ -37,6 +37,9 @@ PyObject *pyvshadow_datetime_new_from_fat_date_time(
 PyObject *pyvshadow_datetime_new_from_filetime(
            uint64_t filetime );
 
+PyObject *pyvshadow_datetime_new_from_floatingtime(
+           uint64_t floatingtime );
+
 PyObject *pyvshadow_datetime_new_from_posix_time(
            uint32_t posix_time );
 

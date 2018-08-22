@@ -1,5 +1,5 @@
 /*
- * The internal libvshadow header
+ * The libvshadow header wrapper
  *
  * Copyright (C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -23,13 +23,6 @@
 #define _VSHADOWTOOLS_LIBVSHADOW_H
 
 #include <common.h>
-
-/* If Cygwin libtool DLL support is enabled set LIBVSHADOW_DLL_IMPORT
- * before including libvshadow.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBVSHADOW_DLL_IMPORT
-#endif
 
 #include <libvshadow.h>
 
