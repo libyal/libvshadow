@@ -37,6 +37,10 @@ extern \
 int libvshadow_volume_open_file_io_handle(
      libvshadow_volume_t *volume,
      libbfio_handle_t *file_io_handle,
+     libvshadow_volume_t *catalog_volume,
+     libbfio_handle_t *catalog_file_io_handle,
+     libvshadow_volume_t *store_volume,
+     libbfio_handle_t *store_file_io_handle,
      int access_flags,
      libvshadow_error_t **error );
 
@@ -497,6 +501,10 @@ int debug_handle_open_input(
 		if( libvshadow_volume_open_file_io_handle(
 		     debug_handle->input_volume,
 		     debug_handle->input_file_io_handle,
+		     NULL,
+		     NULL,
+		     NULL,
+		     NULL,
 		     LIBVSHADOW_OPEN_READ,
 		     error ) != 1 )
 		{

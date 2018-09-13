@@ -43,6 +43,8 @@ int libvshadow_store_initialize(
      libvshadow_store_t **store,
      libbfio_handle_t *file_io_handle,
      libvshadow_io_handle_t *io_handle,
+     libbfio_handle_t *store_file_io_handle,
+     libvshadow_io_handle_t *store_io_handle,
      libvshadow_internal_volume_t *internal_volume,
      int store_descriptor_index,
      libcerror_error_t **error )
@@ -150,6 +152,8 @@ int libvshadow_store_initialize(
 #endif
 	internal_store->file_io_handle         = file_io_handle;
 	internal_store->io_handle              = io_handle;
+	internal_store->store_file_io_handle   = store_file_io_handle;
+	internal_store->store_io_handle        = store_io_handle;
 	internal_store->internal_volume        = internal_volume;
 	internal_store->store_descriptor_index = store_descriptor_index;
 
@@ -366,6 +370,7 @@ ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
 	read_count = libvshadow_store_descriptor_read_buffer(
 		      store_descriptor,
 		      file_io_handle,
+		      internal_store->store_file_io_handle,
 		      (uint8_t *) buffer,
 		      buffer_size,
 		      internal_store->current_offset,

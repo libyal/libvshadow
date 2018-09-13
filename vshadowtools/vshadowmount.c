@@ -95,7 +95,7 @@ void usage_fprint(
 	                 "volume\n\n" );
 
 	fprintf( stream, "Usage: vshadowmount [ -o offset ] [ -X extended_options ]\n"
-	                 "                    [ -hvV ] source mount_point\n\n" );
+	                 "                    [ -hvV ] [ -c catalog ] [ -s store ] source mount_point\n\n" );
 
 	fprintf( stream, "\tsource:      the source file or device\n" );
 	fprintf( stream, "\tmount_point: the directory to serve as mount point\n\n" );
@@ -106,6 +106,8 @@ void usage_fprint(
 	                 "\t             vshadowmount will remain running in the foreground\n" );
 	fprintf( stream, "\t-V:          print version\n" );
 	fprintf( stream, "\t-X:          extended options to pass to sub system\n" );
+	fprintf( stream, "\t-c:          specify the VSS catalog file\n");
+	fprintf( stream, "\t-s:          specify the VSS store file\n");
 }
 
 /* Signal handler for vshadowmount
@@ -2059,6 +2061,8 @@ int main( int argc, char * const argv[] )
 	system_character_t *mount_point              = NULL;
 	system_character_t *option_extended_options  = NULL;
 	system_character_t *option_volume_offset     = NULL;
+	system_character_t *option_catalog_file      = NULL;
+	system_character_t *option_store_file        = NULL;
 	system_character_t *source                   = NULL;
 	char *program                                = "vshadowmount";
 	system_integer_t option                      = 0;
@@ -2110,7 +2114,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = vshadowtools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "ho:vVX:" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "ho:vVX:c:s:" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -2150,6 +2154,16 @@ int main( int argc, char * const argv[] )
 
 			case (system_integer_t) 'X':
 				option_extended_options = optarg;
+
+				break;
+
+			case (system_integer_t) 'c':
+				option_catalog_file = optarg;
+
+				break;
+
+			case (system_integer_t) 's':
+				option_store_file = optarg;
 
 				break;
 		}
@@ -2216,9 +2230,34 @@ int main( int argc, char * const argv[] )
 			 vshadowmount_mount_handle->volume_offset );
 		}
 	}
+
+	if( option_catalog_file == NULL && option_store_file != NULL ||
+		option_catalog_file != NULL && option_store_file == NULL )
+	{
+		fprintf( stderr, "Both a catalog file and a store file have to be specified.\n" );
+		return( EXIT_FAILURE );
+	}
+
+	if( option_catalog_file == NULL )
+	{
+		vshadowmount_mount_handle->catalog_file_io_handle = NULL;
+		vshadowmount_mount_handle->catalog_volume = NULL;
+		vshadowmount_mount_handle->catalog_offset = 0;
+		vshadowmount_mount_handle->store_file_io_handle = NULL;
+		vshadowmount_mount_handle->store_volume = NULL;
+		vshadowmount_mount_handle->store_offset = 0;
+		vshadowmount_mount_handle->no_parsing_volume = 0;
+	}
+	else if( option_catalog_file != NULL )
+	{
+		vshadowmount_mount_handle->no_parsing_volume = 1;
+	}
+
 	result = mount_handle_open_input(
 	          vshadowmount_mount_handle,
 	          source,
+	          option_catalog_file,
+	          option_store_file,
 	          &error );
 
 	if( result == -1 )

@@ -128,6 +128,19 @@ int libvshadow_volume_initialize(
 
 		goto on_error;
 	}
+	if( libvshadow_io_handle_initialize(
+		&( internal_volume->store_io_handle ),
+		error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create store IO handle.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_initialize(
 	     &( internal_volume->read_write_lock ),
@@ -403,6 +416,10 @@ int libvshadow_volume_open(
 	if( libvshadow_volume_open_file_io_handle(
 	     volume,
 	     file_io_handle,
+	     NULL,
+	     NULL,
+	     NULL,
+	     NULL,
 	     access_flags,
 	     error ) != 1 )
 	{
@@ -570,6 +587,10 @@ int libvshadow_volume_open_wide(
 	if( libvshadow_volume_open_file_io_handle(
 	     volume,
 	     file_io_handle,
+	     NULL,
+	     NULL,
+	     NULL,
+	     NULL,
 	     access_flags,
 	     error ) != 1 )
 	{
@@ -635,14 +656,24 @@ on_error:
 int libvshadow_volume_open_file_io_handle(
      libvshadow_volume_t *volume,
      libbfio_handle_t *file_io_handle,
+     libvshadow_volume_t *catalog_volume,
+     libbfio_handle_t *catalog_file_io_handle,
+     libvshadow_volume_t *store_volume,
+     libbfio_handle_t *store_file_io_handle,
      int access_flags,
      libcerror_error_t **error )
 {
 	libvshadow_internal_volume_t *internal_volume = NULL;
+	libvshadow_internal_volume_t *internal_catalog_volume = NULL;
+	libvshadow_internal_volume_t *internal_store_volume = NULL;
 	static char *function                         = "libvshadow_volume_open_file_io_handle";
 	int bfio_access_flags                         = 0;
 	int file_io_handle_is_open                    = 0;
 	int file_io_handle_opened_in_library          = 0;
+	int catalog_file_io_handle_is_open            = 0;
+	int catalog_file_io_handle_opened_in_library  = 0;
+	int store_file_io_handle_is_open              = 0;
+	int store_file_io_handle_opened_in_library    = 0;
 
 	if( volume == NULL )
 	{
@@ -656,6 +687,10 @@ int libvshadow_volume_open_file_io_handle(
 		return( -1 );
 	}
 	internal_volume = (libvshadow_internal_volume_t *) volume;
+	if( catalog_volume != NULL )
+		internal_catalog_volume = (libvshadow_internal_volume_t *)catalog_volume;
+	if( store_volume != NULL )
+		internal_store_volume = (libvshadow_internal_volume_t *)store_volume;
 
 	if( file_io_handle == NULL )
 	{
@@ -728,9 +763,85 @@ int libvshadow_volume_open_file_io_handle(
 		}
 		file_io_handle_opened_in_library = 1;
 	}
+
+	if( catalog_volume != NULL && store_volume != NULL )
+	{
+		catalog_file_io_handle_is_open = libbfio_handle_is_open(
+		 catalog_file_io_handle,
+		 error );
+
+		if( catalog_file_io_handle_is_open == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to determine if catlog file IO handle is open.",
+			 function );
+
+			goto on_error;
+		}
+		else if( catalog_file_io_handle_is_open == 0 )
+		{
+			if( libbfio_handle_open(
+				 catalog_file_io_handle,
+				 bfio_access_flags,
+				 error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 "%s: unable to open catalog file IO handle.",
+				 function );
+
+				goto on_error;
+			}
+			catalog_file_io_handle_opened_in_library = 1;
+		}
+
+		store_file_io_handle_is_open = libbfio_handle_is_open(
+										store_file_io_handle,
+										error );
+
+		if( store_file_io_handle_is_open == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to determine if store file IO handle is open.",
+			 function );
+
+			goto on_error;
+		}
+		else if( store_file_io_handle_is_open == 0 )
+		{
+			if( libbfio_handle_open(
+				 store_file_io_handle,
+				 bfio_access_flags,
+				 error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 "%s: unable to open store file IO handle.",
+				 function );
+
+				goto on_error;
+			}
+			store_file_io_handle_opened_in_library = 1;
+		}
+	}
+
 	if( libvshadow_volume_open_read(
 	     internal_volume,
 	     file_io_handle,
+	     internal_catalog_volume,
+	     catalog_file_io_handle,
+	     internal_store_volume,
+	     store_file_io_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -742,6 +853,7 @@ int libvshadow_volume_open_file_io_handle(
 
 		goto on_error;
 	}
+
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_volume->read_write_lock,
@@ -759,6 +871,17 @@ int libvshadow_volume_open_file_io_handle(
 #endif
 	internal_volume->file_io_handle                   = file_io_handle;
 	internal_volume->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
+	internal_volume->store_file_io_handle             = store_file_io_handle;
+	if( internal_catalog_volume )
+	{
+		internal_catalog_volume->file_io_handle       = catalog_file_io_handle;
+		internal_catalog_volume->file_io_handle_opened_in_library = catalog_file_io_handle_opened_in_library;
+	}
+	if( internal_store_volume )
+	{
+		internal_store_volume->file_io_handle         = store_file_io_handle;
+		internal_store_volume->file_io_handle_opened_in_library = store_file_io_handle_opened_in_library;
+	}
 
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -944,6 +1067,10 @@ int libvshadow_volume_close(
 int libvshadow_volume_open_read(
      libvshadow_internal_volume_t *internal_volume,
      libbfio_handle_t *file_io_handle,
+     libvshadow_internal_volume_t *internal_catalog_volume,
+     libbfio_handle_t *catalog_file_io_handle,
+     libvshadow_internal_volume_t *internal_store_volume,
+     libbfio_handle_t *store_file_io_handle,
      libcerror_error_t **error )
 {
 	libvshadow_store_descriptor_t *last_store_descriptor = NULL;
@@ -1035,7 +1162,7 @@ int libvshadow_volume_open_read(
 
 		goto on_error;
 	}
-	if( catalog_offset > 0 )
+	if( catalog_offset > 0 && internal_catalog_volume == NULL && internal_store_volume == NULL )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -1138,6 +1265,117 @@ int libvshadow_volume_open_read(
 			store_descriptor->previous_store_descriptor = last_store_descriptor;
 
 			if( last_store_descriptor != NULL )
+			{
+				last_store_descriptor->next_store_descriptor = store_descriptor;
+			}
+			last_store_descriptor = store_descriptor;
+
+			store_descriptor = NULL;
+		}
+	}
+	else if( internal_catalog_volume != NULL && internal_store_volume != NULL )
+	{
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "Reading VSS catalog:\n");
+		}
+#endif
+		if( libvshadow_io_handle_read_catalog(
+			 internal_catalog_volume->io_handle,
+			 catalog_file_io_handle,
+			 0,
+			 &(internal_catalog_volume->size),
+			 internal_volume->store_descriptors_array,
+			 error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read catalog.",
+			 function );
+
+			goto on_error;
+		}
+		if( libcdata_array_get_number_of_entries(
+			 internal_volume->store_descriptors_array,
+			 &number_of_store_descriptors,
+			 error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of store descriptors from array.",
+			 function );
+
+			goto on_error;
+		}
+		for( store_descriptor_index = 0;
+		     store_descriptor_index < number_of_store_descriptors;
+		     store_descriptor_index++ )
+		{
+			if( libcdata_array_get_entry_by_index(
+				 internal_volume->store_descriptors_array,
+				 store_descriptor_index,
+				 (intptr_t **)&store_descriptor,
+				 error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve store descriptor: %d.",
+				 function,
+				 store_descriptor_index );
+
+				goto on_error;
+			}
+			if( store_descriptor == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: invalid store descriptor: %d.",
+				 function,
+				 store_descriptor_index );
+
+				goto on_error;
+			}
+			store_descriptor->index = store_descriptor_index;
+
+			if( store_descriptor->has_in_volume_store_data != 0 )
+			{
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "Reading VSS store: %02d:\n",
+					 store_descriptor->index);
+				}
+#endif
+				if (libvshadow_store_descriptor_read_store_header(
+					store_descriptor,
+					store_file_io_handle,
+					error) != 1)
+				{
+					libcerror_error_set(
+						error,
+						LIBCERROR_ERROR_DOMAIN_IO,
+						LIBCERROR_IO_ERROR_READ_FAILED,
+						"%s: unable to read store: %d header.",
+						function,
+						store_descriptor->index);
+
+					goto on_error;
+				}
+			}
+			store_descriptor->previous_store_descriptor = last_store_descriptor;
+
+			if (last_store_descriptor != NULL)
 			{
 				last_store_descriptor->next_store_descriptor = store_descriptor;
 			}
@@ -1388,6 +1626,8 @@ int libvshadow_volume_get_store(
 	     store,
 	     internal_volume->file_io_handle,
 	     internal_volume->io_handle,
+	     internal_volume->store_file_io_handle,
+	     internal_volume->store_io_handle,
 	     internal_volume,
 	     store_index,
 	     error ) != 1 )

@@ -57,6 +57,14 @@ struct libvshadow_internal_volume
 	 */
 	libvshadow_io_handle_t *io_handle;
 
+	/* The store file IO handle
+	*/
+	libbfio_handle_t *store_file_io_handle;
+
+	/* The store IO handle
+	*/
+	libvshadow_io_handle_t *store_io_handle;
+
 	/* Value to indicate if the file IO handle was created inside the library
 	 */
 	uint8_t file_io_handle_created_in_library;
@@ -109,6 +117,10 @@ LIBVSHADOW_EXTERN \
 int libvshadow_volume_open_file_io_handle(
      libvshadow_volume_t *volume,
      libbfio_handle_t *file_io_handle,
+     libvshadow_volume_t *catalog_volume,
+     libbfio_handle_t *catalog_file_io_handle,
+     libvshadow_volume_t *store_volume,
+     libbfio_handle_t *store_file_io_handle,
      int access_flags,
      libcerror_error_t **error );
 
@@ -120,6 +132,10 @@ int libvshadow_volume_close(
 int libvshadow_volume_open_read(
      libvshadow_internal_volume_t *internal_volume,
      libbfio_handle_t *file_io_handle,
+     libvshadow_internal_volume_t *internal_catalog_volume,
+     libbfio_handle_t *catalog_file_io_handle,
+     libvshadow_internal_volume_t *internal_store_volume,
+     libbfio_handle_t *store_file_io_handle,
      libcerror_error_t **error );
 
 LIBVSHADOW_EXTERN \

@@ -37,6 +37,10 @@ extern \
 int libvshadow_volume_open_file_io_handle(
      libvshadow_volume_t *volume,
      libbfio_handle_t *file_io_handle,
+     libvshadow_volume_t *catalog_volume,
+     libbfio_handle_t *catalog_file_io_handle,
+     libvshadow_volume_t *store_volume,
+     libbfio_handle_t *store_file_io_handle,
      int access_flags,
      libvshadow_error_t **error );
 
@@ -235,6 +239,32 @@ int mount_handle_initialize(
 
 		goto on_error;
 	}
+	if (libbfio_file_range_initialize(
+	     &((*mount_handle)->catalog_file_io_handle),
+	     error) != 1)
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize catalog file IO handle.",
+		 function);
+
+		goto on_error;
+	}
+	if (libbfio_file_range_initialize(
+	     &((*mount_handle)->store_file_io_handle),
+	     error) != 1)
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize store file IO handle.",
+		 function);
+
+		goto on_error;
+	}
 	if( libvshadow_volume_initialize(
 	     &( ( *mount_handle )->input_volume ),
 	     error ) != 1 )
@@ -245,6 +275,32 @@ int mount_handle_initialize(
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to initialize input volume.",
 		 function );
+
+		goto on_error;
+	}
+	if (libvshadow_volume_initialize(
+	    &((*mount_handle)->catalog_volume),
+		error) != 1)
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize catalog volume.",
+		 function);
+
+		goto on_error;
+	}
+	if (libvshadow_volume_initialize(
+	     &((*mount_handle)->store_volume),
+	     error) != 1)
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize store volume.",
+		 function);
 
 		goto on_error;
 	}
@@ -431,10 +487,14 @@ int mount_handle_set_volume_offset(
 int mount_handle_open_input(
      mount_handle_t *mount_handle,
      const system_character_t *filename,
+     const system_character_t *catalog_filename,
+     const system_character_t *store_filename,
      libcerror_error_t **error )
 {
-	static char *function  = "mount_handle_open";
+	static char *function  = "mount_handle_open_input";
 	size_t filename_length = 0;
+	size_t catalog_filename_length = 0;
+	size_t store_filename_length = 0;
 	int result             = 0;
 
 	if( mount_handle == NULL )
@@ -474,6 +534,64 @@ int mount_handle_open_input(
 
 		return( -1 );
 	}
+
+	if( mount_handle->no_parsing_volume )
+	{
+		catalog_filename_length = system_string_length(
+		                           catalog_filename );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libbfio_file_range_set_name_wide(
+		     mount_handle->catalog_file_io_handle,
+		     catalog_filename,
+		     catalog_filename_length,
+		     error ) != 1 )
+#else
+		if( libbfio_file_range_set_name(
+			 mount_handle->catalog_file_io_handle,
+			 catalog_filename,
+			 catalog_filename_length,
+			 error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set catalog_filename.",
+			 function );
+
+			return( -1 );
+		}
+
+		store_filename_length = system_string_length(
+		                         store_filename );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libbfio_file_range_set_name_wide(
+		     mount_handle->store_file_io_handle,
+		     store_filename,
+		     store_filename_length,
+		     error ) != 1 )
+#else
+		if( libbfio_file_range_set_name(
+		     mount_handle->store_file_io_handle,
+		     store_filename,
+		     store_filename_length,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set store_filename.",
+			 function );
+
+			return( -1 );
+		}
+	}
+
 	if( libbfio_file_range_set(
 	     mount_handle->input_file_io_handle,
 	     mount_handle->volume_offset,
@@ -489,6 +607,42 @@ int mount_handle_open_input(
 
 		return( -1 );
 	}
+
+	if( mount_handle->no_parsing_volume )
+	{
+		if( libbfio_file_range_set(
+			 mount_handle->catalog_file_io_handle,
+			 mount_handle->catalog_offset,
+			 0,
+			 error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to set catalog offset.",
+			 function );
+
+			return( -1 );
+		}
+
+		if( libbfio_file_range_set(
+			 mount_handle->store_file_io_handle,
+			 mount_handle->store_offset,
+			 0,
+			 error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to set store offset.",
+			 function);
+
+			return( -1 );
+		}
+	}
+
 	result = libvshadow_check_volume_signature_file_io_handle(
 	          mount_handle->input_file_io_handle,
 	          error );
@@ -509,6 +663,10 @@ int mount_handle_open_input(
 		if( libvshadow_volume_open_file_io_handle(
 		     mount_handle->input_volume,
 		     mount_handle->input_file_io_handle,
+		     mount_handle->catalog_volume,
+		     mount_handle->catalog_file_io_handle,
+		     mount_handle->store_volume,
+		     mount_handle->store_file_io_handle,
 		     LIBVSHADOW_OPEN_READ,
 		     error ) != 1 )
 		{

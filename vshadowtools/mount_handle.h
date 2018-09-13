@@ -65,6 +65,22 @@ struct mount_handle
 	/* Value to indicate if abort was signalled
 	 */
 	int abort;
+
+	/* The libbfio catalog file IO handle
+	 */
+	libbfio_handle_t *catalog_file_io_handle;
+	libvshadow_volume_t *catalog_volume;
+	off64_t catalog_offset;
+
+	/* The libbfio store file IO handle
+	 */
+	libbfio_handle_t *store_file_io_handle;
+	libvshadow_volume_t *store_volume;
+	off64_t store_offset;
+
+	/* Flag for parsing the libvshadow input volume
+	 */
+	int no_parsing_volume;
 };
 
 int vshadowtools_system_string_copy_from_64_bit_in_decimal(
@@ -93,6 +109,8 @@ int mount_handle_set_volume_offset(
 int mount_handle_open_input(
      mount_handle_t *mount_handle,
      const system_character_t *filename,
+     const system_character_t *catalog_filename,
+     const system_character_t *store_filename,
      libcerror_error_t **error );
 
 int mount_handle_close_input(
