@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libvshadow
 Package: libvshadow
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libvshadow1
+Replaces: libvshadow1
 Suggests: libvshadow-dbg
 Description: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
  libvshadow is a library to access the Windows NT Volume Shadow Snapshot (VSS) format.
@@ -31,6 +33,8 @@ Package: libvshadow-tools
 Section: utils
 Architecture: any
 Depends: libvshadow (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libvshadow-utils
+Replaces: libvshadow-utils
 Description: Several tools for reading Windows NT Volume Shadow Snapshots (VSS)
  Several tools for reading Windows NT Volume Shadow Snapshots (VSS).
 
@@ -45,6 +49,8 @@ Package: libvshadow-python
 Section: python
 Architecture: any
 Depends: libvshadow (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libvshadow
+Replaces: python-libvshadow
 Suggests: libvshadow-python-dbg
 Description: Python 2 bindings for libvshadow
  Python 2 bindings for libvshadow.
@@ -60,6 +66,8 @@ Package: libvshadow-python3
 Section: python
 Architecture: any
 Depends: libvshadow (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libvshadow
+Replaces: python3-libvshadow
 Suggests: libvshadow-python3-dbg
 Description: Python 3 bindings for libvshadow
  Python 3 bindings for libvshadow.
