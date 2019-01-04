@@ -97,7 +97,7 @@ int vshadowtools_output_initialize(
 
 /* Prints the copyright information
  */
-void vshadowoutput_copyright_fprint(
+void vshadowtools_output_copyright_fprint(
       FILE *stream )
 {
 	if( stream == NULL )
@@ -129,7 +129,7 @@ void vshadowoutput_copyright_fprint(
 
 /* Prints the version information
  */
-void vshadowoutput_version_fprint(
+void vshadowtools_output_version_fprint(
       FILE *stream,
       const char *program )
 {
@@ -150,7 +150,7 @@ void vshadowoutput_version_fprint(
 
 /* Prints the detailed version information
  */
-void vshadowoutput_version_detailed_fprint(
+void vshadowtools_output_version_detailed_fprint(
       FILE *stream,
       const char *program )
 {

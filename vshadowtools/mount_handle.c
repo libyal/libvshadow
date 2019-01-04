@@ -26,9 +26,12 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include "mount_file_entry.h"
+#include "mount_file_system.h"
 #include "mount_handle.h"
 #include "vshadowtools_libbfio.h"
 #include "vshadowtools_libcerror.h"
+#include "vshadowtools_libcpath.h"
 #include "vshadowtools_libvshadow.h"
 
 #if !defined( LIBVSHADOW_HAVE_BFIO )
@@ -50,15 +53,15 @@ int libvshadow_check_volume_signature_file_io_handle(
 /* Copies a string of a decimal value to a 64-bit value
  * Returns 1 if successful or -1 on error
  */
-int vshadowtools_system_string_copy_from_64_bit_in_decimal(
+int mount_handle_system_string_copy_from_64_bit_in_decimal(
      const system_character_t *string,
      size_t string_size,
      uint64_t *value_64bit,
      libcerror_error_t **error )
 {
-	static char *function              = "vshadowtools_system_string_copy_from_64_bit_in_decimal";
-	size_t string_index                = 0;
+	static char *function              = "mount_handle_system_string_copy_from_64_bit_in_decimal";
 	system_character_t character_value = 0;
+	size_t string_index                = 0;
 	uint8_t maximum_string_index       = 20;
 	int8_t sign                        = 1;
 
@@ -201,12 +204,7 @@ int mount_handle_initialize(
 		 "%s: unable to create mount handle.",
 		 function );
 
-		memory_free(
-		 *mount_handle );
-
-		*mount_handle = NULL;
-
-		return( -1 );
+		goto on_error;
 	}
 	if( memory_set(
 	     *mount_handle,
@@ -222,28 +220,15 @@ int mount_handle_initialize(
 
 		goto on_error;
 	}
-	if( libbfio_file_range_initialize(
-	     &( ( *mount_handle )->input_file_io_handle ),
+	if( mount_file_system_initialize(
+	     &( ( *mount_handle )->file_system ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize input file IO handle.",
-		 function );
-
-		goto on_error;
-	}
-	if( libvshadow_volume_initialize(
-	     &( ( *mount_handle )->input_volume ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize input volume.",
+		 "%s: unable to initialize file system.",
 		 function );
 
 		goto on_error;
@@ -253,12 +238,6 @@ int mount_handle_initialize(
 on_error:
 	if( *mount_handle != NULL )
 	{
-		if( ( *mount_handle )->input_file_io_handle != NULL )
-		{
-			libbfio_handle_free(
-			 &( ( *mount_handle )->input_file_io_handle ),
-			 NULL );
-		}
 		memory_free(
 		 *mount_handle );
 
@@ -290,44 +269,15 @@ int mount_handle_free(
 	}
 	if( *mount_handle != NULL )
 	{
-		if( ( *mount_handle )->inputs != NULL )
-		{
-			if( mount_handle_close_input(
-			     *mount_handle,
-			     error ) != 0 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close mount handle.",
-				 function );
-
-				result = -1;
-			}
-		}
-		if( libvshadow_volume_free(
-		     &( ( *mount_handle )->input_volume ),
+		if( mount_file_system_free(
+		     &( ( *mount_handle )->file_system ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free input volume.",
-			 function );
-
-			result = -1;
-		}
-		if( libbfio_handle_free(
-		     &( ( *mount_handle )->input_file_io_handle ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free input file IO handle.",
+			 "%s: unable to free file system.",
 			 function );
 
 			result = -1;
@@ -360,21 +310,18 @@ int mount_handle_signal_abort(
 
 		return( -1 );
 	}
-	if( mount_handle->input_volume != NULL )
+	if( mount_file_system_signal_abort(
+	     mount_handle->file_system,
+	     error ) != 1 )
 	{
-		if( libvshadow_volume_signal_abort(
-		     mount_handle->input_volume,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to signal input volume to abort.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to signal file system to abort.",
+		 function );
 
-			return( -1 );
-		}
+		return( -1 );
 	}
 	return( 1 );
 }
@@ -382,12 +329,12 @@ int mount_handle_signal_abort(
 /* Sets the volume offset
  * Returns 1 if successful or -1 on error
  */
-int mount_handle_set_volume_offset(
+int mount_handle_set_offset(
      mount_handle_t *mount_handle,
      const system_character_t *string,
      libcerror_error_t **error )
 {
-	static char *function = "mount_handle_set_volume_offset";
+	static char *function = "mount_handle_set_offset";
 	size_t string_length  = 0;
 	uint64_t value_64bit  = 0;
 
@@ -405,7 +352,7 @@ int mount_handle_set_volume_offset(
 	string_length = system_string_length(
 	                 string );
 
-	if( vshadowtools_system_string_copy_from_64_bit_in_decimal(
+	if( mount_handle_system_string_copy_from_64_bit_in_decimal(
 	     string,
 	     string_length + 1,
 	     &value_64bit,
@@ -425,17 +372,16 @@ int mount_handle_set_volume_offset(
 	return( 1 );
 }
 
-/* Opens the mount handle
- * Returns 1 if successful, 0 if no VSS enabled volume was found or -1 on error
+/* Sets the path prefix
+ * Returns 1 if successful or -1 on error
  */
-int mount_handle_open_input(
+int mount_handle_set_path_prefix(
      mount_handle_t *mount_handle,
-     const system_character_t *filename,
+     const system_character_t *path_prefix,
+     size_t path_prefix_size,
      libcerror_error_t **error )
 {
-	static char *function  = "mount_handle_open";
-	size_t filename_length = 0;
-	int result             = 0;
+	static char *function = "mount_handle_set_path_prefix";
 
 	if( mount_handle == NULL )
 	{
@@ -448,18 +394,88 @@ int mount_handle_open_input(
 
 		return( -1 );
 	}
+	if( mount_file_system_set_path_prefix(
+	     mount_handle->file_system,
+	     path_prefix,
+	     path_prefix_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set path prefix.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Opens the mount handle
+ * Returns 1 if successful, 0 if not or -1 on error
+ */
+int mount_handle_open(
+     mount_handle_t *mount_handle,
+     const system_character_t *filename,
+     libcerror_error_t **error )
+{
+	libbfio_handle_t *file_io_handle    = NULL;
+	libvshadow_store_t *vshadow_store   = NULL;
+	libvshadow_volume_t *vshadow_volume = NULL;
+	static char *function               = "mount_handle_open";
+	size_t filename_length              = 0;
+	int number_of_stores                = 0;
+	int result                          = 0;
+	int store_index                     = 0;
+
+	if( mount_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid mount handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid filename.",
+		 function );
+
+		return( -1 );
+	}
 	filename_length = system_string_length(
 	                   filename );
 
+	if( libbfio_file_range_initialize(
+	     &file_io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize file IO handle.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libbfio_file_range_set_name_wide(
-	     mount_handle->input_file_io_handle,
+	     file_io_handle,
 	     filename,
 	     filename_length,
 	     error ) != 1 )
 #else
 	if( libbfio_file_range_set_name(
-	     mount_handle->input_file_io_handle,
+	     file_io_handle,
 	     filename,
 	     filename_length,
 	     error ) != 1 )
@@ -467,15 +483,15 @@ int mount_handle_open_input(
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set filename.",
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to set file range name.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_range_set(
-	     mount_handle->input_file_io_handle,
+	     file_io_handle,
 	     mount_handle->volume_offset,
 	     0,
 	     error ) != 1 )
@@ -484,13 +500,26 @@ int mount_handle_open_input(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to set volume offset.",
+		 "%s: unable to set file range offset.",
 		 function );
 
-		return( -1 );
+		goto on_error;
+	}
+	if( libvshadow_volume_initialize(
+	     &vshadow_volume,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize volume.",
+		 function );
+
+		goto on_error;
 	}
 	result = libvshadow_check_volume_signature_file_io_handle(
-	          mount_handle->input_file_io_handle,
+	          file_io_handle,
 	          error );
 
 	if( result == -1 )
@@ -506,24 +535,40 @@ int mount_handle_open_input(
 	}
 	else if( result != 0 )
 	{
-		if( libvshadow_volume_open_file_io_handle(
-		     mount_handle->input_volume,
-		     mount_handle->input_file_io_handle,
-		     LIBVSHADOW_OPEN_READ,
-		     error ) != 1 )
+		result = libvshadow_volume_open_file_io_handle(
+		          vshadow_volume,
+		          file_io_handle,
+		          LIBVSHADOW_OPEN_READ,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open input volume.",
+			 "%s: unable to open volume.",
 			 function );
 
-			return( -1 );
+			goto on_error;
+		}
+		if( mount_file_system_set_volume(
+		     mount_handle->file_system,
+		     vshadow_volume,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set volume in file system.",
+			 function );
+
+			goto on_error;
 		}
 		if( libvshadow_volume_get_number_of_stores(
-		     mount_handle->input_volume,
-		     &( mount_handle->number_of_inputs ),
+		     vshadow_volume,
+		     &number_of_stores,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -533,32 +578,358 @@ int mount_handle_open_input(
 			 "%s: unable to retrieve number of stores.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
-		mount_handle->inputs = (libvshadow_store_t **) memory_allocate(
-		                                                sizeof( libvshadow_store_t * ) * mount_handle->number_of_inputs );
+		for( store_index = 0;
+		     store_index < number_of_stores;
+		     store_index++ )
+		{
+			if( libvshadow_volume_get_store(
+			     vshadow_volume,
+			     store_index,
+			     &vshadow_store,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: unable to retrieve input: %d from input volume.",
+				 function,
+				 store_index );
 
-		if( mount_handle->inputs == NULL )
+				goto on_error;
+			}
+			if( mount_file_system_append_store(
+			     mount_handle->file_system,
+			     vshadow_store,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append store: %d to file system.",
+				 function,
+				 store_index );
+
+				goto on_error;
+			}
+		}
+		mount_handle->file_io_handle = file_io_handle;
+	}
+	return( 1 );
+
+on_error:
+	if( vshadow_store != NULL )
+	{
+		libvshadow_store_free(
+		 &vshadow_store,
+		 NULL );
+	}
+	if( vshadow_volume != NULL )
+	{
+		libvshadow_volume_free(
+		 &vshadow_volume,
+		 NULL );
+	}
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Closes the mount handle
+ * Returns the 0 if succesful or -1 on error
+ */
+int mount_handle_close(
+     mount_handle_t *mount_handle,
+     libcerror_error_t **error )
+{
+	libvshadow_store_t *vshadow_store   = NULL;
+	libvshadow_volume_t *vshadow_volume = NULL;
+	static char *function               = "mount_handle_close";
+	int number_of_stores                = 0;
+	int store_index                     = 0;
+
+	if( mount_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid mount handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( mount_file_system_get_number_of_stores(
+	     mount_handle->file_system,
+	     &number_of_stores,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of stores.",
+		 function );
+
+		goto on_error;
+	}
+	for( store_index = number_of_stores - 1;
+	     store_index > 0;
+	     store_index-- )
+	{
+		if( mount_file_system_get_store_by_index(
+		     mount_handle->file_system,
+		     store_index,
+		     &vshadow_store,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create inputs.",
-			 function );
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve store: %d.",
+			 function,
+			 store_index );
 
 			goto on_error;
 		}
-		if( memory_set(
-		     mount_handle->inputs,
-		     0,
-		     sizeof( libvshadow_store_t * ) * mount_handle->number_of_inputs ) == NULL )
+/* TODO remove vshadow_store from file system */
+
+		if( libvshadow_store_free(
+		     &vshadow_store,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear inputs.",
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free store: %d.",
+			 function,
+			 store_index );
+
+			goto on_error;
+		}
+	}
+	if( mount_file_system_get_volume(
+	     mount_handle->file_system,
+	     &vshadow_volume,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve volume from file system.",
+		 function );
+
+		goto on_error;
+	}
+	if( mount_file_system_set_volume(
+	     mount_handle->file_system,
+	     NULL,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set volume in file system.",
+		 function );
+
+		vshadow_volume = NULL;
+
+		goto on_error;
+	}
+	if( libvshadow_volume_close(
+	     vshadow_volume,
+	     error ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close volume.",
+		 function );
+
+		goto on_error;
+	}
+	if( libvshadow_volume_free(
+	     &vshadow_volume,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free volume.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_handle_close(
+	     mount_handle->file_io_handle,
+	     error ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to close file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_handle_free(
+	     &( mount_handle->file_io_handle ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free file IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	return( 0 );
+
+on_error:
+	if( vshadow_store != NULL )
+	{
+		libvshadow_store_free(
+		 &vshadow_store,
+		 NULL );
+	}
+	if( vshadow_volume != NULL )
+	{
+		libvshadow_volume_free(
+		 &vshadow_volume,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves a file entry for a specific path
+ * Returns 1 if successful, 0 if no such file entry or -1 on error
+ */
+int mount_handle_get_file_entry_by_path(
+     mount_handle_t *mount_handle,
+     const system_character_t *path,
+     mount_file_entry_t **file_entry,
+     libcerror_error_t **error )
+{
+	libvshadow_store_t *vshadow_store  = NULL;
+	const system_character_t *filename = NULL;
+	static char *function              = "mount_handle_get_file_entry_by_path";
+	size_t filename_length             = 0;
+	size_t path_index                  = 0;
+	size_t path_length                 = 0;
+	int result                         = 0;
+
+	if( mount_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid mount handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( path == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid path.",
+		 function );
+
+		return( -1 );
+	}
+	path_length = system_string_length(
+	               path );
+
+	if( path_length == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid path length value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( path_length >= 2 )
+	 && ( path[ path_length - 1 ] == LIBCPATH_SEPARATOR ) )
+	{
+		path_length--;
+	}
+	path_index = path_length;
+
+	while( path_index > 0 )
+	{
+		if( path[ path_index ] == LIBCPATH_SEPARATOR )
+		{
+			break;
+		}
+		path_index--;
+	}
+	/* Ignore the name of the root item
+	 */
+	if( path_length == 0 )
+	{
+		filename        = _SYSTEM_STRING( "" );
+		filename_length = 0;
+	}
+	else
+	{
+		filename        = &( path[ path_index + 1 ] );
+		filename_length = path_length - ( path_index + 1 );
+	}
+	result = mount_file_system_get_store_by_path(
+	          mount_handle->file_system,
+	          path,
+	          path_length,
+	          &vshadow_store,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve store.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( mount_file_entry_initialize(
+		     file_entry,
+		     mount_handle->file_system,
+		     filename,
+		     filename_length,
+		     vshadow_store,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to initialize file entry.",
 			 function );
 
 			goto on_error;
@@ -567,303 +938,6 @@ int mount_handle_open_input(
 	return( result );
 
 on_error:
-	if( mount_handle->inputs != NULL )
-	{
-		memory_free(
-		 mount_handle->inputs );
-	}
 	return( -1 );
-}
-
-/* Closes the mount handle
- * Returns the 0 if succesful or -1 on error
- */
-int mount_handle_close_input(
-     mount_handle_t *mount_handle,
-     libcerror_error_t **error )
-{
-	static char *function = "mount_handle_close_input";
-	int result            = 0;
-	int store_index       = 0;
-
-	if( mount_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid mount handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( mount_handle->inputs != NULL )
-	{
-		for( store_index = 0;
-		     store_index < mount_handle->number_of_inputs;
-		     store_index++ )
-		{
-			if( mount_handle->inputs[ store_index ] != NULL )
-			{
-				if( libvshadow_store_free(
-			             &( mount_handle->inputs[ store_index ] ),
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free input: %d.",
-					 function,
-					 store_index );
-
-					result = -1;
-				}
-			}
-		}
-		memory_free(
-		 mount_handle->inputs );
-	}
-	if( libvshadow_volume_close(
-	     mount_handle->input_volume,
-	     error ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close input volume.",
-		 function );
-
-		result = -1;
-	}
-	return( result );
-}
-
-/* Read a buffer from the specified input
- * Returns the number of bytes read if successful or -1 on error
- */
-ssize_t mount_handle_read_buffer(
-         mount_handle_t *mount_handle,
-         int store_index,
-         uint8_t *buffer,
-         size_t size,
-         libcerror_error_t **error )
-{
-	static char *function = "mount_handle_read_buffer";
-	ssize_t read_count    = 0;
-
-	if( mount_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid mount handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( store_index < 0 )
-	 || ( store_index >= mount_handle->number_of_inputs ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: unsupported to store index value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	if( mount_handle->inputs[ store_index ] == NULL )
-	{
-		if( libvshadow_volume_get_store(
-		     mount_handle->input_volume,
-		     store_index,
-		     &( mount_handle->inputs[ store_index ] ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: unable to retrieve input: %d from input volume.",
-			 function,
-			 store_index );
-
-			return( -1 );
-		}
-	}
-	read_count = libvshadow_store_read_buffer(
-	              mount_handle->inputs[ store_index ],
-	              buffer,
-	              size,
-	              error );
-
-	if( read_count == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer from input: %d.",
-		 function,
-		 store_index );
-
-		return( -1 );
-	}
-	return( read_count );
-}
-
-/* Seeks a specific offset from the specified input
- * Returns the offset if successful or -1 on error
- */
-off64_t mount_handle_seek_offset(
-         mount_handle_t *mount_handle,
-         int store_index,
-         off64_t offset,
-         int whence,
-         libcerror_error_t **error )
-{
-	static char *function = "mount_handle_seek_offset";
-
-	if( mount_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid mount handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( store_index < 0 )
-	 || ( store_index >= mount_handle->number_of_inputs ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: unsupported to store index value out of bounds: %d.",
-		 function,
-		 store_index );
-
-		return( -1 );
-	}
-	if( mount_handle->inputs[ store_index ] == NULL )
-	{
-		if( libvshadow_volume_get_store(
-		     mount_handle->input_volume,
-		     store_index,
-		     &( mount_handle->inputs[ store_index ] ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: unable to retrieve input: %d from input volume.",
-			 function,
-			 store_index );
-
-			return( -1 );
-		}
-	}
-	offset = libvshadow_store_seek_offset(
-	          mount_handle->inputs[ store_index ],
-	          offset,
-	          whence,
-	          error );
-
-	if( offset == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset in input: %d.",
-		 function,
-		 store_index );
-
-		return( -1 );
-	}
-	return( offset );
-}
-
-/* Retrieves the size of the input volume
- * Returns 1 if successful or -1 on error
- */
-int mount_handle_get_size(
-     mount_handle_t *mount_handle,
-     size64_t *size,
-     libcerror_error_t **error )
-{
-	static char *function = "mount_handle_get_size";
-
-	if( mount_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid mount handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( libvshadow_volume_get_size(
-	     mount_handle->input_volume,
-	     size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size from input volume.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
-}
-
-/* Retrieves the number of inputs of the input volume
- * Returns 1 if successful or -1 on error
- */
-int mount_handle_get_number_of_inputs(
-     mount_handle_t *mount_handle,
-     int *number_of_inputs,
-     libcerror_error_t **error )
-{
-	static char *function = "mount_handle_get_number_of_inputs";
-
-	if( mount_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid mount handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( number_of_inputs == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid number of inputs.",
-		 function );
-
-		return( -1 );
-	}
-	*number_of_inputs = mount_handle->number_of_inputs;
-
-	return( 1 );
 }
 

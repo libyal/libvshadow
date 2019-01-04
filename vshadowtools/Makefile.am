@@ -94,11 +94,16 @@ vshadowinfo_LDADD = \
 	@LIBINTL@
 
 vshadowmount_SOURCES = \
+	mount_dokan.c mount_dokan.h \
+	mount_file_entry.c mount_file_entry.h \
+	mount_file_system.c mount_file_system.h \
+	mount_fuse.c mount_fuse.h \
 	mount_handle.c mount_handle.h \
 	vshadowmount.c \
 	vshadowtools_getopt.c vshadowtools_getopt.h \
 	vshadowtools_i18n.h \
 	vshadowtools_libbfio.h \
+	vshadowtools_libcdata.h \
 	vshadowtools_libcerror.h \
 	vshadowtools_libcfile.h \
 	vshadowtools_libclocale.h \

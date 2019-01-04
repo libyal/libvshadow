@@ -141,7 +141,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadowinfo", "vshadowinfo\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadowmount", "vshadowmount\vshadowmount.vcproj", "{91A40238-86E3-44BA-8CFE-8410F4EE492C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE} = {61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}
 		{8C13E498-6369-4792-A0CF-B7134C54561B} = {8C13E498-6369-4792-A0CF-B7134C54561B}
 		{25C60507-39C6-4564-912D-DA2E7482A00F} = {25C60507-39C6-4564-912D-DA2E7482A00F}
 		{41CFAFBF-A1C8-4704-AFEF-31979E6452B9} = {41CFAFBF-A1C8-4704-AFEF-31979E6452B9}
@@ -247,8 +246,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcsplit", "libcsplit\libc
 	ProjectSection(ProjectDependencies) = postProject
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dokan", "dokan\dokan.vcproj", "{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -372,10 +369,6 @@ Global
 		{B86FB73A-4ACC-42DE-9545-586D93955B06}.Release|Win32.Build.0 = Release|Win32
 		{B86FB73A-4ACC-42DE-9545-586D93955B06}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{B86FB73A-4ACC-42DE-9545-586D93955B06}.VSDebug|Win32.Build.0 = VSDebug|Win32
-		{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}.Release|Win32.ActiveCfg = Release|Win32
-		{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}.Release|Win32.Build.0 = Release|Win32
-		{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
-		{61DFBD8D-C8EB-46AA-95DB-5007E8E112DE}.VSDebug|Win32.Build.0 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
