@@ -1281,6 +1281,7 @@ int libvshadow_store_descriptor_read_store_bitmap(
 	uint32_t value_32bit                  = 0;
 	uint16_t block_size                   = 0;
 	uint8_t bit_index                     = 0;
+	int result                            = 0;
 
 	if( store_descriptor == NULL )
 	{
@@ -1403,14 +1404,16 @@ int libvshadow_store_descriptor_read_store_bitmap(
 						 *bitmap_offset - start_offset );
 					}
 #endif
-					if( libcdata_range_list_insert_range(
-					     offset_list,
-					     (uint64_t) start_offset,
-					     (uint64_t) ( *bitmap_offset - start_offset ),
-					     NULL,
-					     NULL,
-					     NULL,
-					     error ) != 1 )
+					result = libcdata_range_list_insert_range(
+					          offset_list,
+					          (uint64_t) start_offset,
+					          (uint64_t) ( *bitmap_offset - start_offset ),
+					          NULL,
+					          NULL,
+					          NULL,
+					          error );
+
+					if( result == -1 )
 					{
 						libcerror_error_set(
 						 error,
@@ -1452,14 +1455,16 @@ int libvshadow_store_descriptor_read_store_bitmap(
 			 *bitmap_offset - start_offset );
 		}
 #endif
-		if( libcdata_range_list_insert_range(
-		     offset_list,
-		     (uint64_t) start_offset,
-		     (uint64_t) ( *bitmap_offset - start_offset ),
-		     NULL,
-		     NULL,
-		     NULL,
-		     error ) != 1 )
+		result = libcdata_range_list_insert_range(
+		          offset_list,
+		          (uint64_t) start_offset,
+		          (uint64_t) ( *bitmap_offset - start_offset ),
+		          NULL,
+		          NULL,
+		          NULL,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,

@@ -13,6 +13,14 @@ BuildRequires: gcc @ax_libbfio_spec_build_requires@ @ax_libcdata_spec_build_requ
 %description -n libvshadow
 Library to access the Windows NT Volume Shadow Snapshot (VSS) format
 
+%package -n libvshadow-static
+Summary: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
+Group: Development/Libraries
+Requires: libvshadow = %{version}-%{release}
+
+%description -n libvshadow-static
+Static library version of libvshadow.
+
 %package -n libvshadow-devel
 Summary: Header files and libraries for developing applications for libvshadow
 Group: Development/Libraries
@@ -74,11 +82,16 @@ rm -rf %{buildroot}
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
+%files -n libvshadow-static
+%defattr(644,root,root,755)
+%license COPYING
+%doc AUTHORS README
+%attr(755,root,root) %{_libdir}/*.a
+
 %files -n libvshadow-devel
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
-%{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libvshadow.pc
