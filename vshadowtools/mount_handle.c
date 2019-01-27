@@ -615,6 +615,7 @@ int mount_handle_open(
 
 				goto on_error;
 			}
+			vshadow_store = NULL;
 		}
 		mount_handle->file_io_handle = file_io_handle;
 	}
