@@ -23,6 +23,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_manpage.sh \
 	test_vshadowinfo.sh \
 	$(TESTS_PYVSHADOW)
 
@@ -31,6 +32,7 @@ check_SCRIPTS = \
 	pyvshadow_test_support.py \
 	pyvshadow_test_volume.py \
 	test_library.sh \
+	test_manpage.sh \
 	test_python_module.sh \
 	test_runner.sh \
 	test_vshadowinfo.sh
