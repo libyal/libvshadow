@@ -774,7 +774,6 @@ int libvshadow_io_handle_read_catalog(
 	static char *function                                = "libvshadow_io_handle_read_catalog";
 	off64_t next_offset                                  = 0;
 	size_t catalog_block_offset                          = 0;
-	size_t catalog_block_size                            = 0;
 	ssize_t read_count                                   = 0;
 	uint64_t catalog_entry_type                          = 0;
 	int result                                           = 0;
@@ -818,8 +817,6 @@ int libvshadow_io_handle_read_catalog(
 	}
 	do
 	{
-		catalog_block_size = io_handle->block_size;
-
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -849,10 +846,10 @@ int libvshadow_io_handle_read_catalog(
 		read_count = libbfio_handle_read_buffer(
 			      file_io_handle,
 			      catalog_block_data,
-			      catalog_block_size,
+			      io_handle->block_size,
 			      error );
 
-		if( read_count != (ssize_t) catalog_block_size )
+		if( read_count != (ssize_t) io_handle->block_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -866,7 +863,7 @@ int libvshadow_io_handle_read_catalog(
 		if( libvshadow_io_handle_read_catalog_header_data(
 		     io_handle,
 		     catalog_block_data,
-		     catalog_block_size,
+		     io_handle->block_size,
 		     &next_offset,
 		     error ) != 1 )
 		{
@@ -880,9 +877,8 @@ int libvshadow_io_handle_read_catalog(
 			goto on_error;
 		}
 		catalog_block_offset = sizeof( vshadow_catalog_header_t );
-		catalog_block_size  -= sizeof( vshadow_catalog_header_t );
 
-		while( catalog_block_offset < catalog_block_size )
+		while( catalog_block_offset < io_handle->block_size )
 		{
 			if( store_descriptor == NULL )
 			{
@@ -903,7 +899,7 @@ int libvshadow_io_handle_read_catalog(
 			result = libvshadow_store_descriptor_read_catalog_entry(
 			          store_descriptor,
 			          &( catalog_block_data[ catalog_block_offset ] ),
-			          catalog_block_size,
+			          io_handle->block_size - catalog_block_offset,
 			          &catalog_entry_type,
 			          error );
 
@@ -1006,7 +1002,6 @@ int libvshadow_io_handle_read_catalog(
 #endif
 			}
 			catalog_block_offset += (size_t) 128;
-			catalog_block_size   -= (size_t) 128;
 		}
 		file_offset = next_offset;
 	}

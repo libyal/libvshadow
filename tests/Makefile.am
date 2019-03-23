@@ -23,7 +23,6 @@ endif
 
 TESTS = \
 	test_library.sh \
-	test_manpage.sh \
 	test_vshadowinfo.sh \
 	$(TESTS_PYVSHADOW)
 
