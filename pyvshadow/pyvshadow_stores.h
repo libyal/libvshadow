@@ -1,5 +1,5 @@
 /*
- * Python object definition of the stores sequence and iterator
+ * Python object definition of the sequence and iterator object of stores
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -27,7 +27,6 @@
 
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
-#include "pyvshadow_volume.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -41,52 +40,52 @@ struct pyvshadow_stores
 	 */
 	PyObject_HEAD
 
-	/* The pyvshadow volume object
+	/* The parent object
 	 */
-	pyvshadow_volume_t *volume_object;
+	PyObject *parent_object;
 
-	/* The get store by index callback function
+	/* The get item by index callback function
 	 */
-	PyObject* (*get_store_by_index)(
-	             pyvshadow_volume_t *volume_object,
-	             int store_index );
+	PyObject* (*get_item_by_index)(
+	             PyObject *parent_object,
+	             int index );
 
-	/* The (current) store index
+	/* The current index
 	 */
-	int store_index;
+	int current_index;
 
-	/* The number of stores
+	/* The number of items
 	 */
-	int number_of_stores;
+	int number_of_items;
 };
 
 extern PyTypeObject pyvshadow_stores_type_object;
 
 PyObject *pyvshadow_stores_new(
-           pyvshadow_volume_t *volume_object,
-           PyObject* (*get_store_by_index)(
-                        pyvshadow_volume_t *volume_object,
-                        int store_index ),
-           int number_of_stores );
+           PyObject *parent_object,
+           PyObject* (*get_item_by_index)(
+                        PyObject *parent_object,
+                        int index ),
+           int number_of_items );
 
 int pyvshadow_stores_init(
-     pyvshadow_stores_t *pyvshadow_stores );
+     pyvshadow_stores_t *sequence_object );
 
 void pyvshadow_stores_free(
-      pyvshadow_stores_t *pyvshadow_stores );
+      pyvshadow_stores_t *sequence_object );
 
 Py_ssize_t pyvshadow_stores_len(
-            pyvshadow_stores_t *pyvshadow_stores );
+            pyvshadow_stores_t *sequence_object );
 
 PyObject *pyvshadow_stores_getitem(
-           pyvshadow_stores_t *pyvshadow_stores,
+           pyvshadow_stores_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pyvshadow_stores_iter(
-           pyvshadow_stores_t *pyvshadow_stores );
+           pyvshadow_stores_t *sequence_object );
 
 PyObject *pyvshadow_stores_iternext(
-           pyvshadow_stores_t *pyvshadow_stores );
+           pyvshadow_stores_t *sequence_object );
 
 #if defined( __cplusplus )
 }

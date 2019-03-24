@@ -1,5 +1,5 @@
 /*
- * Python bindings for libvshadow (pyvshadow)
+ * Python bindings module for libvshadow (pyvshadow)
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -41,6 +41,16 @@ PyObject *pyvshadow_check_volume_signature(
            PyObject *keywords );
 
 PyObject *pyvshadow_check_volume_signature_file_object(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyvshadow_open_new_volume(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyvshadow_open_new_volume_with_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

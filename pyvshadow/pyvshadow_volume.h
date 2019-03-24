@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libvshadow volume
+ * Python object wrapper of libvshadow_volume_t
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYVSHADOW_FILE_H )
-#define _PYVSHADOW_FILE_H
+#if !defined( _PYVSHADOW_VOLUME_H )
+#define _PYVSHADOW_VOLUME_H
 
 #include <common.h>
 #include <types.h>
@@ -53,19 +53,6 @@ struct pyvshadow_volume
 extern PyMethodDef pyvshadow_volume_object_methods[];
 extern PyTypeObject pyvshadow_volume_type_object;
 
-PyObject *pyvshadow_volume_new(
-           void );
-
-PyObject *pyvshadow_volume_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyvshadow_volume_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pyvshadow_volume_init(
      pyvshadow_volume_t *pyvshadow_volume );
 
@@ -95,7 +82,7 @@ PyObject *pyvshadow_volume_get_number_of_stores(
            PyObject *arguments );
 
 PyObject *pyvshadow_volume_get_store_by_index(
-           pyvshadow_volume_t *pyvshadow_volume,
+           PyObject *pyvshadow_volume,
            int store_index );
 
 PyObject *pyvshadow_volume_get_store(
@@ -111,5 +98,5 @@ PyObject *pyvshadow_volume_get_stores(
 }
 #endif
 
-#endif /* !defined( _PYVSHADOW_FILE_H ) */
+#endif /* !defined( _PYVSHADOW_VOLUME_H ) */
 

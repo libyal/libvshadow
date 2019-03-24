@@ -205,39 +205,39 @@ on_error:
 PyObject *pyvshadow_block_flags_new(
            void )
 {
-	pyvshadow_block_flags_t *pyvshadow_block_flags = NULL;
-	static char *function                          = "pyvshadow_block_flags_new";
+	pyvshadow_block_flags_t *definitions_object = NULL;
+	static char *function                       = "pyvshadow_block_flags_new";
 
-	pyvshadow_block_flags = PyObject_New(
-	                         struct pyvshadow_block_flags,
-	                         &pyvshadow_block_flags_type_object );
+	definitions_object = PyObject_New(
+	                      struct pyvshadow_block_flags,
+	                      &pyvshadow_block_flags_type_object );
 
-	if( pyvshadow_block_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize block flags.",
+		 "%s: unable to create definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pyvshadow_block_flags_init(
-	     pyvshadow_block_flags ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize block flags.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pyvshadow_block_flags );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pyvshadow_block_flags != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_block_flags );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
@@ -246,15 +246,15 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_block_flags_init(
-     pyvshadow_block_flags_t *pyvshadow_block_flags )
+     pyvshadow_block_flags_t *definitions_object )
 {
 	static char *function = "pyvshadow_block_flags_init";
 
-	if( pyvshadow_block_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid block flags.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -265,22 +265,22 @@ int pyvshadow_block_flags_init(
 /* Frees a block flags object
  */
 void pyvshadow_block_flags_free(
-      pyvshadow_block_flags_t *pyvshadow_block_flags )
+      pyvshadow_block_flags_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyvshadow_block_flags_free";
 
-	if( pyvshadow_block_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid block flags.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyvshadow_block_flags );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -301,6 +301,6 @@ void pyvshadow_block_flags_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyvshadow_block_flags );
+	 (PyObject*) definitions_object );
 }
 

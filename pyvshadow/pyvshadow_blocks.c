@@ -1,5 +1,5 @@
 /*
- * Python object definition of the blocks sequence and iterator
+ * Python object definition of the sequence and iterator object of blocks
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -31,7 +31,6 @@
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
-#include "pyvshadow_store.h"
 
 PySequenceMethods pyvshadow_blocks_sequence_methods = {
 	/* sq_length */
@@ -60,7 +59,7 @@ PyTypeObject pyvshadow_blocks_type_object = {
 	PyVarObject_HEAD_INIT( NULL, 0 )
 
 	/* tp_name */
-	"pyvshadow._blocks",
+	"pyvshadow.blocks",
 	/* tp_basicsize */
 	sizeof( pyvshadow_blocks_t ),
 	/* tp_itemsize */
@@ -98,7 +97,7 @@ PyTypeObject pyvshadow_blocks_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"internal pyvshadow blocks sequence and iterator object",
+	"pyvshadow sequence and iterator object of blocks",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -151,126 +150,122 @@ PyTypeObject pyvshadow_blocks_type_object = {
 	0
 };
 
-/* Creates a new blocks object
+/* Creates a new blocks sequence and iterator object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_blocks_new(
-           pyvshadow_store_t *store_object,
-           PyObject* (*get_block_by_index)(
-                        pyvshadow_store_t *store_object,
-                        int block_index ),
-           int number_of_blocks )
+           PyObject *parent_object,
+           PyObject* (*get_item_by_index)(
+                        PyObject *parent_object,
+                        int index ),
+           int number_of_items )
 {
-	pyvshadow_blocks_t *pyvshadow_blocks = NULL;
-	static char *function                = "pyvshadow_blocks_new";
+	pyvshadow_blocks_t *sequence_object = NULL;
+	static char *function               = "pyvshadow_blocks_new";
 
-	if( store_object == NULL )
+	if( parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid store object.",
+		 "%s: invalid parent object.",
 		 function );
 
 		return( NULL );
 	}
-	if( get_block_by_index == NULL )
+	if( get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid get block by index function.",
+		 "%s: invalid get item by index function.",
 		 function );
 
 		return( NULL );
 	}
 	/* Make sure the blocks values are initialized
 	 */
-	pyvshadow_blocks = PyObject_New(
-	                    struct pyvshadow_blocks,
-	                    &pyvshadow_blocks_type_object );
+	sequence_object = PyObject_New(
+	                   struct pyvshadow_blocks,
+	                   &pyvshadow_blocks_type_object );
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize blocks.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		goto on_error;
 	}
-	if( pyvshadow_blocks_init(
-	     pyvshadow_blocks ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize blocks.",
-		 function );
-
-		goto on_error;
-	}
-	pyvshadow_blocks->store_object       = store_object;
-	pyvshadow_blocks->get_block_by_index = get_block_by_index;
-	pyvshadow_blocks->number_of_blocks   = number_of_blocks;
+	sequence_object->parent_object     = parent_object;
+	sequence_object->get_item_by_index = get_item_by_index;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) pyvshadow_blocks->store_object );
+	 (PyObject *) sequence_object->parent_object );
 
-	return( (PyObject *) pyvshadow_blocks );
+	return( (PyObject *) sequence_object );
 
 on_error:
-	if( pyvshadow_blocks != NULL )
+	if( sequence_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_blocks );
+		 (PyObject *) sequence_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a blocks object
+/* Intializes a blocks sequence and iterator object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_blocks_init(
-     pyvshadow_blocks_t *pyvshadow_blocks )
+     pyvshadow_blocks_t *sequence_object )
 {
 	static char *function = "pyvshadow_blocks_init";
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the blocks values are initialized
 	 */
-	pyvshadow_blocks->store_object       = NULL;
-	pyvshadow_blocks->get_block_by_index = NULL;
-	pyvshadow_blocks->block_index        = 0;
-	pyvshadow_blocks->number_of_blocks   = 0;
+	sequence_object->parent_object     = NULL;
+	sequence_object->get_item_by_index = NULL;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = 0;
+
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of blocks not supported.",
+	 function );
 
 	return( 0 );
 }
 
-/* Frees a blocks object
+/* Frees a blocks sequence object
  */
 void pyvshadow_blocks_free(
-      pyvshadow_blocks_t *pyvshadow_blocks )
+      pyvshadow_blocks_t *sequence_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyvshadow_blocks_free";
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyvshadow_blocks );
+	           sequence_object );
 
 	if( ob_type == NULL )
 	{
@@ -290,72 +285,72 @@ void pyvshadow_blocks_free(
 
 		return;
 	}
-	if( pyvshadow_blocks->store_object != NULL )
+	if( sequence_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_blocks->store_object );
+		 (PyObject *) sequence_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyvshadow_blocks );
+	 (PyObject*) sequence_object );
 }
 
 /* The blocks len() function
  */
 Py_ssize_t pyvshadow_blocks_len(
-            pyvshadow_blocks_t *pyvshadow_blocks )
+            pyvshadow_blocks_t *sequence_object )
 {
 	static char *function = "pyvshadow_blocks_len";
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) pyvshadow_blocks->number_of_blocks );
+	return( (Py_ssize_t) sequence_object->number_of_items );
 }
 
 /* The blocks getitem() function
  */
 PyObject *pyvshadow_blocks_getitem(
-           pyvshadow_blocks_t *pyvshadow_blocks,
+           pyvshadow_blocks_t *sequence_object,
            Py_ssize_t item_index )
 {
 	PyObject *block_object = NULL;
 	static char *function  = "pyvshadow_blocks_getitem";
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_blocks->get_block_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - missing get block by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_blocks->number_of_blocks < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - invalid number of blocks.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) pyvshadow_blocks->number_of_blocks ) )
+	 || ( item_index >= (Py_ssize_t) sequence_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -364,8 +359,8 @@ PyObject *pyvshadow_blocks_getitem(
 
 		return( NULL );
 	}
-	block_object = pyvshadow_blocks->get_block_by_index(
-	                pyvshadow_blocks->store_object,
+	block_object = sequence_object->get_item_by_index(
+	                sequence_object->parent_object,
 	                (int) item_index );
 
 	return( block_object );
@@ -374,83 +369,83 @@ PyObject *pyvshadow_blocks_getitem(
 /* The blocks iter() function
  */
 PyObject *pyvshadow_blocks_iter(
-           pyvshadow_blocks_t *pyvshadow_blocks )
+           pyvshadow_blocks_t *sequence_object )
 {
 	static char *function = "pyvshadow_blocks_iter";
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) pyvshadow_blocks );
+	 (PyObject *) sequence_object );
 
-	return( (PyObject *) pyvshadow_blocks );
+	return( (PyObject *) sequence_object );
 }
 
 /* The blocks iternext() function
  */
 PyObject *pyvshadow_blocks_iternext(
-           pyvshadow_blocks_t *pyvshadow_blocks )
+           pyvshadow_blocks_t *sequence_object )
 {
 	PyObject *block_object = NULL;
 	static char *function  = "pyvshadow_blocks_iternext";
 
-	if( pyvshadow_blocks == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_blocks->get_block_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - missing get block by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_blocks->block_index < 0 )
+	if( sequence_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - invalid block index.",
+		 "%s: invalid sequence object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_blocks->number_of_blocks < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid blocks - invalid number of blocks.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_blocks->block_index >= pyvshadow_blocks->number_of_blocks )
+	if( sequence_object->current_index >= sequence_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	block_object = pyvshadow_blocks->get_block_by_index(
-	                pyvshadow_blocks->store_object,
-	                pyvshadow_blocks->block_index );
+	block_object = sequence_object->get_item_by_index(
+	                sequence_object->parent_object,
+	                sequence_object->current_index );
 
 	if( block_object != NULL )
 	{
-		pyvshadow_blocks->block_index++;
+		sequence_object->current_index++;
 	}
 	return( block_object );
 }

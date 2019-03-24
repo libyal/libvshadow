@@ -50,10 +50,10 @@ PyObject *pyvshadow_block_flags_new(
            void );
 
 int pyvshadow_block_flags_init(
-     pyvshadow_block_flags_t *pyvshadow_block_flags );
+     pyvshadow_block_flags_t *definitions_object );
 
 void pyvshadow_block_flags_free(
-      pyvshadow_block_flags_t *pyvshadow_block_flags );
+      pyvshadow_block_flags_t *definitions_object );
 
 #if defined( __cplusplus )
 }

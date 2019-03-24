@@ -38,8 +38,8 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    if not unittest.source:
-      return
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
@@ -58,8 +58,8 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    if not unittest.source:
-      return
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
 
     file_object = open(unittest.source, "rb")
 
@@ -67,8 +67,7 @@ class VolumeTypeTests(unittest.TestCase):
 
     vshadow_volume.open_file_object(file_object)
 
-    # with self.assertRaises(IOError):
-    with self.assertRaises(MemoryError):
+    with self.assertRaises(IOError):
       vshadow_volume.open_file_object(file_object)
 
     vshadow_volume.close()
@@ -82,18 +81,15 @@ class VolumeTypeTests(unittest.TestCase):
 
   def test_close(self):
     """Tests the close function."""
-    if not unittest.source:
-      return
-
     vshadow_volume = pyvshadow.volume()
 
-    # with self.assertRaises(IOError):
-    #   vshadow_volume.close()
+    with self.assertRaises(IOError):
+      vshadow_volume.close()
 
   def test_open_close(self):
     """Tests the open and close functions."""
-    if not unittest.source:
-      return
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
@@ -120,17 +116,83 @@ class VolumeTypeTests(unittest.TestCase):
     del file_object
     vshadow_volume.close()
 
+  def test_get_number_of_stores(self):
+    """Tests the get_number_of_stores function."""
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
+
+    vshadow_volume = pyvshadow.volume()
+
+    vshadow_volume.open(unittest.source)
+
+    number_of_stores = vshadow_volume.get_number_of_stores()
+    self.assertIsNotNone(number_of_stores)
+
+    vshadow_volume.close()
+
+  def test_get_store(self):
+    """Tests the get_store function."""
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
+
+    vshadow_volume = pyvshadow.volume()
+
+    vshadow_volume.open(unittest.source)
+
+    if vshadow_volume.number_of_stores > 0:
+      vshadow_store = vshadow_volume.get_store(
+          vshadow_volume.number_of_stores - 1)
+      self.assertIsNotNone(vshadow_store)
+
+      with self.assertRaises(IOError):
+        vshadow_volume.get_store(-1)
+
+    vshadow_volume.close()
+
+  def test_number_of_stores(self):
+    """Tests the number_of_stores property."""
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
+
+    vshadow_volume = pyvshadow.volume()
+
+    vshadow_volume.open(unittest.source)
+
+    self.assertIsNotNone(vshadow_volume.number_of_stores)
+
+    vshadow_volume.close()
+
+  def test_stores(self):
+    """Tests the stores property."""
+    if not unittest.source or unittest.offset != 0:
+      raise unittest.SkipTest("missing source")
+
+    vshadow_volume = pyvshadow.volume()
+
+    vshadow_volume.open(unittest.source)
+
+    number_of_stores = vshadow_volume.get_number_of_stores()
+    if number_of_stores > 0:
+      self.assertIsNotNone(vshadow_volume.stores)
+
+    vshadow_volume.close()
+
 
 if __name__ == "__main__":
   argument_parser = argparse.ArgumentParser()
 
   argument_parser.add_argument(
+      "-o", "--offset", dest="offset", action="store", default=0,
+      type=int, help="offset of the source file.")
+
+  argument_parser.add_argument(
       "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="The path of the source file.")
+      default=None, help="path of the source file.")
 
   options, unknown_options = argument_parser.parse_known_args()
   unknown_options.insert(0, sys.argv[0])
 
+  setattr(unittest, "offset", options.offset)
   setattr(unittest, "source", options.source)
 
   unittest.main(argv=unknown_options, verbosity=2)

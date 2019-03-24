@@ -1,4 +1,5 @@
 TODO
+* rename libvshadow_volume_get_store to libvshadow_volume_get_store_by_index
 * fix issue with multi threaded read test
   - store descriptor initialization?
 * add error tolerance for missing NTFS backup volume header

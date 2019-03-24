@@ -517,25 +517,23 @@ int vshadow_test_store_read_buffer(
 	size64_t size            = 0;
 	ssize_t read_count       = 0;
 	off64_t offset           = 0;
+	int result               = 0;
 
 	/* Determine size
 	 */
-	offset = libvshadow_store_seek_offset(
+	result = libvshadow_store_get_volume_size(
 	          store,
-	          0,
-	          SEEK_END,
+	          &size,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT64(
-	 "offset",
-	 offset,
-	 (int64_t) -1 );
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	size = (size64_t) offset;
 
 	/* Reset offset to 0
 	 */
@@ -669,25 +667,23 @@ int vshadow_test_store_seek_offset(
 	libcerror_error_t *error = NULL;
 	size64_t size            = 0;
 	off64_t offset           = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
-	offset = libvshadow_store_seek_offset(
+	result = libvshadow_store_get_volume_size(
 	          store,
-	          0,
-	          SEEK_END,
+	          &size,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT64(
-	 "offset",
-	 offset,
-	 (int64_t) -1 );
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	size = (size64_t) offset;
 
 	offset = libvshadow_store_seek_offset(
 	          store,
@@ -714,6 +710,21 @@ int vshadow_test_store_seek_offset(
 	 "offset",
 	 offset,
 	 (int64_t) 512 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libvshadow_store_seek_offset(
+	          store,
+	          0,
+	          SEEK_END,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) size );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -850,10 +861,10 @@ int vshadow_test_store_get_offset(
 	          &offset,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -923,10 +934,10 @@ int vshadow_test_store_get_size(
 	          &size,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -996,10 +1007,10 @@ int vshadow_test_store_get_volume_size(
 	          &volume_size,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1071,10 +1082,10 @@ int vshadow_test_store_get_identifier(
 	          16,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1182,10 +1193,10 @@ int vshadow_test_store_get_creation_time(
 	          &filetime,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1257,10 +1268,10 @@ int vshadow_test_store_get_copy_identifier(
 	          16,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1370,10 +1381,10 @@ int vshadow_test_store_get_copy_set_identifier(
 	          16,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1481,10 +1492,10 @@ int vshadow_test_store_get_number_of_blocks(
 	          &number_of_blocks,
 	          &error );
 
-	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	VSHADOW_TEST_ASSERT_IS_NULL(
 	 "error",

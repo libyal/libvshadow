@@ -1,5 +1,5 @@
 /*
- * Python object definition of the blocks sequence and iterator
+ * Python object definition of the sequence and iterator object of blocks
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -27,7 +27,6 @@
 
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
-#include "pyvshadow_store.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -41,52 +40,52 @@ struct pyvshadow_blocks
 	 */
 	PyObject_HEAD
 
-	/* The pyvshadow store object
+	/* The parent object
 	 */
-	pyvshadow_store_t *store_object;
+	PyObject *parent_object;
 
-	/* The get block by index callback function
+	/* The get item by index callback function
 	 */
-	PyObject* (*get_block_by_index)(
-	             pyvshadow_store_t *store_object,
-	             int block_index );
+	PyObject* (*get_item_by_index)(
+	             PyObject *parent_object,
+	             int index );
 
-	/* The (current) block index
+	/* The current index
 	 */
-	int block_index;
+	int current_index;
 
-	/* The number of blocks
+	/* The number of items
 	 */
-	int number_of_blocks;
+	int number_of_items;
 };
 
 extern PyTypeObject pyvshadow_blocks_type_object;
 
 PyObject *pyvshadow_blocks_new(
-           pyvshadow_store_t *store_object,
-           PyObject* (*get_block_by_index)(
-                        pyvshadow_store_t *store_object,
-                        int block_index ),
-           int number_of_blocks );
+           PyObject *parent_object,
+           PyObject* (*get_item_by_index)(
+                        PyObject *parent_object,
+                        int index ),
+           int number_of_items );
 
 int pyvshadow_blocks_init(
-     pyvshadow_blocks_t *pyvshadow_blocks );
+     pyvshadow_blocks_t *sequence_object );
 
 void pyvshadow_blocks_free(
-      pyvshadow_blocks_t *pyvshadow_blocks );
+      pyvshadow_blocks_t *sequence_object );
 
 Py_ssize_t pyvshadow_blocks_len(
-            pyvshadow_blocks_t *pyvshadow_blocks );
+            pyvshadow_blocks_t *sequence_object );
 
 PyObject *pyvshadow_blocks_getitem(
-           pyvshadow_blocks_t *pyvshadow_blocks,
+           pyvshadow_blocks_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pyvshadow_blocks_iter(
-           pyvshadow_blocks_t *pyvshadow_blocks );
+           pyvshadow_blocks_t *sequence_object );
 
 PyObject *pyvshadow_blocks_iternext(
-           pyvshadow_blocks_t *pyvshadow_blocks );
+           pyvshadow_blocks_t *sequence_object );
 
 #if defined( __cplusplus )
 }

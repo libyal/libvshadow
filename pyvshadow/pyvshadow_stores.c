@@ -1,5 +1,5 @@
 /*
- * Python object definition of the stores sequence and iterator
+ * Python object definition of the sequence and iterator object of stores
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -31,7 +31,6 @@
 #include "pyvshadow_python.h"
 #include "pyvshadow_store.h"
 #include "pyvshadow_stores.h"
-#include "pyvshadow_volume.h"
 
 PySequenceMethods pyvshadow_stores_sequence_methods = {
 	/* sq_length */
@@ -60,7 +59,7 @@ PyTypeObject pyvshadow_stores_type_object = {
 	PyVarObject_HEAD_INIT( NULL, 0 )
 
 	/* tp_name */
-	"pyvshadow._stores",
+	"pyvshadow.stores",
 	/* tp_basicsize */
 	sizeof( pyvshadow_stores_t ),
 	/* tp_itemsize */
@@ -98,7 +97,7 @@ PyTypeObject pyvshadow_stores_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"internal pyvshadow stores sequence and iterator object",
+	"pyvshadow sequence and iterator object of stores",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -151,126 +150,122 @@ PyTypeObject pyvshadow_stores_type_object = {
 	0
 };
 
-/* Creates a new stores object
+/* Creates a new stores sequence and iterator object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_stores_new(
-           pyvshadow_volume_t *volume_object,
-           PyObject* (*get_store_by_index)(
-                        pyvshadow_volume_t *volume_object,
-                        int store_index ),
-           int number_of_stores )
+           PyObject *parent_object,
+           PyObject* (*get_item_by_index)(
+                        PyObject *parent_object,
+                        int index ),
+           int number_of_items )
 {
-	pyvshadow_stores_t *pyvshadow_stores = NULL;
-	static char *function                = "pyvshadow_stores_new";
+	pyvshadow_stores_t *sequence_object = NULL;
+	static char *function               = "pyvshadow_stores_new";
 
-	if( volume_object == NULL )
+	if( parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid volume object.",
+		 "%s: invalid parent object.",
 		 function );
 
 		return( NULL );
 	}
-	if( get_store_by_index == NULL )
+	if( get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid get store by index function.",
+		 "%s: invalid get item by index function.",
 		 function );
 
 		return( NULL );
 	}
 	/* Make sure the stores values are initialized
 	 */
-	pyvshadow_stores = PyObject_New(
-	                    struct pyvshadow_stores,
-	                    &pyvshadow_stores_type_object );
+	sequence_object = PyObject_New(
+	                   struct pyvshadow_stores,
+	                   &pyvshadow_stores_type_object );
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize stores.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		goto on_error;
 	}
-	if( pyvshadow_stores_init(
-	     pyvshadow_stores ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize stores.",
-		 function );
-
-		goto on_error;
-	}
-	pyvshadow_stores->volume_object      = volume_object;
-	pyvshadow_stores->get_store_by_index = get_store_by_index;
-	pyvshadow_stores->number_of_stores   = number_of_stores;
+	sequence_object->parent_object     = parent_object;
+	sequence_object->get_item_by_index = get_item_by_index;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) pyvshadow_stores->volume_object );
+	 (PyObject *) sequence_object->parent_object );
 
-	return( (PyObject *) pyvshadow_stores );
+	return( (PyObject *) sequence_object );
 
 on_error:
-	if( pyvshadow_stores != NULL )
+	if( sequence_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_stores );
+		 (PyObject *) sequence_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a stores object
+/* Intializes a stores sequence and iterator object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_stores_init(
-     pyvshadow_stores_t *pyvshadow_stores )
+     pyvshadow_stores_t *sequence_object )
 {
 	static char *function = "pyvshadow_stores_init";
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the stores values are initialized
 	 */
-	pyvshadow_stores->volume_object      = NULL;
-	pyvshadow_stores->get_store_by_index = NULL;
-	pyvshadow_stores->store_index        = 0;
-	pyvshadow_stores->number_of_stores   = 0;
+	sequence_object->parent_object     = NULL;
+	sequence_object->get_item_by_index = NULL;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = 0;
+
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of stores not supported.",
+	 function );
 
 	return( 0 );
 }
 
-/* Frees a stores object
+/* Frees a stores sequence object
  */
 void pyvshadow_stores_free(
-      pyvshadow_stores_t *pyvshadow_stores )
+      pyvshadow_stores_t *sequence_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyvshadow_stores_free";
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyvshadow_stores );
+	           sequence_object );
 
 	if( ob_type == NULL )
 	{
@@ -290,72 +285,72 @@ void pyvshadow_stores_free(
 
 		return;
 	}
-	if( pyvshadow_stores->volume_object != NULL )
+	if( sequence_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_stores->volume_object );
+		 (PyObject *) sequence_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyvshadow_stores );
+	 (PyObject*) sequence_object );
 }
 
 /* The stores len() function
  */
 Py_ssize_t pyvshadow_stores_len(
-            pyvshadow_stores_t *pyvshadow_stores )
+            pyvshadow_stores_t *sequence_object )
 {
 	static char *function = "pyvshadow_stores_len";
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) pyvshadow_stores->number_of_stores );
+	return( (Py_ssize_t) sequence_object->number_of_items );
 }
 
 /* The stores getitem() function
  */
 PyObject *pyvshadow_stores_getitem(
-           pyvshadow_stores_t *pyvshadow_stores,
+           pyvshadow_stores_t *sequence_object,
            Py_ssize_t item_index )
 {
 	PyObject *store_object = NULL;
 	static char *function  = "pyvshadow_stores_getitem";
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_stores->get_store_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores - missing get store by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_stores->number_of_stores < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores - invalid number of stores.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) pyvshadow_stores->number_of_stores ) )
+	 || ( item_index >= (Py_ssize_t) sequence_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -364,8 +359,8 @@ PyObject *pyvshadow_stores_getitem(
 
 		return( NULL );
 	}
-	store_object = pyvshadow_stores->get_store_by_index(
-	                pyvshadow_stores->volume_object,
+	store_object = sequence_object->get_item_by_index(
+	                sequence_object->parent_object,
 	                (int) item_index );
 
 	return( store_object );
@@ -374,83 +369,83 @@ PyObject *pyvshadow_stores_getitem(
 /* The stores iter() function
  */
 PyObject *pyvshadow_stores_iter(
-           pyvshadow_stores_t *pyvshadow_stores )
+           pyvshadow_stores_t *sequence_object )
 {
 	static char *function = "pyvshadow_stores_iter";
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) pyvshadow_stores );
+	 (PyObject *) sequence_object );
 
-	return( (PyObject *) pyvshadow_stores );
+	return( (PyObject *) sequence_object );
 }
 
 /* The stores iternext() function
  */
 PyObject *pyvshadow_stores_iternext(
-           pyvshadow_stores_t *pyvshadow_stores )
+           pyvshadow_stores_t *sequence_object )
 {
 	PyObject *store_object = NULL;
 	static char *function  = "pyvshadow_stores_iternext";
 
-	if( pyvshadow_stores == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_stores->get_store_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores - missing get store by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_stores->store_index < 0 )
+	if( sequence_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores - invalid store index.",
+		 "%s: invalid sequence object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_stores->number_of_stores < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stores - invalid number of stores.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( pyvshadow_stores->store_index >= pyvshadow_stores->number_of_stores )
+	if( sequence_object->current_index >= sequence_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	store_object = pyvshadow_stores->get_store_by_index(
-	                pyvshadow_stores->volume_object,
-	                pyvshadow_stores->store_index );
+	store_object = sequence_object->get_item_by_index(
+	                sequence_object->parent_object,
+	                sequence_object->current_index );
 
 	if( store_object != NULL )
 	{
-		pyvshadow_stores->store_index++;
+		sequence_object->current_index++;
 	}
 	return( store_object );
 }

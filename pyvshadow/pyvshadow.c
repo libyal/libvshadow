@@ -65,24 +65,24 @@ PyMethodDef pyvshadow_module_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_volume_signature(filename) -> Boolean\n"
 	  "\n"
-	  "Checks if a volume has a Windows NT Volume Shadow Snapshot (VSS) volume signature." },
+	  "Checks if a volume has a Volume Shadow Snapshot (VSS) signature." },
 
 	{ "check_volume_signature_file_object",
 	  (PyCFunction) pyvshadow_check_volume_signature_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "check_volume_signature(file_object) -> Boolean\n"
+	  "check_volume_signature_file_object(file_object) -> Boolean\n"
 	  "\n"
-	  "Checks if a volume has a Windows NT Volume Shadow Snapshot (VSS) volume signature using a file-like object." },
+	  "Checks if a volume has a Volume Shadow Snapshot (VSS) signature using a file-like object." },
 
 	{ "open",
-	  (PyCFunction) pyvshadow_volume_new_open,
+	  (PyCFunction) pyvshadow_open_new_volume,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
 	  "Opens a volume." },
 
 	{ "open_file_object",
-	  (PyCFunction) pyvshadow_volume_new_open_file_object,
+	  (PyCFunction) pyvshadow_open_new_volume_with_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
@@ -125,7 +125,7 @@ PyObject *pyvshadow_get_version(
 	         errors ) );
 }
 
-/* Checks if the volume has a Windows NT Volume Shadow Snapshot (VSS) volume signature
+/* Checks if a volume has a Volume Shadow Snapshot (VSS) signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_check_volume_signature(
@@ -156,7 +156,7 @@ PyObject *pyvshadow_check_volume_signature(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|O",
+	     "O|",
 	     keyword_list,
 	     &string_object ) == 0 )
 	{
@@ -172,7 +172,7 @@ PyObject *pyvshadow_check_volume_signature(
 	{
 		pyvshadow_error_fetch_and_raise(
 	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -199,7 +199,7 @@ PyObject *pyvshadow_check_volume_signature(
 		{
 			pyvshadow_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -221,7 +221,9 @@ PyObject *pyvshadow_check_volume_signature(
 
 		Py_DecRef(
 		 utf8_string_object );
-#endif
+
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 		if( result == -1 )
 		{
 			pyvshadow_error_raise(
@@ -319,7 +321,7 @@ PyObject *pyvshadow_check_volume_signature(
 	return( NULL );
 }
 
-/* Checks if the volume has a Windows NT Volume Shadow Snapshot (VSS) volume signature using a file-like object
+/* Checks if a volume has a Volume Shadow Snapshot (VSS) signature using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_check_volume_signature_file_object(
@@ -419,6 +421,52 @@ on_error:
 	return( NULL );
 }
 
+/* Creates a new volume object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyvshadow_open_new_volume(
+           PyObject *self PYVSHADOW_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pyvshadow_volume = NULL;
+
+	PYVSHADOW_UNREFERENCED_PARAMETER( self )
+
+	pyvshadow_volume_init(
+	 (pyvshadow_volume_t *) pyvshadow_volume );
+
+	pyvshadow_volume_open(
+	 (pyvshadow_volume_t *) pyvshadow_volume,
+	 arguments,
+	 keywords );
+
+	return( pyvshadow_volume );
+}
+
+/* Creates a new volume object and opens it using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyvshadow_open_new_volume_with_file_object(
+           PyObject *self PYVSHADOW_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pyvshadow_volume = NULL;
+
+	PYVSHADOW_UNREFERENCED_PARAMETER( self )
+
+	pyvshadow_volume_init(
+	 (pyvshadow_volume_t *) pyvshadow_volume );
+
+	pyvshadow_volume_open_file_object(
+	 (pyvshadow_volume_t *) pyvshadow_volume,
+	 arguments,
+	 keywords );
+
+	return( pyvshadow_volume );
+}
+
 #if PY_MAJOR_VERSION >= 3
 
 /* The pyvshadow module definition
@@ -456,14 +504,8 @@ PyMODINIT_FUNC initpyvshadow(
                 void )
 #endif
 {
-	PyObject *module                      = NULL;
-	PyTypeObject *block_type_object       = NULL;
-	PyTypeObject *block_flags_type_object = NULL;
-	PyTypeObject *blocks_type_object      = NULL;
-	PyTypeObject *store_type_object       = NULL;
-	PyTypeObject *stores_type_object      = NULL;
-	PyTypeObject *volume_type_object      = NULL;
-	PyGILState_STATE gil_state            = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libvshadow_notify_set_stream(
@@ -498,62 +540,39 @@ PyMODINIT_FUNC initpyvshadow(
 
 	gil_state = PyGILState_Ensure();
 
-	/* Setup the volume type object
+	/* Setup the block type object
 	 */
-	pyvshadow_volume_type_object.tp_new = PyType_GenericNew;
+	pyvshadow_block_type_object.tp_new = PyType_GenericNew;
 
 	if( PyType_Ready(
-	     &pyvshadow_volume_type_object ) < 0 )
+	     &pyvshadow_block_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pyvshadow_volume_type_object );
-
-	volume_type_object = &pyvshadow_volume_type_object;
+	 (PyObject *) &pyvshadow_block_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "volume",
-	 (PyObject *) volume_type_object );
+	 "block",
+	 (PyObject *) &pyvshadow_block_type_object );
 
-	/* Setup the stores type object
+	/* Setup the block_flags type object
 	 */
-	pyvshadow_stores_type_object.tp_new = PyType_GenericNew;
+	pyvshadow_block_flags_type_object.tp_new = PyType_GenericNew;
 
 	if( PyType_Ready(
-	     &pyvshadow_stores_type_object ) < 0 )
+	     &pyvshadow_block_flags_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pyvshadow_stores_type_object );
-
-	stores_type_object = &pyvshadow_stores_type_object;
+	 (PyObject *) &pyvshadow_block_flags_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "_stores",
-	 (PyObject *) stores_type_object );
-
-	/* Setup the store type object
-	 */
-	pyvshadow_store_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pyvshadow_store_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pyvshadow_store_type_object );
-
-	store_type_object = &pyvshadow_store_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "store",
-	 (PyObject *) store_type_object );
+	 "block_flags",
+	 (PyObject *) &pyvshadow_block_flags_type_object );
 
 	/* Setup the blocks type object
 	 */
@@ -567,55 +586,61 @@ PyMODINIT_FUNC initpyvshadow(
 	Py_IncRef(
 	 (PyObject *) &pyvshadow_blocks_type_object );
 
-	blocks_type_object = &pyvshadow_blocks_type_object;
-
 	PyModule_AddObject(
 	 module,
-	 "_blocks",
-	 (PyObject *) blocks_type_object );
+	 "blocks",
+	 (PyObject *) &pyvshadow_blocks_type_object );
 
-	/* Setup the block type object
+	/* Setup the store type object
 	 */
-	pyvshadow_block_type_object.tp_new = PyType_GenericNew;
+	pyvshadow_store_type_object.tp_new = PyType_GenericNew;
 
 	if( PyType_Ready(
-	     &pyvshadow_block_type_object ) < 0 )
+	     &pyvshadow_store_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pyvshadow_block_type_object );
-
-	block_type_object = &pyvshadow_block_type_object;
+	 (PyObject *) &pyvshadow_store_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "block",
-	 (PyObject *) block_type_object );
+	 "store",
+	 (PyObject *) &pyvshadow_store_type_object );
 
-	/* Setup the block flags type object
+	/* Setup the stores type object
 	 */
-	pyvshadow_block_flags_type_object.tp_new = PyType_GenericNew;
+	pyvshadow_stores_type_object.tp_new = PyType_GenericNew;
 
-	if( pyvshadow_block_flags_init_type(
-	     &pyvshadow_block_flags_type_object ) != 1 )
-	{
-		goto on_error;
-	}
 	if( PyType_Ready(
-	     &pyvshadow_block_flags_type_object ) < 0 )
+	     &pyvshadow_stores_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pyvshadow_block_flags_type_object );
-
-	block_flags_type_object = &pyvshadow_block_flags_type_object;
+	 (PyObject *) &pyvshadow_stores_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "block_flags",
-	 (PyObject *) block_flags_type_object );
+	 "stores",
+	 (PyObject *) &pyvshadow_stores_type_object );
+
+	/* Setup the volume type object
+	 */
+	pyvshadow_volume_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pyvshadow_volume_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyvshadow_volume_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "volume",
+	 (PyObject *) &pyvshadow_volume_type_object );
 
 	PyGILState_Release(
 	 gil_state );

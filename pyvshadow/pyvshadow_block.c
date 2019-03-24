@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libvshadow block
+ * Python object wrapper of libvshadow_block_t
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -26,8 +26,8 @@
 #include <stdlib.h>
 #endif
 
-#include "pyvshadow_error.h"
 #include "pyvshadow_block.h"
+#include "pyvshadow_error.h"
 #include "pyvshadow_integer.h"
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_libvshadow.h"
@@ -35,8 +35,6 @@
 #include "pyvshadow_unused.h"
 
 PyMethodDef pyvshadow_block_object_methods[] = {
-
-	/* Functions to access the block values */
 
 	{ "get_original_offset",
 	  (PyCFunction) pyvshadow_block_get_original_offset,
@@ -187,7 +185,7 @@ PyTypeObject pyvshadow_block_type_object = {
  */
 PyObject *pyvshadow_block_new(
            libvshadow_block_t *block,
-           pyvshadow_store_t *store_object )
+           PyObject *parent_object )
 {
 	pyvshadow_block_t *pyvshadow_block = NULL;
 	static char *function              = "pyvshadow_block_new";
@@ -195,12 +193,14 @@ PyObject *pyvshadow_block_new(
 	if( block == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid block.",
 		 function );
 
 		return( NULL );
 	}
+	/* PyObject_New does not invoke tp_init
+	 */
 	pyvshadow_block = PyObject_New(
 	                   struct pyvshadow_block,
 	                   &pyvshadow_block_type_object );
@@ -214,22 +214,14 @@ PyObject *pyvshadow_block_new(
 
 		goto on_error;
 	}
-	if( pyvshadow_block_init(
-	     pyvshadow_block ) != 0 )
+	pyvshadow_block->block         = block;
+	pyvshadow_block->parent_object = parent_object;
+
+	if( pyvshadow_block->parent_object != NULL )
 	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize block.",
-		 function );
-
-		goto on_error;
+		Py_IncRef(
+		 pyvshadow_block->parent_object );
 	}
-	pyvshadow_block->block        = block;
-	pyvshadow_block->store_object = store_object;
-
-	Py_IncRef(
-	 (PyObject *) pyvshadow_block->store_object );
-
 	return( (PyObject *) pyvshadow_block );
 
 on_error:
@@ -241,7 +233,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an block object
+/* Intializes a block object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_block_init(
@@ -252,7 +244,7 @@ int pyvshadow_block_init(
 	if( pyvshadow_block == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid block.",
 		 function );
 
@@ -262,32 +254,29 @@ int pyvshadow_block_init(
 	 */
 	pyvshadow_block->block = NULL;
 
-	return( 0 );
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of block not supported.",
+	 function );
+
+	return( -1 );
 }
 
-/* Frees an block object
+/* Frees a block object
  */
 void pyvshadow_block_free(
       pyvshadow_block_t *pyvshadow_block )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pyvshadow_block_free";
+	int result                  = 0;
 
 	if( pyvshadow_block == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid block.",
-		 function );
-
-		return;
-	}
-	if( pyvshadow_block->block == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid block - missing libvshadow block.",
 		 function );
 
 		return;
@@ -313,23 +302,32 @@ void pyvshadow_block_free(
 
 		return;
 	}
-	if( libvshadow_block_free(
-	     &( pyvshadow_block->block ),
-	     &error ) != 1 )
+	if( pyvshadow_block->block != NULL )
 	{
-		pyvshadow_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to free libvshadow block.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libvshadow_block_free(
+		          &( pyvshadow_block->block ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyvshadow_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libvshadow block.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
-	if( pyvshadow_block->store_object != NULL )
+	if( pyvshadow_block->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_block->store_object );
+		 pyvshadow_block->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyvshadow_block );
@@ -342,10 +340,10 @@ PyObject *pyvshadow_block_get_original_offset(
            pyvshadow_block_t *pyvshadow_block,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_block_get_original_offset";
-	off64_t original_offset  = 0;
+	off64_t offset           = 0;
 	int result               = 0;
 
 	PYVSHADOW_UNREFERENCED_PARAMETER( arguments )
@@ -353,7 +351,7 @@ PyObject *pyvshadow_block_get_original_offset(
 	if( pyvshadow_block == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid block.",
 		 function );
 
@@ -363,7 +361,7 @@ PyObject *pyvshadow_block_get_original_offset(
 
 	result = libvshadow_block_get_original_offset(
 	          pyvshadow_block->block,
-	          &original_offset,
+	          &offset,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -382,7 +380,7 @@ PyObject *pyvshadow_block_get_original_offset(
 		return( NULL );
 	}
 	integer_object = pyvshadow_integer_signed_new_from_64bit(
-	                  (int64_t) original_offset );
+	                  (int64_t) offset );
 
 	return( integer_object );
 }
@@ -394,10 +392,10 @@ PyObject *pyvshadow_block_get_relative_offset(
            pyvshadow_block_t *pyvshadow_block,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_block_get_relative_offset";
-	off64_t relative_offset  = 0;
+	off64_t offset           = 0;
 	int result               = 0;
 
 	PYVSHADOW_UNREFERENCED_PARAMETER( arguments )
@@ -405,7 +403,7 @@ PyObject *pyvshadow_block_get_relative_offset(
 	if( pyvshadow_block == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid block.",
 		 function );
 
@@ -415,7 +413,7 @@ PyObject *pyvshadow_block_get_relative_offset(
 
 	result = libvshadow_block_get_relative_offset(
 	          pyvshadow_block->block,
-	          &relative_offset,
+	          &offset,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -434,7 +432,7 @@ PyObject *pyvshadow_block_get_relative_offset(
 		return( NULL );
 	}
 	integer_object = pyvshadow_integer_signed_new_from_64bit(
-	                  (int64_t) relative_offset );
+	                  (int64_t) offset );
 
 	return( integer_object );
 }
@@ -446,8 +444,8 @@ PyObject *pyvshadow_block_get_offset(
            pyvshadow_block_t *pyvshadow_block,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_block_get_offset";
 	off64_t offset           = 0;
 	int result               = 0;
@@ -457,7 +455,7 @@ PyObject *pyvshadow_block_get_offset(
 	if( pyvshadow_block == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid block.",
 		 function );
 

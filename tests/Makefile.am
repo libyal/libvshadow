@@ -27,7 +27,7 @@ TESTS = \
 	$(TESTS_PYVSHADOW)
 
 check_SCRIPTS = \
-	pyvshadow_test_read.py \
+	pyvshadow_test_store.py \
 	pyvshadow_test_support.py \
 	pyvshadow_test_volume.py \
 	test_library.sh \

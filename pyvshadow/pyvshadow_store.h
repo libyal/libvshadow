@@ -27,7 +27,6 @@
 
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
-#include "pyvshadow_volume.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -45,9 +44,9 @@ struct pyvshadow_store
 	 */
 	libvshadow_store_t *store;
 
-	/* The pyvshadow volume object
+	/* The parent object
 	 */
-	pyvshadow_volume_t *volume_object;
+	PyObject *parent_object;
 };
 
 extern PyMethodDef pyvshadow_store_object_methods[];
@@ -55,7 +54,7 @@ extern PyTypeObject pyvshadow_store_type_object;
 
 PyObject *pyvshadow_store_new(
            libvshadow_store_t *store,
-           pyvshadow_volume_t *volume_object );
+           PyObject *parent_object );
 
 int pyvshadow_store_init(
      pyvshadow_store_t *pyvshadow_store );
@@ -119,7 +118,7 @@ PyObject *pyvshadow_store_get_number_of_blocks(
            PyObject *arguments );
 
 PyObject *pyvshadow_store_get_block_by_index(
-           pyvshadow_store_t *pyvshadow_store,
+           PyObject *pyvshadow_store,
            int block_index );
 
 PyObject *pyvshadow_store_get_block(

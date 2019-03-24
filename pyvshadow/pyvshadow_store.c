@@ -333,7 +333,7 @@ PyTypeObject pyvshadow_store_type_object = {
  */
 PyObject *pyvshadow_store_new(
            libvshadow_store_t *store,
-           pyvshadow_volume_t *volume_object )
+           PyObject *parent_object )
 {
 	pyvshadow_store_t *pyvshadow_store = NULL;
 	static char *function              = "pyvshadow_store_new";
@@ -371,10 +371,10 @@ PyObject *pyvshadow_store_new(
 		goto on_error;
 	}
 	pyvshadow_store->store         = store;
-	pyvshadow_store->volume_object = volume_object;
+	pyvshadow_store->parent_object = parent_object;
 
 	Py_IncRef(
-	 (PyObject *) pyvshadow_store->volume_object );
+	 (PyObject *) pyvshadow_store->parent_object );
 
 	return( (PyObject *) pyvshadow_store );
 
@@ -472,10 +472,10 @@ void pyvshadow_store_free(
 		libcerror_error_free(
 		 &error );
 	}
-	if( pyvshadow_store->volume_object != NULL )
+	if( pyvshadow_store->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_store->volume_object );
+		 (PyObject *) pyvshadow_store->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyvshadow_store );
@@ -1342,7 +1342,7 @@ PyObject *pyvshadow_store_get_number_of_blocks(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_store_get_block_by_index(
-           pyvshadow_store_t *pyvshadow_store,
+           PyObject *pyvshadow_store,
            int block_index )
 {
 	libcerror_error_t *error  = NULL;
@@ -1363,7 +1363,7 @@ PyObject *pyvshadow_store_get_block_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libvshadow_store_get_block_by_index(
-	          pyvshadow_store->store,
+	          ( (pyvshadow_store_t *) pyvshadow_store )->store,
 	          block_index,
 	          &block,
 	          &error );
@@ -1431,7 +1431,7 @@ PyObject *pyvshadow_store_get_block(
 		return( NULL );
 	}
 	block_object = pyvshadow_store_get_block_by_index(
-	                pyvshadow_store,
+	                (PyObject *) pyvshadow_store,
 	                block_index );
 
 	return( block_object );
@@ -1484,7 +1484,7 @@ PyObject *pyvshadow_store_get_blocks(
 		return( NULL );
 	}
 	blocks_object = pyvshadow_blocks_new(
-	                 pyvshadow_store,
+	                 (PyObject *) pyvshadow_store,
 	                 &pyvshadow_store_get_block_by_index,
 	                 number_of_blocks );
 

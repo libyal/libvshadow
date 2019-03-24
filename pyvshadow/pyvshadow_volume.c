@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libvshadow volume
+ * Python object wrapper of libvshadow_volume_t
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -28,9 +28,9 @@
 
 #include "pyvshadow_error.h"
 #include "pyvshadow_file_object_io_handle.h"
+#include "pyvshadow_integer.h"
 #include "pyvshadow_libbfio.h"
 #include "pyvshadow_libcerror.h"
-#include "pyvshadow_libclocale.h"
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
 #include "pyvshadow_store.h"
@@ -58,8 +58,6 @@ PyMethodDef pyvshadow_volume_object_methods[] = {
 	  "\n"
 	  "Signals the volume to abort the current activity." },
 
-	/* Functions to access the volume */
-
 	{ "open",
 	  (PyCFunction) pyvshadow_volume_open,
 	  METH_VARARGS | METH_KEYWORDS,
@@ -81,8 +79,6 @@ PyMethodDef pyvshadow_volume_object_methods[] = {
 	  "\n"
 	  "Closes a volume." },
 
-	/* Functions to access the stores */
-
 	{ "get_number_of_stores",
 	  (PyCFunction) pyvshadow_volume_get_number_of_stores,
 	  METH_NOARGS,
@@ -93,9 +89,9 @@ PyMethodDef pyvshadow_volume_object_methods[] = {
 	{ "get_store",
 	  (PyCFunction) pyvshadow_volume_get_store,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_store(store_index) -> Object or None\n"
+	  "get_store(store_index) -> Object\n"
 	  "\n"
-	  "Retrieves a specific store." },
+	  "Retrieves the store specified by the index." },
 
 	{ "get_stores",
 	  (PyCFunction) pyvshadow_volume_get_stores,
@@ -221,101 +217,14 @@ PyTypeObject pyvshadow_volume_type_object = {
 	0
 };
 
-/* Creates a new volume object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyvshadow_volume_new(
-           void )
-{
-	pyvshadow_volume_t *pyvshadow_volume = NULL;
-	static char *function                = "pyvshadow_volume_new";
-
-	pyvshadow_volume = PyObject_New(
-	                    struct pyvshadow_volume,
-	                    &pyvshadow_volume_type_object );
-
-	if( pyvshadow_volume == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize volume.",
-		 function );
-
-		goto on_error;
-	}
-	if( pyvshadow_volume_init(
-	     pyvshadow_volume ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize volume.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pyvshadow_volume );
-
-on_error:
-	if( pyvshadow_volume != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pyvshadow_volume );
-	}
-	return( NULL );
-}
-
-/* Creates a new volume object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyvshadow_volume_new_open(
-           PyObject *self PYVSHADOW_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyvshadow_volume = NULL;
-
-	PYVSHADOW_UNREFERENCED_PARAMETER( self )
-
-	pyvshadow_volume = pyvshadow_volume_new();
-
-	pyvshadow_volume_open(
-	 (pyvshadow_volume_t *) pyvshadow_volume,
-	 arguments,
-	 keywords );
-
-	return( pyvshadow_volume );
-}
-
-/* Creates a new volume object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyvshadow_volume_new_open_file_object(
-           PyObject *self PYVSHADOW_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyvshadow_volume = NULL;
-
-	PYVSHADOW_UNREFERENCED_PARAMETER( self )
-
-	pyvshadow_volume = pyvshadow_volume_new();
-
-	pyvshadow_volume_open_file_object(
-	 (pyvshadow_volume_t *) pyvshadow_volume,
-	 arguments,
-	 keywords );
-
-	return( pyvshadow_volume );
-}
-
 /* Intializes a volume object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_volume_init(
      pyvshadow_volume_t *pyvshadow_volume )
 {
-	static char *function    = "pyvshadow_volume_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pyvshadow_volume_init";
 
 	if( pyvshadow_volume == NULL )
 	{
@@ -326,6 +235,8 @@ int pyvshadow_volume_init(
 
 		return( -1 );
 	}
+	/* Make sure libvshadow volume is set to NULL
+	 */
 	pyvshadow_volume->volume         = NULL;
 	pyvshadow_volume->file_io_handle = NULL;
 
@@ -352,8 +263,8 @@ int pyvshadow_volume_init(
 void pyvshadow_volume_free(
       pyvshadow_volume_t *pyvshadow_volume )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pyvshadow_volume_free";
 	int result                  = 0;
 
@@ -362,15 +273,6 @@ void pyvshadow_volume_free(
 		PyErr_Format(
 		 PyExc_ValueError,
 		 "%s: invalid volume.",
-		 function );
-
-		return;
-	}
-	if( pyvshadow_volume->volume == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid volume - missing libvshadow volume.",
 		 function );
 
 		return;
@@ -396,24 +298,27 @@ void pyvshadow_volume_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libvshadow_volume_free(
-	          &( pyvshadow_volume->volume ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pyvshadow_volume->volume != NULL )
 	{
-		pyvshadow_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libvshadow volume.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libvshadow_volume_free(
+		          &( pyvshadow_volume->volume ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyvshadow_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libvshadow volume.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyvshadow_volume );
@@ -478,9 +383,9 @@ PyObject *pyvshadow_volume_open(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pyvshadow_volume_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
-	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
 	int result                   = 0;
 
@@ -534,8 +439,8 @@ PyObject *pyvshadow_volume_open(
 	if( result == -1 )
 	{
 		pyvshadow_error_fetch_and_raise(
-	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -551,7 +456,7 @@ PyObject *pyvshadow_volume_open(
 
 		result = libvshadow_volume_open_wide(
 		          pyvshadow_volume->volume,
-	                  filename_wide,
+		          filename_wide,
 		          LIBVSHADOW_OPEN_READ,
 		          &error );
 
@@ -564,23 +469,23 @@ PyObject *pyvshadow_volume_open(
 		{
 			pyvshadow_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libvshadow_volume_open(
 		          pyvshadow_volume->volume,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBVSHADOW_OPEN_READ,
 		          &error );
 
@@ -611,17 +516,17 @@ PyObject *pyvshadow_volume_open(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pyvshadow_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -633,16 +538,16 @@ PyObject *pyvshadow_volume_open(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libvshadow_volume_open(
 		          pyvshadow_volume->volume,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBVSHADOW_OPEN_READ,
 		          &error );
 
@@ -684,9 +589,9 @@ PyObject *pyvshadow_volume_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pyvshadow_volume_open_file_object";
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	char *mode                  = NULL;
 	int result                  = 0;
 
 	if( pyvshadow_volume == NULL )
@@ -718,6 +623,16 @@ PyObject *pyvshadow_volume_open_file_object(
 		 mode );
 
 		return( NULL );
+	}
+	if( pyvshadow_volume->file_io_handle != NULL )
+	{
+		pyvshadow_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid volume - file IO handle already set.",
+		 function );
+
+		goto on_error;
 	}
 	if( pyvshadow_file_object_initialize(
 	     &( pyvshadow_volume->file_io_handle ),
@@ -830,7 +745,7 @@ PyObject *pyvshadow_volume_close(
 		{
 			pyvshadow_error_raise(
 			 error,
-			 PyExc_IOError,
+			 PyExc_MemoryError,
 			 "%s: unable to free libbfio file IO handle.",
 			 function );
 
@@ -853,8 +768,8 @@ PyObject *pyvshadow_volume_get_number_of_stores(
            pyvshadow_volume_t *pyvshadow_volume,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyvshadow_volume_get_number_of_stores";
 	int number_of_stores     = 0;
 	int result               = 0;
@@ -864,7 +779,7 @@ PyObject *pyvshadow_volume_get_number_of_stores(
 	if( pyvshadow_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid volume.",
 		 function );
 
@@ -906,19 +821,19 @@ PyObject *pyvshadow_volume_get_number_of_stores(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_volume_get_store_by_index(
-           pyvshadow_volume_t *pyvshadow_volume,
+           PyObject *pyvshadow_volume,
            int store_index )
 {
+	PyObject *store_object    = NULL;
 	libcerror_error_t *error  = NULL;
 	libvshadow_store_t *store = NULL;
-	PyObject *store_object    = NULL;
 	static char *function     = "pyvshadow_volume_get_store_by_index";
 	int result                = 0;
 
 	if( pyvshadow_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid volume.",
 		 function );
 
@@ -927,7 +842,7 @@ PyObject *pyvshadow_volume_get_store_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libvshadow_volume_get_store(
-	          pyvshadow_volume->volume,
+	          ( (pyvshadow_volume_t *) pyvshadow_volume )->volume,
 	          store_index,
 	          &store,
 	          &error );
@@ -995,31 +910,31 @@ PyObject *pyvshadow_volume_get_store(
 		return( NULL );
 	}
 	store_object = pyvshadow_volume_get_store_by_index(
-	                pyvshadow_volume,
+	                (PyObject *) pyvshadow_volume,
 	                store_index );
 
 	return( store_object );
 }
 
-/* Retrieves a stores sequence and iterator object for the stores
+/* Retrieves a sequence and iterator object for the stores
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyvshadow_volume_get_stores(
            pyvshadow_volume_t *pyvshadow_volume,
            PyObject *arguments PYVSHADOW_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
-	PyObject *stores_object  = NULL;
-	static char *function    = "pyvshadow_volume_get_stores";
-	int number_of_stores     = 0;
-	int result               = 0;
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyvshadow_volume_get_stores";
+	int number_of_stores      = 0;
+	int result                = 0;
 
 	PYVSHADOW_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyvshadow_volume == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid volume.",
 		 function );
 
@@ -1047,20 +962,21 @@ PyObject *pyvshadow_volume_get_stores(
 
 		return( NULL );
 	}
-	stores_object = pyvshadow_stores_new(
-	                 pyvshadow_volume,
-	                 &pyvshadow_volume_get_store_by_index,
-	                 number_of_stores );
+	sequence_object = pyvshadow_stores_new(
+	                   (PyObject *) pyvshadow_volume,
+	                   &pyvshadow_volume_get_store_by_index,
+	                   number_of_stores );
 
-	if( stores_object == NULL )
+	if( sequence_object == NULL )
 	{
-		PyErr_Format(
+		pyvshadow_error_raise(
+		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to create stores object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( stores_object );
+	return( sequence_object );
 }
 

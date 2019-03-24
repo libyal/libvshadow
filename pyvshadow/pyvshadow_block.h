@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libvshadow block
+ * Python object wrapper of libvshadow_block_t
  *
  * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -27,7 +27,6 @@
 
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
-#include "pyvshadow_store.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -45,9 +44,9 @@ struct pyvshadow_block
 	 */
 	libvshadow_block_t *block;
 
-	/* The pyvshadow store object
+	/* The parent object
 	 */
-	pyvshadow_store_t *store_object;
+	PyObject *parent_object;
 };
 
 extern PyMethodDef pyvshadow_block_object_methods[];
@@ -55,7 +54,7 @@ extern PyTypeObject pyvshadow_block_type_object;
 
 PyObject *pyvshadow_block_new(
            libvshadow_block_t *block,
-           pyvshadow_store_t *store_object );
+           PyObject *parent_object );
 
 int pyvshadow_block_init(
      pyvshadow_block_t *pyvshadow_block );
