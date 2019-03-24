@@ -335,6 +335,28 @@ ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
 
 		return( -1 );
 	}
+	if( buffer == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid buffer.",
+		 function );
+
+		return( -1 );
+	}
+	if( buffer_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid element data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	if( buffer_size == 0 )
 	{
 		return( 0 );

@@ -2838,7 +2838,18 @@ int libvshadow_store_descriptor_get_identifier(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid GUID value too small.",
+		 "%s: invalid GUID size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid GUID size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -3002,6 +3013,17 @@ int libvshadow_store_descriptor_get_copy_identifier(
 
 		return( -1 );
 	}
+	if( size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid GUID size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_read(
 	     store_descriptor->read_write_lock,
@@ -3095,6 +3117,17 @@ int libvshadow_store_descriptor_get_copy_set_identifier(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
 		 "%s: invalid GUID value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid GUID size value exceeds maximum.",
 		 function );
 
 		return( -1 );

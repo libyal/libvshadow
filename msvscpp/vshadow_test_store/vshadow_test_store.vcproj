@@ -176,6 +176,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\tests\vshadow_test_functions.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_getopt.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\vshadow_test_memory.c"
 				>
 			</File>
@@ -190,7 +198,31 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\tests\vshadow_test_functions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_getopt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_libbfio.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\vshadow_test_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_libclocale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_libcnotify.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\vshadow_test_libuna.h"
 				>
 			</File>
 			<File
