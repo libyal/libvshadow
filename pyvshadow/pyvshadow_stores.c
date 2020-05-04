@@ -244,7 +244,7 @@ int pyvshadow_stores_init(
 	 "%s: initialize of stores not supported.",
 	 function );
 
-	return( 0 );
+	return( -1 );
 }
 
 /* Frees a stores sequence object

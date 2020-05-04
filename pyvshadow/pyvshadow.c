@@ -33,6 +33,7 @@
 #include "pyvshadow_blocks.h"
 #include "pyvshadow_error.h"
 #include "pyvshadow_file_object_io_handle.h"
+#include "pyvshadow_libbfio.h"
 #include "pyvshadow_libcerror.h"
 #include "pyvshadow_libvshadow.h"
 #include "pyvshadow_python.h"
@@ -561,6 +562,11 @@ PyMODINIT_FUNC initpyvshadow(
 	 */
 	pyvshadow_block_flags_type_object.tp_new = PyType_GenericNew;
 
+	if( pyvshadow_block_flags_init_type(
+	     &pyvshadow_block_flags_type_object ) != 1 )
+	{
+		goto on_error;
+	}
 	if( PyType_Ready(
 	     &pyvshadow_block_flags_type_object ) < 0 )
 	{

@@ -341,12 +341,14 @@ PyObject *pyvshadow_store_new(
 	if( store == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid store.",
 		 function );
 
 		return( NULL );
 	}
+	/* PyObject_New does not invoke tp_init
+	 */
 	pyvshadow_store = PyObject_New(
 	                   struct pyvshadow_store,
 	                   &pyvshadow_store_type_object );
@@ -360,22 +362,14 @@ PyObject *pyvshadow_store_new(
 
 		goto on_error;
 	}
-	if( pyvshadow_store_init(
-	     pyvshadow_store ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize store.",
-		 function );
-
-		goto on_error;
-	}
 	pyvshadow_store->store         = store;
 	pyvshadow_store->parent_object = parent_object;
 
-	Py_IncRef(
-	 (PyObject *) pyvshadow_store->parent_object );
-
+	if( pyvshadow_store->parent_object != NULL )
+	{
+		Py_IncRef(
+		 pyvshadow_store->parent_object );
+	}
 	return( (PyObject *) pyvshadow_store );
 
 on_error:
@@ -398,7 +392,7 @@ int pyvshadow_store_init(
 	if( pyvshadow_store == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid store.",
 		 function );
 
@@ -408,7 +402,12 @@ int pyvshadow_store_init(
 	 */
 	pyvshadow_store->store = NULL;
 
-	return( 0 );
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of store not supported.",
+	 function );
+
+	return( -1 );
 }
 
 /* Frees a store object
@@ -416,24 +415,16 @@ int pyvshadow_store_init(
 void pyvshadow_store_free(
       pyvshadow_store_t *pyvshadow_store )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pyvshadow_store_free";
+	int result                  = 0;
 
 	if( pyvshadow_store == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid store.",
-		 function );
-
-		return;
-	}
-	if( pyvshadow_store->store == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid store - missing libvshadow store.",
 		 function );
 
 		return;
@@ -459,23 +450,32 @@ void pyvshadow_store_free(
 
 		return;
 	}
-	if( libvshadow_store_free(
-	     &( pyvshadow_store->store ),
-	     &error ) != 1 )
+	if( pyvshadow_store->store != NULL )
 	{
-		pyvshadow_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to free libvshadow store.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libvshadow_store_free(
+		          &( pyvshadow_store->store ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyvshadow_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libvshadow store.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	if( pyvshadow_store->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyvshadow_store->parent_object );
+		 pyvshadow_store->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyvshadow_store );

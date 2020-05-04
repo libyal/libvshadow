@@ -244,7 +244,7 @@ int pyvshadow_blocks_init(
 	 "%s: initialize of blocks not supported.",
 	 function );
 
-	return( 0 );
+	return( -1 );
 }
 
 /* Frees a blocks sequence object
