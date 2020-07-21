@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "vshadow_test_libcerror.h"
 #include "vshadow_test_libvshadow.h"
 #include "vshadow_test_macros.h"
 #include "vshadow_test_unused.h"

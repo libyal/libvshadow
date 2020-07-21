@@ -41,7 +41,7 @@ class DataRangeFileObject(object):
     """
     super(DataRangeFileObject, self).__init__()
     self._current_offset = 0
-    self._file_object = open(unittest.source, "rb")
+    self._file_object = open(path, "rb")
     self._range_offset = range_offset
     self._range_size = range_size
 
@@ -198,8 +198,7 @@ class VolumeTypeTests(unittest.TestCase):
 
       vshadow_volume.close()
 
-      # TODO: change IOError into TypeError
-      with self.assertRaises(IOError):
+      with self.assertRaises(TypeError):
         vshadow_volume.open_file_object(None)
 
       with self.assertRaises(ValueError):
@@ -254,11 +253,10 @@ class VolumeTypeTests(unittest.TestCase):
     if not unittest.source:
       raise unittest.SkipTest("missing source")
 
-    vshadow_volume = pyvshadow.volume()
-
     with DataRangeFileObject(
         unittest.source, unittest.offset or 0, None) as file_object:
 
+      vshadow_volume = pyvshadow.volume()
       vshadow_volume.open_file_object(file_object)
 
       number_of_stores = vshadow_volume.get_number_of_stores()
@@ -273,11 +271,10 @@ class VolumeTypeTests(unittest.TestCase):
     if not unittest.source or unittest.offset != 0:
       raise unittest.SkipTest("missing source")
 
-    vshadow_volume = pyvshadow.volume()
-
     with DataRangeFileObject(
         unittest.source, unittest.offset or 0, None) as file_object:
 
+      vshadow_volume = pyvshadow.volume()
       vshadow_volume.open_file_object(file_object)
 
       if vshadow_volume.number_of_stores == 0:
@@ -297,11 +294,10 @@ class VolumeTypeTests(unittest.TestCase):
     if not unittest.source or unittest.offset != 0:
       raise unittest.SkipTest("missing source")
 
-    vshadow_volume = pyvshadow.volume()
-
     with DataRangeFileObject(
         unittest.source, unittest.offset or 0, None) as file_object:
 
+      vshadow_volume = pyvshadow.volume()
       vshadow_volume.open_file_object(file_object)
 
       if vshadow_volume.number_of_stores == 0:
