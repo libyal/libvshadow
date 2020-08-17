@@ -215,7 +215,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a stores sequence and iterator object
+/* Initializes a stores sequence and iterator object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_stores_init(

@@ -381,7 +381,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a store object
+/* Initializes a store object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_store_init(

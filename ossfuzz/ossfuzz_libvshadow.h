@@ -1,5 +1,5 @@
 /*
- * Date and time functions
+ * The libvshadow header wrapper
  *
  * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,36 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYVSHADOW_DATETIME_H )
-#define _PYVSHADOW_DATETIME_H
+#if !defined( _OSSFUZZ_LIBVSHADOW_H )
+#define _OSSFUZZ_LIBVSHADOW_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pyvshadow_python.h"
+#include <libvshadow.h>
 
-#if defined( __cplusplus )
-extern "C" {
-#endif
-
-PyObject *pyvshadow_datetime_new_from_fat_date_time(
-           uint32_t fat_date_time );
-
-PyObject *pyvshadow_datetime_new_from_filetime(
-           uint64_t filetime );
-
-PyObject *pyvshadow_datetime_new_from_floatingtime(
-           uint64_t floatingtime );
-
-PyObject *pyvshadow_datetime_new_from_posix_time(
-           int64_t posix_time );
-
-PyObject *pyvshadow_datetime_new_from_posix_time_in_micro_seconds(
-           int64_t posix_time );
-
-#if defined( __cplusplus )
-}
-#endif
-
-#endif /* !defined( _PYVSHADOW_DATETIME_H ) */
+#endif /* !defined( _OSSFUZZ_LIBVSHADOW_H ) */
 

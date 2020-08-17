@@ -233,7 +233,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a block object
+/* Initializes a block object
  * Returns 0 if successful or -1 on error
  */
 int pyvshadow_block_init(
