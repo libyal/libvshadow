@@ -206,7 +206,7 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	uint64_t total_number_of_sectors         = 0;
 	uint32_t cluster_block_size              = 0;
 	uint16_t bytes_per_sector                = 0;
-	uint8_t sectors_per_cluster_block        = 0;
+	uint32_t sectors_per_cluster_block       = 0;
 
 	if( io_handle == NULL )
 	{
@@ -284,6 +284,11 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	 bytes_per_sector );
 
 	sectors_per_cluster_block = volume_header.sectors_per_cluster_block;
+	
+	/* Handle large cluster size case
+    */
+	if( sectors_per_cluster_block > 128 )
+		sectors_per_cluster_block = 1 << -(int32_t)sectors_per_cluster_block;
 
 	byte_stream_copy_to_uint16_little_endian(
 	 volume_header.total_number_of_sectors_16bit,
@@ -308,11 +313,9 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	cluster_block_size = sectors_per_cluster_block * bytes_per_sector;
 
 	primary_volume_size  = total_number_of_sectors * bytes_per_sector;
-	primary_volume_size /= cluster_block_size;
-	primary_volume_size += 1;
-	primary_volume_size *= cluster_block_size;
+	primary_volume_size = primary_volume_size + bytes_per_sector;
 
-	backup_ntfs_volume_header_offset = primary_volume_size - 512;
+	backup_ntfs_volume_header_offset = primary_volume_size - bytes_per_sector;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -374,6 +377,9 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 
 	sectors_per_cluster_block = volume_header.sectors_per_cluster_block;
 
+	if (sectors_per_cluster_block > 128)
+		sectors_per_cluster_block = 1 << -(int32_t)sectors_per_cluster_block;
+
 	byte_stream_copy_to_uint16_little_endian(
 	 volume_header.total_number_of_sectors_16bit,
 	 total_number_of_sectors );
@@ -394,10 +400,8 @@ int libvshadow_io_handle_read_ntfs_volume_header(
 	{
 		return( 0 );
 	}
-	backup_volume_size  = total_number_of_sectors * bytes_per_sector;
-	backup_volume_size /= cluster_block_size;
-	backup_volume_size += 1;
-	backup_volume_size *= cluster_block_size;
+	backup_volume_size = total_number_of_sectors * bytes_per_sector;
+	backup_volume_size = backup_volume_size + bytes_per_sector;
 
 	if( primary_volume_size != backup_volume_size )
 	{
