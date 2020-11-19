@@ -206,6 +206,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libvshadow\libvshadow_ntfs_volume_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libvshadow\libvshadow_store.c"
 				>
 			</File>
@@ -313,6 +317,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libvshadow\libvshadow_notify.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libvshadow\libvshadow_ntfs_volume_header.h"
 				>
 			</File>
 			<File

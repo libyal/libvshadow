@@ -9,7 +9,7 @@ EXIT_IGNORE=77;
 
 LIBRARY_TESTS="block block_descriptor block_range_descriptor block_tree error io_handle notify store_block store_descriptor";
 LIBRARY_TESTS_WITH_INPUT="store support volume";
-OPTION_SETS="";
+OPTION_SETS="offset";
 
 INPUT_GLOB="*";
 

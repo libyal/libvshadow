@@ -80,7 +80,7 @@ void vshadowinfo_signal_handler(
       vshadowtools_signal_t signal VSHADOWTOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
-	static char *function   = "vshadowinfo_signal_handler";
+	static char *function    = "vshadowinfo_signal_handler";
 
 	VSHADOWTOOLS_UNREFERENCED_PARAMETER( signal )
 

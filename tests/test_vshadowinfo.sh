@@ -9,7 +9,7 @@ EXIT_IGNORE=77;
 
 PROFILES=("vshadowinfo");
 OPTIONS_PER_PROFILE=("-a");
-OPTION_SETS="";
+OPTION_SETS="offset";
 
 INPUT_GLOB="*";
 

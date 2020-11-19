@@ -41,6 +41,7 @@ libvshadow_la_SOURCES = \
 	libvshadow_libfguid.h \
 	libvshadow_libuna.h \
 	libvshadow_notify.c libvshadow_notify.h \
+	libvshadow_ntfs_volume_header.c libvshadow_ntfs_volume_header.h \
 	libvshadow_support.c libvshadow_support.h \
 	libvshadow_store.c libvshadow_store.h \
 	libvshadow_store_block.c libvshadow_store_block.h \

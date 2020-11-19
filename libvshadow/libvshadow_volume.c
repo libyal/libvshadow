@@ -33,6 +33,7 @@
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
 #include "libvshadow_libcthreads.h"
+#include "libvshadow_ntfs_volume_header.h"
 #include "libvshadow_store.h"
 #include "libvshadow_store_descriptor.h"
 #include "libvshadow_volume.h"
@@ -994,20 +995,19 @@ int libvshadow_volume_open_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "Reading NTFS volume header:\n" );
+		 "Reading NTFS volume headers:\n" );
 	}
 #endif
-	if( libvshadow_io_handle_read_ntfs_volume_header(
-	     internal_volume->io_handle,
+	if( libvshadow_volume_open_read_ntfs_volume_headers(
+	     internal_volume,
 	     file_io_handle,
-	     &( internal_volume->size ),
 	     error ) == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read NTFS volume header.",
+		 "%s: unable to read NTFS volume headers.",
 		 function );
 
 		goto on_error;
@@ -1176,6 +1176,145 @@ on_error:
 	 internal_volume->read_write_lock,
 	 NULL );
 #endif
+	return( -1 );
+}
+
+/* Reads the NTFS volume headers to determine the volume size
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_volume_open_read_ntfs_volume_headers(
+     libvshadow_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error )
+{
+	libvshadow_ntfs_volume_header_t *backup_ntfs_volume_header = NULL;
+	libvshadow_ntfs_volume_header_t *ntfs_volume_header        = NULL;
+	static char *function                                      = "libvshadow_volume_open_read_ntfs_volume_headers";
+	off64_t backup_ntfs_volume_header_offset                   = 0;
+
+	if( internal_volume == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid volume.",
+		 function );
+
+		return( -1 );
+	}
+	if( libvshadow_ntfs_volume_header_initialize(
+	     &ntfs_volume_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create NTFS volume header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libvshadow_ntfs_volume_header_read_file_io_handle(
+	     ntfs_volume_header,
+	     file_io_handle,
+	     0,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read NTFS volume header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libvshadow_ntfs_volume_header_initialize(
+	     &backup_ntfs_volume_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create backup NTFS volume header.",
+		 function );
+
+		goto on_error;
+	}
+	backup_ntfs_volume_header_offset = ntfs_volume_header->volume_size - ntfs_volume_header->bytes_per_sector;
+
+	if( libvshadow_ntfs_volume_header_read_file_io_handle(
+	     backup_ntfs_volume_header,
+	     file_io_handle,
+	     backup_ntfs_volume_header_offset,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read backup NTFS volume header.",
+		 function );
+
+		goto on_error;
+	}
+	if( ntfs_volume_header->volume_size != backup_ntfs_volume_header->volume_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: mismatch of volume size between NTFS volume header and backup.",
+		 function );
+
+		goto on_error;
+	}
+	internal_volume->size = ntfs_volume_header->volume_size;
+
+	if( libvshadow_ntfs_volume_header_free(
+	     &backup_ntfs_volume_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free NTFS volume header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libvshadow_ntfs_volume_header_free(
+	     &ntfs_volume_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free NTFS volume header.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( backup_ntfs_volume_header != NULL )
+	{
+		libvshadow_ntfs_volume_header_free(
+		 &backup_ntfs_volume_header,
+		 NULL );
+	}
+	if( ntfs_volume_header != NULL )
+	{
+		libvshadow_ntfs_volume_header_free(
+		 &ntfs_volume_header,
+		 NULL );
+	}
 	return( -1 );
 }
 

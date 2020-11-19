@@ -101,16 +101,17 @@ typedef struct vshadow_ntfs_volume_header vshadow_ntfs_volume_header_t;
 
 struct vshadow_ntfs_volume_header
 {
-	/* The boot entry point
+	/* Boot entry point
 	 * Consists of 3 bytes
+	 * Contains a jump instruction to the boot loader
 	 */
 	uint8_t boot_entry_point[ 3 ];
 
-	/* The signature
+	/* The file system signature
 	 * Consists of 8 bytes
-	 * Contains: -FVE-FS-
+	 * Contains: "NTFS\x20\x20\x20\x20"
 	 */
-	uint8_t signature[ 8 ];
+	uint8_t file_system_signature[ 8 ];
 
 	/* The number of bytes per sector
 	 * Consists of 2 bytes
@@ -123,14 +124,9 @@ struct vshadow_ntfs_volume_header
 	uint8_t sectors_per_cluster_block;
 
 	/* Unknown
-	 * Consists of 5 bytes
+	 * Consists of 7 bytes
 	 */
-	uint8_t unknown1[ 5 ];
-
-	/* The total number of sectors 16-bit
-	 * Consists of 2 bytes
-	 */
-	uint8_t total_number_of_sectors_16bit[ 2 ];
+	uint8_t unknown1[ 7 ];
 
 	/* The media descriptor
 	 * Consists of 1 byte
@@ -157,10 +153,10 @@ struct vshadow_ntfs_volume_header
 	 */
 	uint8_t number_of_hidden_sectors[ 4 ];
 
-	/* The total number of sectors 32-bit
+	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t total_number_of_sectors_32bit[ 4 ];
+	uint8_t unknown3[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -170,17 +166,17 @@ struct vshadow_ntfs_volume_header
 	/* The total number of sectors
 	 * Consists of 8 bytes
 	 */
-	uint8_t total_number_of_sectors_64bit[ 8 ];
+	uint8_t total_number_of_sectors[ 8 ];
 
 	/* The master file table (MFT) cluster block number
 	 * Consists of 8 bytes
 	 */
 	uint8_t mft_cluster_block_number[ 8 ];
 
-	/* The first FVE metadata cluster block number
+	/* The mirror MFT cluster block number
 	 * Consists of 8 bytes
 	 */
-	uint8_t first_metadata_cluster_block_number[ 8 ];
+	uint8_t mirror_mft_cluster_block_number[ 8 ];
 
 	/* The MFT entry size
 	 * Consists of 4 bytes

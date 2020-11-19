@@ -60,12 +60,6 @@ int libvshadow_io_handle_clear(
      libvshadow_io_handle_t *io_handle,
      libcerror_error_t **error );
 
-int libvshadow_io_handle_read_ntfs_volume_header(
-     libvshadow_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     size64_t *volume_size,
-     libcerror_error_t **error );
-
 int libvshadow_io_handle_read_volume_header(
      libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,

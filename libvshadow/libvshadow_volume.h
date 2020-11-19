@@ -122,6 +122,11 @@ int libvshadow_volume_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
+int libvshadow_volume_open_read_ntfs_volume_headers(
+     libvshadow_internal_volume_t *internal_volume,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
 LIBVSHADOW_EXTERN \
 int libvshadow_volume_get_size(
      libvshadow_volume_t *volume,
