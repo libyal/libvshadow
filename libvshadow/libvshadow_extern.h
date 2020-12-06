@@ -30,7 +30,7 @@
 
 #include <libvshadow/extern.h>
 
-#if defined( __CYGWIN__ )
+#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
 #define LIBVSHADOW_EXTERN_VARIABLE	extern
 #else
 #define LIBVSHADOW_EXTERN_VARIABLE	LIBVSHADOW_EXTERN
