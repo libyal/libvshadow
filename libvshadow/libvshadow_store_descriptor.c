@@ -2537,32 +2537,18 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
-					 "%s: store: %02d reading block from current volume at offset: 0x%08" PRIx64 "\n",
+					 "%s: store: %02d reading block from current volume at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 					 function,
 					 store_descriptor->index,
+					 block_descriptor_offset,
 					 block_descriptor_offset );
 				}
 #endif
-				if( libbfio_handle_seek_offset(
-				     file_io_handle,
-				     block_descriptor_offset,
-				     SEEK_SET,
-				     error ) == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_SEEK_FAILED,
-					 "%s: unable to seek block offset: %" PRIi64 ".",
-					 function,
-					 block_descriptor_offset );
-
-					goto on_error;
-				}
-				read_count = libbfio_handle_read_buffer(
+				read_count = libbfio_handle_read_buffer_at_offset(
 					      file_io_handle,
 					      &( buffer[ buffer_offset ] ),
 					      read_size,
+					      block_descriptor_offset,
 					      error );
 
 				if( read_count != (ssize_t) read_size )
@@ -2571,8 +2557,10 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_IO,
 					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read buffer from file IO handle.",
-					 function );
+					 "%s: unable to read buffer at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+					 function,
+					 block_descriptor_offset,
+					 block_descriptor_offset );
 
 					goto on_error;
 				}
@@ -2652,32 +2640,18 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
-					 "%s: store: %02d reading block from current volume at offset: 0x%08" PRIx64 "\n",
+					 "%s: store: %02d reading block from current volume at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 					 function,
 					 store_descriptor->index,
+					 block_offset,
 					 block_offset );
 				}
 #endif
-				if( libbfio_handle_seek_offset(
-				     file_io_handle,
-				     block_offset,
-				     SEEK_SET,
-				     error ) == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_SEEK_FAILED,
-					 "%s: unable to seek block offset: %" PRIi64 ".",
-					 function,
-					 block_offset );
-
-					goto on_error;
-				}
-				read_count = libbfio_handle_read_buffer(
+				read_count = libbfio_handle_read_buffer_at_offset(
 					      file_io_handle,
 					      &( buffer[ buffer_offset ] ),
 					      read_size,
+					      block_offset,
 					      error );
 
 				if( read_count != (ssize_t) read_size )
@@ -2686,8 +2660,10 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_IO,
 					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read buffer from file IO handle.",
-					 function );
+					 "%s: unable to read buffer from file IO handle at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+					 function,
+					 block_offset,
+					 block_offset );
 
 					goto on_error;
 				}

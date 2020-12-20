@@ -374,25 +374,11 @@ int libvshadow_check_volume_signature_file_io_handle(
 			goto on_error;
 		}
 	}
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     0x1e00,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: 0x1e00.",
-		 function );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              signature,
 	              16,
+	              7680,
 	              error );
 
 	if( read_count != 16 )
@@ -401,7 +387,7 @@ int libvshadow_check_volume_signature_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read signature.",
+		 "%s: unable to read signature at offset: 7680 (0x00001e00).",
 		 function );
 
 		goto on_error;
