@@ -40,23 +40,260 @@
 
 #if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
+/* Tests the libvshadow_block_tree_initialize function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_tree_initialize(
+     void )
+{
+	libcerror_error_t *error            = NULL;
+	libvshadow_block_tree_t *block_tree = NULL;
+	int result                          = 0;
+
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+	int number_of_malloc_fail_tests     = 1;
+	int number_of_memset_fail_tests     = 1;
+	int test_number                     = 0;
+#endif
+
+	/* Test block_tree initialization
+	 */
+	result = libvshadow_block_tree_initialize(
+	          &block_tree,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_tree",
+	 block_tree );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_block_tree_free(
+	          &block_tree,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_tree",
+	 block_tree );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_tree_initialize(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	block_tree = (libvshadow_block_tree_t *) 0x12345678UL;
+
+	result = libvshadow_block_tree_initialize(
+	          &block_tree,
+	          &error );
+
+	block_tree = NULL;
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
+	{
+		/* Test libvshadow_block_tree_initialize with malloc failing
+		 */
+		vshadow_test_malloc_attempts_before_fail = test_number;
+
+		result = libvshadow_block_tree_initialize(
+		          &block_tree,
+		          &error );
+
+		if( vshadow_test_malloc_attempts_before_fail != -1 )
+		{
+			vshadow_test_malloc_attempts_before_fail = -1;
+
+			if( block_tree != NULL )
+			{
+				libvshadow_block_tree_free(
+				 &block_tree,
+				 NULL,
+				 NULL );
+			}
+		}
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "block_tree",
+			 block_tree );
+
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
+	{
+		/* Test libvshadow_block_tree_initialize with memset failing
+		 */
+		vshadow_test_memset_attempts_before_fail = test_number;
+
+		result = libvshadow_block_tree_initialize(
+		          &block_tree,
+		          &error );
+
+		if( vshadow_test_memset_attempts_before_fail != -1 )
+		{
+			vshadow_test_memset_attempts_before_fail = -1;
+
+			if( block_tree != NULL )
+			{
+				libvshadow_block_tree_free(
+				 &block_tree,
+				 NULL,
+				 NULL );
+			}
+		}
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "block_tree",
+			 block_tree );
+
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+#endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_tree != NULL )
+	{
+		libvshadow_block_tree_free(
+		 &block_tree,
+		 NULL,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_tree_free function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_tree_free(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_tree_free(
+	          NULL,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libvshadow_block_tree_insert function
  * Returns 1 if successful or 0 if not
  */
 int vshadow_test_block_tree_insert(
      void )
 {
-	libcdata_btree_t *forward_block_tree            = NULL;
-	libcdata_btree_t *reverse_block_tree            = NULL;
 	libcerror_error_t *error                        = NULL;
 	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	libvshadow_block_tree_t *forward_block_tree     = NULL;
+	libvshadow_block_tree_t *reverse_block_tree     = NULL;
 	int result                                      = 0;
 
 	/* Initialize test
 	 */
-	result = libcdata_btree_initialize(
+	result = libvshadow_block_tree_initialize(
 	          &forward_block_tree,
-	          LIBVSHADOW_BLOCK_DESCRIPTORS_TREE_MAXIMUM_NUMBER_OF_SUB_NODES,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -72,9 +309,8 @@ int vshadow_test_block_tree_insert(
 	 "error",
 	 error );
 
-	result = libcdata_btree_initialize(
+	result = libvshadow_block_tree_initialize(
 	          &reverse_block_tree,
-	          LIBVSHADOW_BLOCK_DESCRIPTORS_TREE_MAXIMUM_NUMBER_OF_SUB_NODES,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -582,7 +818,7 @@ int vshadow_test_block_tree_insert(
 	 "error",
 	 error );
 
-	result = libcdata_btree_free(
+	result = libvshadow_block_tree_free(
 	          &reverse_block_tree,
 	          (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free_reverse,
 	          &error );
@@ -600,7 +836,7 @@ int vshadow_test_block_tree_insert(
 	 "error",
 	 error );
 
-	result = libcdata_btree_free(
+	result = libvshadow_block_tree_free(
 	          &forward_block_tree,
 	          (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
 	          &error );
@@ -634,14 +870,14 @@ on_error:
 	}
 	if( reverse_block_tree != NULL )
 	{
-		libcdata_btree_free(
+		libvshadow_block_tree_free(
 		 &reverse_block_tree,
 		 (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free_reverse,
 		 NULL );
 	}
 	if( forward_block_tree != NULL )
 	{
-		libcdata_btree_free(
+		libvshadow_block_tree_free(
 		 &forward_block_tree,
 		 (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
 		 NULL );
@@ -669,6 +905,14 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 	VSHADOW_TEST_RUN(
+	 "libvshadow_block_tree_initialize",
+	 vshadow_test_block_tree_initialize );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_tree_free",
+	 vshadow_test_block_tree_free );
+
+	VSHADOW_TEST_RUN(
 	 "libvshadow_block_tree_insert",
 	 vshadow_test_block_tree_insert );
 
@@ -676,7 +920,11 @@ int main(
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
 }
 

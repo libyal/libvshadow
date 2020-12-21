@@ -29,6 +29,7 @@
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcthreads.h"
+#include "libvshadow_store_descriptor.h"
 #include "libvshadow_types.h"
 #include "libvshadow_volume.h"
 
@@ -55,6 +56,10 @@ struct libvshadow_internal_store
 	/* The store descriptor index
 	 */
 	int store_descriptor_index;
+
+	/* The store descriptor
+	 */
+	libvshadow_store_descriptor_t *store_descriptor;
 
 	/* The current offset
 	 */

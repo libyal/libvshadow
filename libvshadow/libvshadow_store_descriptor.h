@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include "libvshadow_block_descriptor.h"
+#include "libvshadow_block_tree.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
@@ -106,13 +107,13 @@ struct libvshadow_store_descriptor
 	 */
 	libcdata_list_t *block_descriptors_list;
 
-	/* The forward block descriptors B-tree
+	/* The forward block B-tree
 	 */
-	libcdata_btree_t *forward_block_descriptors_tree;
+	libvshadow_block_tree_t *forward_block_tree;
 
-	/* The reverse block descriptors B-tree
+	/* The reverse block B-tree
 	 */
-	libcdata_btree_t *reverse_block_descriptors_tree;
+	libvshadow_block_tree_t *reverse_block_tree;
 
 	/* The block offset list
 	 */
@@ -129,6 +130,14 @@ struct libvshadow_store_descriptor
 	/* The next store descriptor in the read chain
 	 */
 	libvshadow_store_descriptor_t *next_store_descriptor;
+
+	/* The current block descriptor
+	 */
+	libvshadow_block_descriptor_t *current_block_descriptor;
+
+	/* The current reverse block descriptor
+	 */
+	libvshadow_block_descriptor_t *current_reverse_block_descriptor;
 
 	/* The index
 	 */
@@ -217,7 +226,7 @@ ssize_t libvshadow_store_descriptor_read_buffer(
          uint8_t *buffer,
          size_t buffer_size,
          off64_t offset,
-         libvshadow_store_descriptor_t *active_store_descriptor,
+         int active_store_descriptor_index,
          libcerror_error_t **error );
 
 int libvshadow_store_descriptor_get_volume_size(

@@ -9,11 +9,11 @@ Analysis the Windows NT VSS format
 == Summary
 
 As of Windows Vista the Volume Shadow Snapshot (VSS) stores persistent shadow
-copies on the local NTFS volume.
+copies on the local NTFS volume. This specification is based on publicly
+available work on the format and was enhanced by analyzing test data.
 
-This document is intended as a working document for the Window NT VSS format.
-Which should allow existing Open Source forensic tooling to be able to process
-this type of volume format.
+This document is intended as a working document of the data format specification
+for the libvshadow project.
 
 [preface]
 == Document information
@@ -535,6 +535,7 @@ differently based on their flags and position in the block list. The block list
 is scanned front to back.
 
 For the new block descriptor
+
 ....
 * If the not used flag is set (0x04):
     * Ignore the new block descriptor

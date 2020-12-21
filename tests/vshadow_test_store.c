@@ -199,10 +199,16 @@ int vshadow_test_volume_close_source(
 int vshadow_test_store_initialize(
      void )
 {
-	libcerror_error_t *error    = NULL;
-	libvshadow_store_t *store   = NULL;
-	libvshadow_volume_t *volume = NULL;
-	int result                  = 0;
+	libcerror_error_t *error        = NULL;
+	libvshadow_store_t *store       = NULL;
+	libvshadow_volume_t *volume     = NULL;
+	int result                      = 0;
+
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
 
 	/* Initialize test
 	 */
@@ -300,6 +306,8 @@ int vshadow_test_store_initialize(
 	          0,
 	          &error );
 
+	store = NULL;
+
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -311,8 +319,6 @@ int vshadow_test_store_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	store = NULL;
 
 	result = libvshadow_store_initialize(
 	          &store,
@@ -338,87 +344,97 @@ int vshadow_test_store_initialize(
 /* TODO: add store descriptor for testing */
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
 
-	/* Test libvshadow_store_initialize with malloc failing
-	 */
-	vshadow_test_malloc_attempts_before_fail = 0;
-
-	result = libvshadow_store_initialize(
-	          &store,
-	          NULL,
-	          NULL,
-	          (libvshadow_internal_volume_t *) volume,
-	          0,
-	          &error );
-
-	if( vshadow_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		vshadow_test_malloc_attempts_before_fail = -1;
+		/* Test libvshadow_store_initialize with malloc failing
+		 */
+		vshadow_test_malloc_attempts_before_fail = test_number;
 
-		if( store != NULL )
+		result = libvshadow_store_initialize(
+		          &store,
+		          NULL,
+		          NULL,
+		          (libvshadow_internal_volume_t *) volume,
+		          0,
+		          &error );
+
+		if( vshadow_test_malloc_attempts_before_fail != -1 )
 		{
-			libvshadow_store_free(
-			 &store,
-			 NULL );
+			vshadow_test_malloc_attempts_before_fail = -1;
+
+			if( store != NULL )
+			{
+				libvshadow_store_free(
+				 &store,
+				 NULL );
+			}
+		}
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "store",
+			 store );
+
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		VSHADOW_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libvshadow_store_initialize with memset failing
+		 */
+		vshadow_test_memset_attempts_before_fail = test_number;
 
-		VSHADOW_TEST_ASSERT_IS_NULL(
-		 "store",
-		 store );
+		result = libvshadow_store_initialize(
+		          &store,
+		          NULL,
+		          NULL,
+		          (libvshadow_internal_volume_t *) volume,
+		          0,
+		          &error );
 
-		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libvshadow_store_initialize with memset failing
-	 */
-	vshadow_test_memset_attempts_before_fail = 0;
-
-	result = libvshadow_store_initialize(
-	          &store,
-	          NULL,
-	          NULL,
-	          (libvshadow_internal_volume_t *) volume,
-	          0,
-	          &error );
-
-	if( vshadow_test_memset_attempts_before_fail != -1 )
-	{
-		vshadow_test_memset_attempts_before_fail = -1;
-
-		if( store != NULL )
+		if( vshadow_test_memset_attempts_before_fail != -1 )
 		{
-			libvshadow_store_free(
-			 &store,
-			 NULL );
+			vshadow_test_memset_attempts_before_fail = -1;
+
+			if( store != NULL )
+			{
+				libvshadow_store_free(
+				 &store,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		VSHADOW_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		VSHADOW_TEST_ASSERT_IS_NULL(
-		 "store",
-		 store );
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "store",
+			 store );
 
-		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
 #endif /* TODO */

@@ -113,6 +113,8 @@ int vshadow_test_store_descriptor_initialize(
 	          &store_descriptor,
 	          &error );
 
+	store_descriptor = NULL;
+
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int vshadow_test_store_descriptor_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	store_descriptor = NULL;
 
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
 

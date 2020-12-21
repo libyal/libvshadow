@@ -36,7 +36,7 @@ const uint8_t vshadow_empty_store_block_range_list_entry[ 24 ] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0 };
 
-/* Creates a block descriptor
+/* Creates a block range descriptor
  * Make sure the value block_range_descriptor is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -52,7 +52,7 @@ int libvshadow_block_range_descriptor_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid block descriptor.",
+		 "%s: invalid block range descriptor.",
 		 function );
 
 		return( -1 );
@@ -63,7 +63,7 @@ int libvshadow_block_range_descriptor_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid block descriptor value already set.",
+		 "%s: invalid block range descriptor value already set.",
 		 function );
 
 		return( -1 );
@@ -77,7 +77,7 @@ int libvshadow_block_range_descriptor_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create block descriptor.",
+		 "%s: unable to create block range descriptor.",
 		 function );
 
 		goto on_error;
@@ -91,7 +91,7 @@ int libvshadow_block_range_descriptor_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear block descriptor.",
+		 "%s: unable to clear block range descriptor.",
 		 function );
 
 		goto on_error;
@@ -109,7 +109,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees a block descriptor
+/* Frees a block range descriptor
  * Returns 1 if successful or -1 on error
  */
 int libvshadow_block_range_descriptor_free(
@@ -117,7 +117,6 @@ int libvshadow_block_range_descriptor_free(
      libcerror_error_t **error )
 {
 	static char *function = "libvshadow_block_range_descriptor_free";
-	int result            = 1;
 
 	if( block_range_descriptor == NULL )
 	{
@@ -125,7 +124,7 @@ int libvshadow_block_range_descriptor_free(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid block descriptor.",
+		 "%s: invalid block range descriptor.",
 		 function );
 
 		return( -1 );
@@ -137,10 +136,10 @@ int libvshadow_block_range_descriptor_free(
 
 		*block_range_descriptor = NULL;
 	}
-	return( result );
+	return( 1 );
 }
 
-/* Reads the block descriptor
+/* Reads the block range descriptor
  * Returns 1 if successful, 0 if block list entry is empty or -1 on error
  */
 int libvshadow_block_range_descriptor_read_data(
@@ -160,7 +159,7 @@ int libvshadow_block_range_descriptor_read_data(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid block descriptor.",
+		 "%s: invalid block range descriptor.",
 		 function );
 
 		return( -1 );

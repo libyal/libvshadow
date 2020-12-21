@@ -49,6 +49,12 @@ int vshadow_test_block_initialize(
 	libvshadow_block_descriptor_t *block_descriptor = NULL;
 	int result                                      = 0;
 
+#if defined( HAVE_VSHADOW_TEST_MEMORY )
+	int number_of_malloc_fail_tests                 = 1;
+	int number_of_memset_fail_tests                 = 1;
+	int test_number                                 = 0;
+#endif
+
 	/* Initialize test
 	 */
 	result = libvshadow_block_descriptor_initialize(
@@ -148,6 +154,8 @@ int vshadow_test_block_initialize(
 	          block_descriptor,
 	          &error );
 
+	block = NULL;
+
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -160,85 +168,93 @@ int vshadow_test_block_initialize(
 	libcerror_error_free(
 	 &error );
 
-	block = NULL;
-
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
 
-	/* Test libvshadow_block_initialize with malloc failing
-	 */
-	vshadow_test_malloc_attempts_before_fail = 0;
-
-	result = libvshadow_block_initialize(
-	          &block,
-	          block_descriptor,
-	          &error );
-
-	if( vshadow_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		vshadow_test_malloc_attempts_before_fail = -1;
+		/* Test libvshadow_block_initialize with malloc failing
+		 */
+		vshadow_test_malloc_attempts_before_fail = test_number;
 
-		if( block != NULL )
+		result = libvshadow_block_initialize(
+		          &block,
+		          block_descriptor,
+		          &error );
+
+		if( vshadow_test_malloc_attempts_before_fail != -1 )
 		{
-			libvshadow_block_free(
-			 &block,
-			 NULL );
+			vshadow_test_malloc_attempts_before_fail = -1;
+
+			if( block != NULL )
+			{
+				libvshadow_block_free(
+				 &block,
+				 NULL );
+			}
+		}
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "block",
+			 block );
+
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		VSHADOW_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libvshadow_block_initialize with memset failing
+		 */
+		vshadow_test_memset_attempts_before_fail = test_number;
 
-		VSHADOW_TEST_ASSERT_IS_NULL(
-		 "block",
-		 block );
+		result = libvshadow_block_initialize(
+		          &block,
+		          block_descriptor,
+		          &error );
 
-		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libvshadow_block_initialize with memset failing
-	 */
-	vshadow_test_memset_attempts_before_fail = 0;
-
-	result = libvshadow_block_initialize(
-	          &block,
-	          block_descriptor,
-	          &error );
-
-	if( vshadow_test_memset_attempts_before_fail != -1 )
-	{
-		vshadow_test_memset_attempts_before_fail = -1;
-
-		if( block != NULL )
+		if( vshadow_test_memset_attempts_before_fail != -1 )
 		{
-			libvshadow_block_free(
-			 &block,
-			 NULL );
+			vshadow_test_memset_attempts_before_fail = -1;
+
+			if( block != NULL )
+			{
+				libvshadow_block_free(
+				 &block,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		VSHADOW_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			VSHADOW_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		VSHADOW_TEST_ASSERT_IS_NULL(
-		 "block",
-		 block );
+			VSHADOW_TEST_ASSERT_IS_NULL(
+			 "block",
+			 block );
 
-		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
 

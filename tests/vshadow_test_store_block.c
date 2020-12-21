@@ -138,6 +138,8 @@ int vshadow_test_store_block_initialize(
 	          4096,
 	          &error );
 
+	store_block = NULL;
+
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -149,8 +151,6 @@ int vshadow_test_store_block_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	store_block = NULL;
 
 	result = libvshadow_store_block_initialize(
 	          &store_block,

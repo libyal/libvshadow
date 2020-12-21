@@ -151,6 +151,7 @@ int libvshadow_store_initialize(
 	internal_store->file_io_handle         = file_io_handle;
 	internal_store->io_handle              = io_handle;
 	internal_store->internal_volume        = internal_volume;
+	internal_store->store_descriptor       = store_descriptor;
 	internal_store->store_descriptor_index = store_descriptor_index;
 
 	*store = (libvshadow_store_t *) internal_store;
@@ -223,10 +224,9 @@ int libvshadow_store_has_in_volume_data(
      libvshadow_store_t *store,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_has_in_volume_data";
-	int result                                      = 0;
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_has_in_volume_data";
+	int result                                  = 0;
 
 	if( store == NULL )
 	{
@@ -252,24 +252,8 @@ int libvshadow_store_has_in_volume_data(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	result = libvshadow_store_descriptor_has_in_volume_data(
-	          store_descriptor,
+	          internal_store->store_descriptor,
 	          error );
 
 	if( result == -1 )
@@ -298,9 +282,8 @@ ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
          size_t buffer_size,
          libcerror_error_t **error )
 {
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_internal_store_read_buffer_from_file_io_handle";
-	ssize_t read_count                              = 0;
+	static char *function = "libvshadow_internal_store_read_buffer_from_file_io_handle";
+	ssize_t read_count    = 0;
 
 	if( internal_store == NULL )
 	{
@@ -357,41 +340,22 @@ ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
 
 		return( -1 );
 	}
-	if( buffer_size == 0 )
+	if( ( buffer_size == 0 )
+	 || ( (size64_t) internal_store->current_offset >= internal_store->internal_volume->size ) )
 	{
 		return( 0 );
 	}
-	if( (size64_t) internal_store->current_offset >= internal_store->internal_volume->size )
-	{
-		return( 0 );
-	}
-	if( (size64_t) ( internal_store->current_offset + buffer_size ) > internal_store->internal_volume->size )
+	if( (size64_t) buffer_size > ( internal_store->internal_volume->size - internal_store->current_offset ) )
 	{
 		buffer_size = (size_t) ( internal_store->internal_volume->size - internal_store->current_offset );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	read_count = libvshadow_store_descriptor_read_buffer(
-		      store_descriptor,
+		      internal_store->store_descriptor,
 		      file_io_handle,
 		      (uint8_t *) buffer,
 		      buffer_size,
 		      internal_store->current_offset,
-		      store_descriptor,
+		      internal_store->store_descriptor_index,
 		      error );
 
 	if( read_count != (ssize_t) buffer_size )
@@ -621,25 +585,28 @@ ssize_t libvshadow_store_read_buffer_at_offset(
 		 "%s: unable to seek offset.",
 		 function );
 
-		goto on_error;
+		read_count = -1;
 	}
-	read_count = libvshadow_internal_store_read_buffer_from_file_io_handle(
-		      internal_store,
-		      internal_store->file_io_handle,
-		      buffer,
-		      buffer_size,
-		      error );
-
-	if( read_count == -1 )
+	else
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read buffer.",
-		 function );
+		read_count = libvshadow_internal_store_read_buffer_from_file_io_handle(
+			      internal_store,
+			      internal_store->file_io_handle,
+			      buffer,
+			      buffer_size,
+			      error );
 
-		goto on_error;
+		if( read_count == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read buffer.",
+			 function );
+
+			read_count = -1;
+		}
 	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -657,14 +624,6 @@ ssize_t libvshadow_store_read_buffer_at_offset(
 	}
 #endif
 	return( read_count );
-
-on_error:
-#if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_store->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
 }
 
 /* Seeks a certain offset of the (store) data
@@ -932,9 +891,8 @@ int libvshadow_store_get_volume_size(
      size64_t *volume_size,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_volume_size";
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_volume_size";
 
 	if( store == NULL )
 	{
@@ -960,24 +918,8 @@ int libvshadow_store_get_volume_size(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	if( libvshadow_store_descriptor_get_volume_size(
-	     store_descriptor,
+	     internal_store->store_descriptor,
 	     volume_size,
 	     error ) != 1 )
 	{
@@ -1003,9 +945,8 @@ int libvshadow_store_get_identifier(
      size_t size,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_identifier";
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_identifier";
 
 	if( store == NULL )
 	{
@@ -1031,24 +972,8 @@ int libvshadow_store_get_identifier(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	if( libvshadow_store_descriptor_get_identifier(
-	     store_descriptor,
+	     internal_store->store_descriptor,
 	     guid,
 	     size,
 	     error ) != 1 )
@@ -1074,9 +999,8 @@ int libvshadow_store_get_creation_time(
      uint64_t *filetime,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_creation_time";
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_creation_time";
 
 	if( store == NULL )
 	{
@@ -1102,24 +1026,8 @@ int libvshadow_store_get_creation_time(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	if( libvshadow_store_descriptor_get_creation_time(
-	     store_descriptor,
+	     internal_store->store_descriptor,
 	     filetime,
 	     error ) != 1 )
 	{
@@ -1145,10 +1053,9 @@ int libvshadow_store_get_copy_identifier(
      size_t size,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_copy_identifier";
-	int result                                      = 0;
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_copy_identifier";
+	int result                                  = 0;
 
 	if( store == NULL )
 	{
@@ -1174,24 +1081,8 @@ int libvshadow_store_get_copy_identifier(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	result = libvshadow_store_descriptor_get_copy_identifier(
-	          store_descriptor,
+	          internal_store->store_descriptor,
 	          guid,
 	          size,
 	          error );
@@ -1220,10 +1111,9 @@ int libvshadow_store_get_copy_set_identifier(
      size_t size,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_copy_set_identifier";
-	int result                                      = 0;
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_copy_set_identifier";
+	int result                                  = 0;
 
 	if( store == NULL )
 	{
@@ -1249,24 +1139,8 @@ int libvshadow_store_get_copy_set_identifier(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	result = libvshadow_store_descriptor_get_copy_set_identifier(
-	          store_descriptor,
+	          internal_store->store_descriptor,
 	          guid,
 	          size,
 	          error );
@@ -1294,10 +1168,9 @@ int libvshadow_store_get_attribute_flags(
      uint32_t *attribute_flags,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_attribute_flags";
-	int result                                      = 0;
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_attribute_flags";
+	int result                                  = 0;
 
 	if( store == NULL )
 	{
@@ -1323,24 +1196,8 @@ int libvshadow_store_get_attribute_flags(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	result = libvshadow_store_descriptor_get_attribute_flags(
-	          store_descriptor,
+	          internal_store->store_descriptor,
 	          attribute_flags,
 	          error );
 
@@ -1367,9 +1224,8 @@ int libvshadow_store_get_number_of_blocks(
      int *number_of_blocks,
      libcerror_error_t **error )
 {
-	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
-	static char *function                           = "libvshadow_store_get_number_of_blocks";
+	libvshadow_internal_store_t *internal_store = NULL;
+	static char *function                       = "libvshadow_store_get_number_of_blocks";
 
 	if( store == NULL )
 	{
@@ -1395,24 +1251,8 @@ int libvshadow_store_get_number_of_blocks(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	if( libvshadow_store_descriptor_get_number_of_blocks(
-	     store_descriptor,
+	     internal_store->store_descriptor,
 	     internal_store->file_io_handle,
 	     number_of_blocks,
 	     error ) != 1 )
@@ -1441,7 +1281,6 @@ int libvshadow_store_get_block_by_index(
 {
 	libvshadow_block_descriptor_t *block_descriptor = NULL;
 	libvshadow_internal_store_t *internal_store     = NULL;
-	libvshadow_store_descriptor_t *store_descriptor = NULL;
 	static char *function                           = "libvshadow_store_get_block_by_index";
 
 	if( store == NULL )
@@ -1490,24 +1329,8 @@ int libvshadow_store_get_block_by_index(
 
 		return( -1 );
 	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_store->internal_volume->store_descriptors_array,
-	     internal_store->store_descriptor_index,
-	     (intptr_t **) &store_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve store descriptor: %d.",
-		 function,
-		 internal_store->store_descriptor_index );
-
-		return( -1 );
-	}
 	if( libvshadow_store_descriptor_get_block_descriptor_by_index(
-	     store_descriptor,
+	     internal_store->store_descriptor,
 	     internal_store->file_io_handle,
 	     block_index,
 	     &block_descriptor,

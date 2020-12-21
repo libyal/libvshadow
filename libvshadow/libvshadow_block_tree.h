@@ -33,9 +33,39 @@
 extern "C" {
 #endif
 
+typedef struct libvshadow_block_tree libvshadow_block_tree_t;
+
+struct libvshadow_block_tree
+{
+	/* The block descriptors B-tree
+	 */
+	libcdata_btree_t *block_descriptors_tree;
+};
+
+int libvshadow_block_tree_initialize(
+     libvshadow_block_tree_t **block_tree,
+     libcerror_error_t **error );
+
+int libvshadow_block_tree_free(
+     libvshadow_block_tree_t **block_tree,
+     int (*value_free_function)(
+            intptr_t **value,
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
+
+int libvshadow_block_tree_get_block_descriptor_by_offset(
+     libvshadow_block_tree_t *block_tree,
+     off64_t offset,
+     int (*value_compare_function)(
+            intptr_t *first_value,
+            intptr_t *second_value,
+            libcerror_error_t **error ),
+     libvshadow_block_descriptor_t **block_descriptor,
+     libcerror_error_t **error );
+
 int libvshadow_block_tree_insert(
-     libcdata_btree_t *forward_block_tree,
-     libcdata_btree_t *reverse_block_tree,
+     libvshadow_block_tree_t *forward_block_tree,
+     libvshadow_block_tree_t *reverse_block_tree,
      libvshadow_block_descriptor_t *block_descriptor,
      int store_index,
      libcerror_error_t **error );
