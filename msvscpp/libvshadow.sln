@@ -31,6 +31,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_block_tree", "
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_block_tree_node", "vshadow_test_block_tree_node\vshadow_test_block_tree_node.vcproj", "{4AD2ABC4-97F4-44E5-AA62-3FC8B1646D96}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vshadow_test_error", "vshadow_test_error\vshadow_test_error.vcproj", "{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6FA27C10-0886-4DA7-B374-B55CDC75FCA2} = {6FA27C10-0886-4DA7-B374-B55CDC75FCA2}
@@ -282,6 +288,10 @@ Global
 		{F7BF24C3-7242-4108-BE05-F8D80FD5E742}.Release|Win32.Build.0 = Release|Win32
 		{F7BF24C3-7242-4108-BE05-F8D80FD5E742}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{F7BF24C3-7242-4108-BE05-F8D80FD5E742}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{4AD2ABC4-97F4-44E5-AA62-3FC8B1646D96}.Release|Win32.ActiveCfg = Release|Win32
+		{4AD2ABC4-97F4-44E5-AA62-3FC8B1646D96}.Release|Win32.Build.0 = Release|Win32
+		{4AD2ABC4-97F4-44E5-AA62-3FC8B1646D96}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{4AD2ABC4-97F4-44E5-AA62-3FC8B1646D96}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.Release|Win32.ActiveCfg = Release|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.Release|Win32.Build.0 = Release|Win32
 		{94BEDFBE-E57F-4A8D-8A52-28987A1E9D45}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

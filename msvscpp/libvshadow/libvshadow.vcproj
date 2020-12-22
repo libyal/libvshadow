@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libvshadow\libvshadow_block_tree_node.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libvshadow\libvshadow_debug.c"
 				>
 			</File>
@@ -249,6 +253,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libvshadow\libvshadow_block_tree.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libvshadow\libvshadow_block_tree_node.h"
 				>
 			</File>
 			<File

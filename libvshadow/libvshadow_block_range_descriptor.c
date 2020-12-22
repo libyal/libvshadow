@@ -175,24 +175,14 @@ int libvshadow_block_range_descriptor_read_data(
 
 		return( -1 );
 	}
-	if( data_size < sizeof( vshadow_store_block_range_list_entry_t ) )
+	if( ( data_size < sizeof( vshadow_store_block_range_list_entry_t ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_size > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -233,13 +223,13 @@ int libvshadow_block_range_descriptor_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: store: %02d offset\t\t: 0x%08" PRIx64 "\n",
+		 "%s: store: %02d offset\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_index,
 		 block_range_descriptor->offset );
 
 		libcnotify_printf(
-		 "%s: store: %02d relative offset\t: 0x%08" PRIx64 "\n",
+		 "%s: store: %02d relative offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_index,
 		 block_range_descriptor->relative_offset );
@@ -253,7 +243,8 @@ int libvshadow_block_range_descriptor_read_data(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	return( 1 );
 }
 

@@ -25,6 +25,7 @@
 
 #include "libvshadow_block_descriptor.h"
 #include "libvshadow_block_tree.h"
+#include "libvshadow_block_tree_node.h"
 #include "libvshadow_definitions.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
@@ -37,6 +38,7 @@
  */
 int libvshadow_block_tree_initialize(
      libvshadow_block_tree_t **block_tree,
+     size64_t volume_size,
      libcerror_error_t **error )
 {
 	static char *function = "libvshadow_block_tree_initialize";
@@ -96,20 +98,24 @@ int libvshadow_block_tree_initialize(
 
 		return( -1 );
 	}
-	if( libcdata_btree_initialize(
-	     &( ( *block_tree )->block_descriptors_tree ),
-	     LIBVSHADOW_BLOCK_DESCRIPTORS_TREE_MAXIMUM_NUMBER_OF_SUB_NODES,
+	if( libvshadow_block_tree_node_initialize(
+	     &( ( *block_tree )->root_node ),
+	     0,
+	     volume_size,
+	     0x4000,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create block descriptors tree.",
+		 "%s: unable to create root node.",
 		 function );
 
 		goto on_error;
 	}
+	( *block_tree )->leaf_value_size = 0x4000;
+
 	return( 1 );
 
 on_error:
@@ -149,8 +155,8 @@ int libvshadow_block_tree_free(
 	}
 	if( *block_tree != NULL )
 	{
-		if( libcdata_btree_free(
-		     &( ( *block_tree )->block_descriptors_tree ),
+		if( libvshadow_block_tree_node_free(
+		     &( ( *block_tree )->root_node ),
 		     value_free_function,
 		     error ) != 1 )
 		{
@@ -158,7 +164,7 @@ int libvshadow_block_tree_free(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free block descriptors tree.",
+			 "%s: unable to free root node.",
 			 function );
 
 			result = -1;
@@ -177,16 +183,12 @@ int libvshadow_block_tree_free(
 int libvshadow_block_tree_get_block_descriptor_by_offset(
      libvshadow_block_tree_t *block_tree,
      off64_t offset,
-     int (*value_compare_function)(
-            intptr_t *first_value,
-            intptr_t *second_value,
-            libcerror_error_t **error ),
      libvshadow_block_descriptor_t **block_descriptor,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *tree_node = NULL;
-	static char *function           = "libvshadow_block_tree_get_block_descriptor_by_offset";
-	int result                      = 0;
+	libvshadow_block_descriptor_t *safe_block_descriptor = NULL;
+	libvshadow_block_tree_node_t *block_tree_node        = NULL;
+	static char *function                                = "libvshadow_block_tree_get_block_descriptor_by_offset";
 
 	if( block_tree == NULL )
 	{
@@ -199,28 +201,344 @@ int libvshadow_block_tree_get_block_descriptor_by_offset(
 
 		return( -1 );
 	}
-	result = libcdata_btree_get_value_by_value(
-	          block_tree->block_descriptors_tree,
-	          (intptr_t *) &offset,
-	          value_compare_function,
-	          &tree_node,
-	          (intptr_t **) block_descriptor,
-	          error );
+	if( block_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block descriptor.",
+		 function );
 
-	if( result == -1 )
+		return( -1 );
+	}
+	block_tree_node = block_tree->root_node;
+
+	while( block_tree_node->is_leaf_node == 0 )
+	{
+		if( libvshadow_block_tree_node_get_sub_node_at_offset(
+		     block_tree_node,
+		     offset,
+		     &block_tree_node,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve sub node at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 offset,
+			 offset );
+
+			return( -1 );
+		}
+		if( block_tree_node == NULL )
+		{
+			return( 0 );
+		}
+	}
+	if( libvshadow_block_tree_node_get_leaf_value_at_offset(
+	     block_tree_node,
+	     offset,
+	     &safe_block_descriptor,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve block descriptor for offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 "%s: unable to retrieve leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 		 function,
 		 offset,
 		 offset );
 
 		return( -1 );
 	}
-	return( result );
+	if( safe_block_descriptor == NULL )
+	{
+		return( 0 );
+	}
+	*block_descriptor = safe_block_descriptor;
+
+	return( 1 );
+}
+
+/* Inserts the block descriptor for a specific offset
+ * Returns 1 if successful, 0 if already set or -1 on error
+ */
+int libvshadow_block_tree_insert_block_descriptor_by_offset(
+     libvshadow_block_tree_t *block_tree,
+     off64_t offset,
+     libvshadow_block_descriptor_t *block_descriptor,
+     int *leaf_value_index,
+     libvshadow_block_tree_node_t **leaf_block_tree_node,
+     libvshadow_block_descriptor_t **existing_block_descriptor,
+     libcerror_error_t **error )
+{
+	libvshadow_block_descriptor_t *safe_block_descriptor = NULL;
+	libvshadow_block_tree_node_t *block_tree_node        = NULL;
+	libvshadow_block_tree_node_t *safe_block_tree_node   = NULL;
+	libvshadow_block_tree_node_t *sub_block_tree_node    = NULL;
+	static char *function                                = "libvshadow_block_tree_insert_block_descriptor_by_offset";
+	off64_t sub_node_index                               = 0;
+	off64_t sub_node_offset                              = 0;
+
+	if( block_tree == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block tree.",
+		 function );
+
+		return( -1 );
+	}
+	if( leaf_value_index == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid leaf value index.",
+		 function );
+
+		return( -1 );
+	}
+	if( leaf_block_tree_node == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid leaf block tree node.",
+		 function );
+
+		return( -1 );
+	}
+	if( existing_block_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid existing block descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	safe_block_tree_node = block_tree->root_node;
+
+	while( safe_block_tree_node->is_leaf_node == 0 )
+	{
+		if( libvshadow_block_tree_node_get_sub_node_at_offset(
+		     safe_block_tree_node,
+		     offset,
+		     &block_tree_node,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve sub node at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 offset,
+			 offset );
+
+			goto on_error;
+		}
+		if( block_tree_node == NULL )
+		{
+			sub_node_offset = offset - safe_block_tree_node->start_offset;
+
+			sub_node_index  = sub_node_offset / safe_block_tree_node->sub_node_size;
+			sub_node_offset = safe_block_tree_node->start_offset + ( sub_node_index * safe_block_tree_node->sub_node_size );
+
+			if( libvshadow_block_tree_node_initialize(
+			     &sub_block_tree_node,
+			     sub_node_offset,
+			     safe_block_tree_node->sub_node_size,
+			     block_tree->leaf_value_size,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create sub node.",
+				 function );
+
+				goto on_error;
+			}
+			if( libvshadow_block_tree_node_set_sub_node_at_offset(
+			     safe_block_tree_node,
+			     offset,
+			     sub_block_tree_node,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to set sub node at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+				 function,
+				 offset,
+				 offset );
+
+				goto on_error;
+			}
+			block_tree_node     = sub_block_tree_node;
+			sub_block_tree_node = NULL;
+		}
+		safe_block_tree_node = block_tree_node;
+	}
+	*leaf_block_tree_node = safe_block_tree_node;
+
+	if( libvshadow_block_tree_node_get_leaf_value_at_offset(
+	     safe_block_tree_node,
+	     offset,
+	     &safe_block_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
+
+		goto on_error;
+	}
+	if( safe_block_descriptor != NULL )
+	{
+		*existing_block_descriptor = safe_block_descriptor;
+
+		return( 0 );
+	}
+	if( libvshadow_block_tree_node_set_leaf_value_at_offset(
+	     safe_block_tree_node,
+	     offset,
+	     block_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
+
+		goto on_error;
+	}
+	*leaf_value_index = (int) ( offset / block_tree->leaf_value_size );
+
+	return( 1 );
+
+on_error:
+	if( sub_block_tree_node != NULL )
+	{
+		libvshadow_block_tree_node_free(
+		 &sub_block_tree_node,
+		 NULL,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Removes the block descriptor for a specific offset
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libvshadow_block_tree_remove_block_descriptor_by_offset(
+     libvshadow_block_tree_t *block_tree,
+     off64_t offset,
+     libcerror_error_t **error )
+{
+	libvshadow_block_descriptor_t *safe_block_descriptor = NULL;
+	libvshadow_block_tree_node_t *block_tree_node        = NULL;
+	static char *function                                = "libvshadow_block_tree_remove_block_descriptor_by_offset";
+
+	if( block_tree == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block tree.",
+		 function );
+
+		return( -1 );
+	}
+	block_tree_node = block_tree->root_node;
+
+	while( block_tree_node->is_leaf_node == 0 )
+	{
+		if( libvshadow_block_tree_node_get_sub_node_at_offset(
+		     block_tree_node,
+		     offset,
+		     &block_tree_node,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve sub node at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 offset,
+			 offset );
+
+			return( -1 );
+		}
+		if( block_tree_node == NULL )
+		{
+			return( 0 );
+		}
+	}
+	if( libvshadow_block_tree_node_get_leaf_value_at_offset(
+	     block_tree_node,
+	     offset,
+	     &safe_block_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
+
+		return( -1 );
+	}
+	if( safe_block_descriptor == NULL )
+	{
+		return( 0 );
+	}
+	if( libvshadow_block_tree_node_set_leaf_value_at_offset(
+	     block_tree_node,
+	     offset,
+	     NULL,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Inserts a block descriptor in the block tree
@@ -233,13 +551,13 @@ int libvshadow_block_tree_insert(
      int store_index LIBVSHADOW_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *existing_tree_node                 = NULL;
-	libcdata_tree_node_t *reverse_tree_node                  = NULL;
 	libvshadow_block_descriptor_t *existing_block_descriptor = NULL;
 	libvshadow_block_descriptor_t *new_block_descriptor      = NULL;
 	libvshadow_block_descriptor_t *overlay_block_descriptor  = NULL;
 	libvshadow_block_descriptor_t *reverse_block_descriptor  = NULL;
+	libvshadow_block_tree_node_t *leaf_block_tree_node       = NULL;
 	static char *function                                    = "libvshadow_block_tree_insert";
+	off64_t new_original_offset                              = 0;
 	int result                                               = 0;
 
 	LIBVSHADOW_UNREFERENCED_PARAMETER( store_index )
@@ -292,30 +610,16 @@ int libvshadow_block_tree_insert(
 #endif
 		return( 1 );
 	}
-	if( libvshadow_block_descriptor_clone(
-	     &new_block_descriptor,
-	     block_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create block descriptor.",
-		 function );
+	new_original_offset = block_descriptor->original_offset;
 
-		goto on_error;
-	}
-	if( ( new_block_descriptor->flags & LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY ) == 0 )
+	if( ( block_descriptor->flags & LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY ) == 0 )
 	{
 		/* The reverse block tree is used to detect forwarder block descriptors that point to each other
 		 */
-		result = libcdata_btree_get_value_by_value(
-			  reverse_block_tree->block_descriptors_tree,
-			  (intptr_t *) new_block_descriptor,
-			  (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libvshadow_block_descriptor_compare_reverse,
-			  &reverse_tree_node,
-			  (intptr_t **) &reverse_block_descriptor,
+		result = libvshadow_block_tree_get_block_descriptor_by_offset(
+			  reverse_block_tree,
+			  block_descriptor->original_offset,
+			  &reverse_block_descriptor,
 			  error );
 
 		if( result == -1 )
@@ -324,8 +628,10 @@ int libvshadow_block_tree_insert(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve reverse block descriptor from reverse block tree.",
-			 function );
+			 "%s: unable to retrieve reverse block descriptor for offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 block_descriptor->original_offset,
+			 block_descriptor->original_offset );
 
 			goto on_error;
 		}
@@ -346,9 +652,10 @@ int libvshadow_block_tree_insert(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: store: %02d found reverse block descriptor: 0x%08" PRIx64 ".\n",
+				 "%s: store: %02d found reverse block descriptor: %" PRIi64 " (0x%08" PRIx64 ").\n",
 				 function,
 				 store_index,
+				 reverse_block_descriptor->original_offset,
 				 reverse_block_descriptor->original_offset );
 
 				libcnotify_printf(
@@ -357,25 +664,26 @@ int libvshadow_block_tree_insert(
 				 store_index );
 			}
 #endif
-			new_block_descriptor->original_offset = reverse_block_descriptor->original_offset;
+			new_original_offset = reverse_block_descriptor->original_offset;
 
-			if( libcdata_btree_remove_value(
-			     reverse_block_tree->block_descriptors_tree,
-			     reverse_tree_node,
-			     &( reverse_block_descriptor->reverse_index ),
-			     (intptr_t *) reverse_block_descriptor,
+			if( libvshadow_block_tree_remove_block_descriptor_by_offset(
+			     reverse_block_tree,
+			     reverse_block_descriptor->relative_offset,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
-				 "%s: unable to remove reverse block descriptor: 0x%08" PRIx64 " from reverse block tree node.",
+				 "%s: unable to remove reverse block descriptor: %" PRIi64 " (0x%08" PRIx64 ") from reverse block tree node.",
 				 function,
+				 reverse_block_descriptor->original_offset,
 				 reverse_block_descriptor->original_offset );
 
 				goto on_error;
 			}
+			reverse_block_descriptor->reverse_index = -1;
+
 			if( reverse_block_descriptor->index == -1 )
 			{
 				if( libvshadow_block_descriptor_free(
@@ -394,9 +702,9 @@ int libvshadow_block_tree_insert(
 			}
 		}
 	}
-	if( ( new_block_descriptor->flags & LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER ) != 0 )
+	if( ( block_descriptor->flags & LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER ) != 0 )
 	{
-		if( new_block_descriptor->original_offset == new_block_descriptor->relative_offset )
+		if( new_original_offset == block_descriptor->relative_offset )
 		{
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
@@ -409,30 +717,33 @@ int libvshadow_block_tree_insert(
 				 "\n" );
 			}
 #endif
-			if( libvshadow_block_descriptor_free(
-			     &new_block_descriptor,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to free block descriptor.",
-				 function );
-
-				goto on_error;
-			}
 			return( 1 );
 		}
 	}
-	result = libcdata_btree_insert_value(
-		  forward_block_tree->block_descriptors_tree,
+	if( libvshadow_block_descriptor_clone(
+	     &new_block_descriptor,
+	     block_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create block descriptor.",
+		 function );
+
+		goto on_error;
+	}
+	new_block_descriptor->original_offset = new_original_offset;
+
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+		  forward_block_tree,
+	          new_block_descriptor->original_offset,
+	          new_block_descriptor,
 	          &( new_block_descriptor->index ),
-		  (intptr_t *) new_block_descriptor,
-		  (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libvshadow_block_descriptor_compare_by_original_offset,
-		  &existing_tree_node,
-		  (intptr_t **) &existing_block_descriptor,
-		  error );
+	          &leaf_block_tree_node,
+	          &existing_block_descriptor,
+	          error );
 
 	if( result == -1 )
 	{
@@ -559,25 +870,26 @@ int libvshadow_block_tree_insert(
 			 store_index );
 		}
 #endif
-		if( libcdata_btree_replace_value(
-		     forward_block_tree->block_descriptors_tree,
-		     existing_tree_node,
-		     &( existing_block_descriptor->index ),
-		     (intptr_t *) existing_block_descriptor,
-		     &( new_block_descriptor->index ),
-		     (intptr_t *) new_block_descriptor,
+		if( libvshadow_block_tree_node_set_leaf_value_at_offset(
+		     leaf_block_tree_node,
+		     new_block_descriptor->original_offset,
+		     new_block_descriptor,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
-			 "%s: unable to replace existing block descriptor: %d.",
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
-			 existing_block_descriptor->index );
+			 new_block_descriptor->original_offset,
+			 new_block_descriptor->original_offset );
 
 			goto on_error;
 		}
+		new_block_descriptor->index      = existing_block_descriptor->index;
+		existing_block_descriptor->index = -1;
+
 		if( ( existing_block_descriptor->flags & LIBVSHADOW_BLOCK_FLAG_IS_OVERLAY ) != 0 )
 		{
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -647,13 +959,13 @@ int libvshadow_block_tree_insert(
 #endif
 	if( ( new_block_descriptor->flags & LIBVSHADOW_BLOCK_FLAG_IS_FORWARDER ) != 0 )
 	{
-		result = libcdata_btree_insert_value(
-			  reverse_block_tree->block_descriptors_tree,
+		result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+			  reverse_block_tree,
+			  new_block_descriptor->relative_offset,
+			  new_block_descriptor,
 			  &( new_block_descriptor->reverse_index ),
-			  (intptr_t *) new_block_descriptor,
-			  (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libvshadow_block_descriptor_compare_by_relative_offset,
-			  &reverse_tree_node,
-			  (intptr_t **) &reverse_block_descriptor,
+			  &leaf_block_tree_node,
+			  &reverse_block_descriptor,
 			  error );
 
 		if( result == -1 )
@@ -694,27 +1006,28 @@ int libvshadow_block_tree_insert(
 				 reverse_block_descriptor->original_offset );
 			}
 #endif
-			if( libcdata_btree_replace_value(
-			     reverse_block_tree->block_descriptors_tree,
-			     reverse_tree_node,
-			     &( reverse_block_descriptor->reverse_index ),
-			     (intptr_t *) reverse_block_descriptor,
-			     &( new_block_descriptor->reverse_index ),
-			     (intptr_t *) new_block_descriptor,
+			if( libvshadow_block_tree_node_set_leaf_value_at_offset(
+			     leaf_block_tree_node,
+			     new_block_descriptor->relative_offset,
+			     new_block_descriptor,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
-				 "%s: unable to replace reverse block descriptor: %d.",
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set reverse leaf value at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 				 function,
-				 reverse_block_descriptor->reverse_index );
+				 new_block_descriptor->relative_offset,
+				 new_block_descriptor->relative_offset );
 
 				new_block_descriptor = NULL;
 
 				goto on_error;
 			}
+			new_block_descriptor->reverse_index     = reverse_block_descriptor->reverse_index;
+			reverse_block_descriptor->reverse_index = -1;
+
 			if( reverse_block_descriptor->index == -1 )
 			{
 				if( libvshadow_block_descriptor_free(
@@ -727,6 +1040,8 @@ int libvshadow_block_tree_insert(
 					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 					 "%s: unable to free reverse block descriptor.",
 					 function );
+
+					new_block_descriptor = NULL;
 
 					goto on_error;
 				}

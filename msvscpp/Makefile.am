@@ -17,6 +17,7 @@ MSVSCPP_FILES = \
 	vshadow_test_block_descriptor/vshadow_test_block_descriptor.vcproj \
 	vshadow_test_block_range_descriptor/vshadow_test_block_range_descriptor.vcproj \
 	vshadow_test_block_tree/vshadow_test_block_tree.vcproj \
+	vshadow_test_block_tree_node/vshadow_test_block_tree_node.vcproj \
 	vshadow_test_error/vshadow_test_error.vcproj \
 	vshadow_test_io_handle/vshadow_test_io_handle.vcproj \
 	vshadow_test_notify/vshadow_test_notify.vcproj \

@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "block block_descriptor block_range_descriptor block_tree error io_handle notify store_block store_descriptor"
+$LibraryTests = "block block_descriptor block_range_descriptor block_tree block_tree_node error io_handle notify store_block store_descriptor"
 $LibraryTestsWithInput = "store support volume"
 $OptionSets = ""
 

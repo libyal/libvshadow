@@ -85,31 +85,6 @@ int libvshadow_block_descriptor_clone(
      libvshadow_block_descriptor_t *source_block_descriptor,
      libcerror_error_t **error );
 
-int libvshadow_block_descriptor_compare_by_original_offset(
-     libvshadow_block_descriptor_t *first_block_descriptor,
-     libvshadow_block_descriptor_t *second_block_descriptor,
-     libcerror_error_t **error );
-
-int libvshadow_block_descriptor_compare_by_relative_offset(
-     libvshadow_block_descriptor_t *first_block_descriptor,
-     libvshadow_block_descriptor_t *second_block_descriptor,
-     libcerror_error_t **error );
-
-int libvshadow_block_descriptor_compare_reverse(
-     libvshadow_block_descriptor_t *first_block_descriptor,
-     libvshadow_block_descriptor_t *second_block_descriptor,
-     libcerror_error_t **error );
-
-int libvshadow_block_descriptor_compare_range_by_original_offset_value(
-     off64_t *orginal_offset,
-     libvshadow_block_descriptor_t *block_descriptor,
-     libcerror_error_t **error );
-
-int libvshadow_block_descriptor_compare_range_by_relative_offset_value(
-     off64_t *relative_offset,
-     libvshadow_block_descriptor_t *block_descriptor,
-     libcerror_error_t **error );
-
 int libvshadow_block_descriptor_read_data(
      libvshadow_block_descriptor_t *block_descriptor,
      const uint8_t *data,

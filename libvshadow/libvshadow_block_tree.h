@@ -26,7 +26,7 @@
 #include <types.h>
 
 #include "libvshadow_block_descriptor.h"
-#include "libvshadow_libcdata.h"
+#include "libvshadow_block_tree_node.h"
 #include "libvshadow_libcerror.h"
 
 #if defined( __cplusplus )
@@ -37,13 +37,18 @@ typedef struct libvshadow_block_tree libvshadow_block_tree_t;
 
 struct libvshadow_block_tree
 {
-	/* The block descriptors B-tree
+	/* The block tree root node
 	 */
-	libcdata_btree_t *block_descriptors_tree;
+	libvshadow_block_tree_node_t *root_node;
+
+	/* The leaf value size
+	 */
+	size64_t leaf_value_size;
 };
 
 int libvshadow_block_tree_initialize(
      libvshadow_block_tree_t **block_tree,
+     size64_t volume_size,
      libcerror_error_t **error );
 
 int libvshadow_block_tree_free(
@@ -56,11 +61,21 @@ int libvshadow_block_tree_free(
 int libvshadow_block_tree_get_block_descriptor_by_offset(
      libvshadow_block_tree_t *block_tree,
      off64_t offset,
-     int (*value_compare_function)(
-            intptr_t *first_value,
-            intptr_t *second_value,
-            libcerror_error_t **error ),
      libvshadow_block_descriptor_t **block_descriptor,
+     libcerror_error_t **error );
+
+int libvshadow_block_tree_insert_block_descriptor_by_offset(
+     libvshadow_block_tree_t *block_tree,
+     off64_t offset,
+     libvshadow_block_descriptor_t *block_descriptor,
+     int *leaf_value_index,
+     libvshadow_block_tree_node_t **leaf_block_tree_node,
+     libvshadow_block_descriptor_t **existing_block_descriptor,
+     libcerror_error_t **error );
+
+int libvshadow_block_tree_remove_block_descriptor_by_offset(
+     libvshadow_block_tree_t *block_tree,
+     off64_t offset,
      libcerror_error_t **error );
 
 int libvshadow_block_tree_insert(

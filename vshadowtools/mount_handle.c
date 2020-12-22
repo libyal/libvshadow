@@ -682,7 +682,7 @@ int mount_handle_close(
 		goto on_error;
 	}
 	for( store_index = number_of_stores - 1;
-	     store_index > 0;
+	     store_index >= 0;
 	     store_index-- )
 	{
 		if( mount_file_system_get_store_by_index(

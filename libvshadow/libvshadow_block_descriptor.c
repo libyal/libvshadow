@@ -26,7 +26,6 @@
 #include "libvshadow_block_descriptor.h"
 #include "libvshadow_debug.h"
 #include "libvshadow_definitions.h"
-#include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
 #include "libvshadow_unused.h"
@@ -308,222 +307,6 @@ on_error:
 	return( -1 );
 }
 
-/* Compares 2 block descriptors by the original offset
- * Returns LIBCDATA_COMPARE_LESS, LIBCDATA_COMPARE_EQUAL, LIBCDATA_COMPARE_GREATER if successful or -1 on error
- */
-int libvshadow_block_descriptor_compare_by_original_offset(
-     libvshadow_block_descriptor_t *first_block_descriptor,
-     libvshadow_block_descriptor_t *second_block_descriptor,
-     libcerror_error_t **error )
-{
-	static char *function = "libvshadow_block_descriptor_compare_by_original_offset";
-
-	if( first_block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid first block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( second_block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid second block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( first_block_descriptor->original_offset < second_block_descriptor->original_offset )
-	{
-		return( LIBCDATA_COMPARE_LESS );
-	}
-	else if( first_block_descriptor->original_offset > second_block_descriptor->original_offset )
-	{
-		return( LIBCDATA_COMPARE_GREATER );
-	}
-	return( LIBCDATA_COMPARE_EQUAL );
-}
-
-/* Compares 2 block descriptors by the relative offset
- * Returns LIBCDATA_COMPARE_LESS, LIBCDATA_COMPARE_EQUAL, LIBCDATA_COMPARE_GREATER if successful or -1 on error
- */
-int libvshadow_block_descriptor_compare_by_relative_offset(
-     libvshadow_block_descriptor_t *first_block_descriptor,
-     libvshadow_block_descriptor_t *second_block_descriptor,
-     libcerror_error_t **error )
-{
-	static char *function = "libvshadow_block_descriptor_compare_by_relative_offset";
-
-	if( first_block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid first block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( second_block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid second block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( first_block_descriptor->relative_offset < second_block_descriptor->relative_offset )
-	{
-		return( LIBCDATA_COMPARE_LESS );
-	}
-	else if( first_block_descriptor->relative_offset > second_block_descriptor->relative_offset )
-	{
-		return( LIBCDATA_COMPARE_GREATER );
-	}
-	return( LIBCDATA_COMPARE_EQUAL );
-}
-
-/* Compares 2 block descriptors for the reverse block tree
- * the original offset of the first block descriptor is compared with the relative offset of the second block descriptor
- * Returns LIBCDATA_COMPARE_LESS, LIBCDATA_COMPARE_EQUAL, LIBCDATA_COMPARE_GREATER if successful or -1 on error
- */
-int libvshadow_block_descriptor_compare_reverse(
-     libvshadow_block_descriptor_t *first_block_descriptor,
-     libvshadow_block_descriptor_t *second_block_descriptor,
-     libcerror_error_t **error )
-{
-	static char *function = "libvshadow_block_descriptor_compare_reverse";
-
-	if( first_block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid first block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( second_block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid second block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( first_block_descriptor->original_offset < second_block_descriptor->relative_offset )
-	{
-		return( LIBCDATA_COMPARE_LESS );
-	}
-	else if( first_block_descriptor->original_offset > second_block_descriptor->relative_offset )
-	{
-		return( LIBCDATA_COMPARE_GREATER );
-	}
-	return( LIBCDATA_COMPARE_EQUAL );
-}
-
-/* Compares original offset value with the range of a block descriptor
- * Returns LIBCDATA_COMPARE_LESS, LIBCDATA_COMPARE_EQUAL, LIBCDATA_COMPARE_GREATER if successful or -1 on error
- */
-int libvshadow_block_descriptor_compare_range_by_original_offset_value(
-     off64_t *original_offset,
-     libvshadow_block_descriptor_t *block_descriptor,
-     libcerror_error_t **error )
-{
-	static char *function = "libvshadow_block_descriptor_compare_range_by_original_offset_value";
-
-	if( original_offset == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid original offset.",
-		 function );
-
-		return( -1 );
-	}
-	if( block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( *original_offset < block_descriptor->original_offset )
-	{
-		return( LIBCDATA_COMPARE_LESS );
-	}
-	else if( *original_offset >= ( block_descriptor->original_offset + 0x4000 ) )
-	{
-		return( LIBCDATA_COMPARE_GREATER );
-	}
-	return( LIBCDATA_COMPARE_EQUAL );
-}
-
-/* Compares relative offset value with the range of a block descriptor
- * Returns LIBCDATA_COMPARE_LESS, LIBCDATA_COMPARE_EQUAL, LIBCDATA_COMPARE_GREATER if successful or -1 on error
- */
-int libvshadow_block_descriptor_compare_range_by_relative_offset_value(
-     off64_t *relative_offset,
-     libvshadow_block_descriptor_t *block_descriptor,
-     libcerror_error_t **error )
-{
-	static char *function = "libvshadow_block_descriptor_compare_range_by_relative_offset_value";
-
-	if( relative_offset == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid relative offset.",
-		 function );
-
-		return( -1 );
-	}
-	if( block_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid block descriptor.",
-		 function );
-
-		return( -1 );
-	}
-	if( *relative_offset < block_descriptor->relative_offset )
-	{
-		return( LIBCDATA_COMPARE_LESS );
-	}
-	else if( *relative_offset >= ( block_descriptor->relative_offset + 0x4000 ) )
-	{
-		return( LIBCDATA_COMPARE_GREATER );
-	}
-	return( LIBCDATA_COMPARE_EQUAL );
-}
-
 /* Reads the block descriptor
  * Returns 1 if successful, 0 if block list entry is empty or -1 on error
  */
@@ -626,13 +409,13 @@ int libvshadow_block_descriptor_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: store: %02d original offset\t\t: 0x%08" PRIx64 "\n",
+		 "%s: store: %02d original offset\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_index,
 		 block_descriptor->original_offset );
 
 		libcnotify_printf(
-		 "%s: store: %02d relative offset\t\t: 0x%08" PRIx64 "\n",
+		 "%s: store: %02d relative offset\t: 0x%08" PRIx64 "\n",
 		 function,
 		 store_index,
 		 block_descriptor->relative_offset );
@@ -650,7 +433,7 @@ int libvshadow_block_descriptor_read_data(
 		 block_descriptor->flags );
 
 		libcnotify_printf(
-		 "%s: store: %02d allocation bitmap\t\t: 0x%08" PRIx32 "\n",
+		 "%s: store: %02d allocation bitmap\t: 0x%08" PRIx32 "\n",
 		 function,
 		 store_index,
 		 block_descriptor->bitmap );

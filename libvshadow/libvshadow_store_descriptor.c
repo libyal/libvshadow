@@ -120,32 +120,6 @@ int libvshadow_store_descriptor_initialize(
 
 		goto on_error;
 	}
-	if( libvshadow_block_tree_initialize(
-	     &( ( *store_descriptor )->forward_block_tree ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create forward block tree.",
-		 function );
-
-		goto on_error;
-	}
-	if( libvshadow_block_tree_initialize(
-	     &( ( *store_descriptor )->reverse_block_tree ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create reverse block tree.",
-		 function );
-
-		goto on_error;
-	}
 	if( libcdata_range_list_initialize(
 	     &( ( *store_descriptor )->block_offset_list ),
 	     error ) != 1 )
@@ -196,20 +170,6 @@ on_error:
 		{
 			libcdata_range_list_free(
 			 &( ( *store_descriptor )->block_offset_list ),
-			 NULL,
-			 NULL );
-		}
-		if( ( *store_descriptor )->reverse_block_tree != NULL )
-		{
-			libvshadow_block_tree_free(
-			 &( ( *store_descriptor )->reverse_block_tree ),
-			 NULL,
-			 NULL );
-		}
-		if( ( *store_descriptor )->forward_block_tree != NULL )
-		{
-			libvshadow_block_tree_free(
-			 &( ( *store_descriptor )->forward_block_tree ),
 			 NULL,
 			 NULL );
 		}
@@ -276,33 +236,39 @@ int libvshadow_store_descriptor_free(
 			memory_free(
 			 ( *store_descriptor )->service_machine_string );
 		}
-		if( libvshadow_block_tree_free(
-		     &( ( *store_descriptor )->reverse_block_tree ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free_reverse,
-		     error ) != 1 )
+		if( ( *store_descriptor )->reverse_block_tree != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free reverse block tree.",
-			 function );
+			if( libvshadow_block_tree_free(
+			     &( ( *store_descriptor )->reverse_block_tree ),
+			     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free_reverse,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free reverse block tree.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
-		if( libvshadow_block_tree_free(
-		     &( ( *store_descriptor )->forward_block_tree ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
-		     error ) != 1 )
+		if( ( *store_descriptor )->forward_block_tree != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free forward block tree.",
-			 function );
+			if( libvshadow_block_tree_free(
+			     &( ( *store_descriptor )->forward_block_tree ),
+			     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free forward block tree.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
 		if( libcdata_list_free(
 		     &( ( *store_descriptor )->block_descriptors_list ),
@@ -699,7 +665,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			 72,
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	}
 	else if( *entry_type == 3 )
 	{
@@ -802,7 +768,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			 40,
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
@@ -1942,6 +1908,34 @@ int libvshadow_store_descriptor_read_block_descriptors(
 #endif
 	if( store_descriptor->block_descriptors_read == 0 )
 	{
+		if( libvshadow_block_tree_initialize(
+		     &( store_descriptor->forward_block_tree ),
+		     store_descriptor->volume_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create forward block tree.",
+			 function );
+
+			goto on_error;
+		}
+		if( libvshadow_block_tree_initialize(
+		     &( store_descriptor->reverse_block_tree ),
+		     store_descriptor->volume_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create reverse block tree.",
+			 function );
+
+			goto on_error;
+		}
 		bitmap_offset      = 0;
 		store_block_offset = store_descriptor->store_bitmap_offset;
 
@@ -2052,6 +2046,23 @@ int libvshadow_store_descriptor_read_block_descriptors(
 	return( 1 );
 
 on_error:
+	if( store_descriptor->block_descriptors_read == 0 )
+	{
+		if( store_descriptor->reverse_block_tree != NULL )
+		{
+			libvshadow_block_tree_free(
+			 &( store_descriptor->reverse_block_tree ),
+			 (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free_reverse,
+			 NULL );
+		}
+		if( store_descriptor->forward_block_tree != NULL )
+		{
+			libvshadow_block_tree_free(
+			 &( store_descriptor->forward_block_tree ),
+			 (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
+			 NULL );
+		}
+	}
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
 	 store_descriptor->read_write_lock,
@@ -2153,7 +2164,6 @@ int libvshadow_store_descriptor_get_block_range_at_offset(
 		result = libvshadow_block_tree_get_block_descriptor_by_offset(
 		          store_descriptor->forward_block_tree,
 		          offset,
-		          (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libvshadow_block_descriptor_compare_range_by_original_offset_value,
 		          &safe_block_descriptor,
 		          error );
 
@@ -2376,7 +2386,6 @@ int libvshadow_store_descriptor_get_reverse_block_range_at_offset(
 		result = libvshadow_block_tree_get_block_descriptor_by_offset(
 			  store_descriptor->reverse_block_tree,
 			  offset,
-			  (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libvshadow_block_descriptor_compare_range_by_relative_offset_value,
 			  &reverse_block_descriptor,
 			  error );
 

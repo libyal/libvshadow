@@ -60,6 +60,7 @@ int vshadow_test_block_tree_initialize(
 	 */
 	result = libvshadow_block_tree_initialize(
 	          &block_tree,
+	          0x800000000UL,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -97,6 +98,7 @@ int vshadow_test_block_tree_initialize(
 	 */
 	result = libvshadow_block_tree_initialize(
 	          NULL,
+	          0x800000000UL,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -115,6 +117,7 @@ int vshadow_test_block_tree_initialize(
 
 	result = libvshadow_block_tree_initialize(
 	          &block_tree,
+	          0x800000000UL,
 	          &error );
 
 	block_tree = NULL;
@@ -143,6 +146,7 @@ int vshadow_test_block_tree_initialize(
 
 		result = libvshadow_block_tree_initialize(
 		          &block_tree,
+		          0x800000000UL,
 		          &error );
 
 		if( vshadow_test_malloc_attempts_before_fail != -1 )
@@ -186,6 +190,7 @@ int vshadow_test_block_tree_initialize(
 
 		result = libvshadow_block_tree_initialize(
 		          &block_tree,
+		          0x800000000UL,
 		          &error );
 
 		if( vshadow_test_memset_attempts_before_fail != -1 )
@@ -294,6 +299,7 @@ int vshadow_test_block_tree_insert(
 	 */
 	result = libvshadow_block_tree_initialize(
 	          &forward_block_tree,
+	          0x800000000UL,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -311,6 +317,7 @@ int vshadow_test_block_tree_insert(
 
 	result = libvshadow_block_tree_initialize(
 	          &reverse_block_tree,
+	          0x800000000UL,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(

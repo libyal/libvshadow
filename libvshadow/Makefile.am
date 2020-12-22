@@ -24,6 +24,7 @@ libvshadow_la_SOURCES = \
 	libvshadow_block_descriptor.c libvshadow_block_descriptor.h \
 	libvshadow_block_range_descriptor.c libvshadow_block_range_descriptor.h \
 	libvshadow_block_tree.c libvshadow_block_tree.h \
+	libvshadow_block_tree_node.c libvshadow_block_tree_node.h \
 	libvshadow_codepage.h \
 	libvshadow_debug.c libvshadow_debug.h \
 	libvshadow_definitions.h \

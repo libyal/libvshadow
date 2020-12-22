@@ -44,6 +44,7 @@ check_PROGRAMS = \
 	vshadow_test_block_descriptor \
 	vshadow_test_block_range_descriptor \
 	vshadow_test_block_tree \
+	vshadow_test_block_tree_node \
 	vshadow_test_error \
 	vshadow_test_io_handle \
 	vshadow_test_notify \
@@ -100,6 +101,18 @@ vshadow_test_block_tree_SOURCES = \
 
 vshadow_test_block_tree_LDADD = \
 	@LIBCDATA_LIBADD@ \
+	../libvshadow/libvshadow.la \
+	@LIBCERROR_LIBADD@
+
+vshadow_test_block_tree_node_SOURCES = \
+	vshadow_test_block_tree_node.c \
+	vshadow_test_libcerror.h \
+	vshadow_test_libvshadow.h \
+	vshadow_test_macros.h \
+	vshadow_test_memory.c vshadow_test_memory.h \
+	vshadow_test_unused.h
+
+vshadow_test_block_tree_node_LDADD = \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 
