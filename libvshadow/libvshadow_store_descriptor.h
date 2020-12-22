@@ -107,11 +107,11 @@ struct libvshadow_store_descriptor
 	 */
 	libcdata_list_t *block_descriptors_list;
 
-	/* The forward block B-tree
+	/* The forward block tree
 	 */
 	libvshadow_block_tree_t *forward_block_tree;
 
-	/* The reverse block B-tree
+	/* The reverse block tree
 	 */
 	libvshadow_block_tree_t *reverse_block_tree;
 
