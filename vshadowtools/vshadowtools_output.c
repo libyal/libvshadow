@@ -1,7 +1,7 @@
 /*
  * Common output functions for the vshadowtools
  *
- * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -108,7 +108,7 @@ void vshadowtools_output_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Copyright (C) 2011-2020, %s.\n" ),
+	 _( "Copyright (C) 2011-2021, %s.\n" ),
 	 _( "Joachim Metz" ) );
 
 	fprintf(
