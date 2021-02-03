@@ -37,7 +37,6 @@ libvshadow_la_SOURCES = \
 	libvshadow_libclocale.h \
 	libvshadow_libcnotify.h \
 	libvshadow_libcthreads.h \
-	libvshadow_libfdata.h \
 	libvshadow_libfdatetime.h \
 	libvshadow_libfguid.h \
 	libvshadow_libuna.h \
