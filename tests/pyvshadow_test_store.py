@@ -42,7 +42,7 @@ class DataRangeFileObject(object):
     """
     super(DataRangeFileObject, self).__init__()
     self._current_offset = 0
-    self._file_object = open(unittest.source, "rb")
+    self._file_object = open(path, "rb")
     self._range_offset = range_offset
     self._range_size = range_size
 
@@ -152,13 +152,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_read_buffer(self):
     """Tests the read_buffer function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -236,13 +237,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_read_buffer_at_offset(self):
     """Tests the read_buffer_at_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -309,13 +311,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_seek_offset(self):
     """Tests the seek_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -374,13 +377,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_get_offset(self):
     """Tests the get_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -398,13 +402,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_get_size(self):
     """Tests the get_size function and size property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -424,13 +429,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_get_volume_size(self):
     """Tests the get_volume_size function and volume_size property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -450,13 +456,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_get_creation_time(self):
     """Tests the get_creation_time function and creation_time property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
@@ -476,13 +483,14 @@ class StoreTypeTests(unittest.TestCase):
 
   def test_get_number_of_blocks(self):
     """Tests the get_number_of_blocks function and number_of_blocks property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     vshadow_volume = pyvshadow.volume()
 
     with DataRangeFileObject(
-        unittest.source, unittest.offset or 0, None) as file_object:
+        test_source, unittest.offset or 0, None) as file_object:
 
       vshadow_volume.open_file_object(file_object)
 
