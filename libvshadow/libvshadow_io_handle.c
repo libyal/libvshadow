@@ -270,13 +270,14 @@ int libvshadow_io_handle_read_volume_header_data(
      off64_t *catalog_offset,
      libcerror_error_t **error )
 {
-	static char *function = "libvshadow_io_handle_read_volume_header_data";
-	uint32_t record_type  = 0;
-	uint32_t version      = 0;
+	static char *function        = "libvshadow_io_handle_read_volume_header_data";
+	uint64_t safe_catalog_offset = 0;
+	uint32_t record_type         = 0;
+	uint32_t version             = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
-	uint32_t value_32bit  = 0;
+	uint64_t value_64bit         = 0;
+	uint32_t value_32bit         = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -301,24 +302,14 @@ int libvshadow_io_handle_read_volume_header_data(
 
 		return( -1 );
 	}
-	if( data_size < sizeof( vshadow_volume_header_t ) )
+	if( ( data_size < sizeof( vshadow_volume_header_t ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_size > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -370,7 +361,7 @@ int libvshadow_io_handle_read_volume_header_data(
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (vshadow_volume_header_t *) data )->catalog_offset,
-	 *catalog_offset );
+	 safe_catalog_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -430,7 +421,7 @@ int libvshadow_io_handle_read_volume_header_data(
 		libcnotify_printf(
 		 "%s: catalog offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
-		 *catalog_offset );
+		 safe_catalog_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (vshadow_volume_header_t *) data )->maximum_size,
@@ -492,7 +483,8 @@ int libvshadow_io_handle_read_volume_header_data(
 		 412,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( ( version != 1 )
 	 && ( version != 2 ) )
 	{
@@ -518,6 +510,8 @@ int libvshadow_io_handle_read_volume_header_data(
 
 		return( -1 );
 	}
+	*catalog_offset = safe_catalog_offset;
+
 	return( 1 );
 }
 
