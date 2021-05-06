@@ -798,12 +798,13 @@ int libvshadow_io_handle_read_catalog_header_data(
      off64_t *next_offset,
      libcerror_error_t **error )
 {
-	static char *function = "libvshadow_io_handle_read_catalog_header_data";
-	uint32_t record_type  = 0;
-	uint32_t version      = 0;
+	static char *function     = "libvshadow_io_handle_read_catalog_header_data";
+	uint64_t safe_next_offset = 0;
+	uint32_t record_type      = 0;
+	uint32_t version          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
+	uint64_t value_64bit      = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -897,7 +898,7 @@ int libvshadow_io_handle_read_catalog_header_data(
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (vshadow_catalog_header_t *) data )->next_offset,
-	 *next_offset );
+	 safe_next_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -949,7 +950,7 @@ int libvshadow_io_handle_read_catalog_header_data(
 		libcnotify_printf(
 		 "%s: next offset\t\t: 0x%08" PRIx64 "\n",
 		 function,
-		 *next_offset );
+		 safe_next_offset );
 
 		libcnotify_printf(
 		 "%s: unknown1:\n",
@@ -959,7 +960,8 @@ int libvshadow_io_handle_read_catalog_header_data(
 		 80,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( version != 1 )
 	{
 		libcerror_error_set(
@@ -984,6 +986,20 @@ int libvshadow_io_handle_read_catalog_header_data(
 
 		return( -1 );
 	}
+	if( safe_next_offset > (uint64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid next offset value out of bounds.",
+		 function,
+		 version );
+
+		return( -1 );
+	}
+	*next_offset = (off64_t) safe_next_offset;
+
 	return( 1 );
 }
 
