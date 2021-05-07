@@ -445,10 +445,15 @@ int libvshadow_store_descriptor_read_catalog_entry(
      uint64_t *entry_type,
      libcerror_error_t **error )
 {
-	static char *function = "libvshadow_store_descriptor_read_catalog_entry";
+	static char *function                       = "libvshadow_store_descriptor_read_catalog_entry";
+	uint64_t safe_store_bitmap_offset           = 0;
+	uint64_t safe_store_block_list_offset       = 0;
+	uint64_t safe_store_block_range_list_offset = 0;
+	uint64_t safe_store_header_offset           = 0;
+	uint64_t safe_store_previous_bitmap_offset  = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
+	uint64_t value_64bit                        = 0;
 #endif
 
 	if( store_descriptor == NULL )
@@ -671,23 +676,23 @@ int libvshadow_store_descriptor_read_catalog_entry(
 	{
 		byte_stream_copy_to_uint64_little_endian(
 		 &( catalog_block_data[ 8 ] ),
-		 store_descriptor->store_block_list_offset );
+		 safe_store_block_list_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 &( catalog_block_data[ 32 ] ),
-		 store_descriptor->store_header_offset );
+		 safe_store_header_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 &( catalog_block_data[ 40 ] ),
-		 store_descriptor->store_block_range_list_offset );
+		 safe_store_block_range_list_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 &( catalog_block_data[ 48 ] ),
-		 store_descriptor->store_bitmap_offset );
+		 safe_store_bitmap_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 &( catalog_block_data[ 72 ] ),
-		 store_descriptor->store_previous_bitmap_offset );
+		 safe_store_previous_bitmap_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -695,7 +700,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			libcnotify_printf(
 			 "%s: store block list offset\t\t: 0x%08" PRIx64 "\n",
 			 function,
-			 store_descriptor->store_block_list_offset );
+			 safe_store_block_list_offset );
 
 			if( libvshadow_debug_print_guid_value(
 			     function,
@@ -718,17 +723,17 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			libcnotify_printf(
 			 "%s: store header offset\t\t: 0x%08" PRIx64 "\n",
 			 function,
-			 store_descriptor->store_header_offset );
+			 safe_store_header_offset );
 
 			libcnotify_printf(
 			 "%s: store block range list offset\t: 0x%08" PRIx64 "\n",
 			 function,
-			 store_descriptor->store_block_range_list_offset );
+			 safe_store_block_range_list_offset );
 
 			libcnotify_printf(
 			 "%s: store bitmap offset\t\t: 0x%08" PRIx64 "\n",
 			 function,
-			 store_descriptor->store_bitmap_offset );
+			 safe_store_bitmap_offset );
 
 			byte_stream_copy_to_uint64_little_endian(
 			 &( catalog_block_data[ 56 ] ),
@@ -750,7 +755,7 @@ int libvshadow_store_descriptor_read_catalog_entry(
 			libcnotify_printf(
 			 "%s: store previous bitmap offset\t: 0x%08" PRIx64 "\n",
 			 function,
-			 store_descriptor->store_previous_bitmap_offset );
+			 safe_store_previous_bitmap_offset );
 
 			byte_stream_copy_to_uint64_little_endian(
 			 &( catalog_block_data[ 80 ] ),
@@ -770,6 +775,67 @@ int libvshadow_store_descriptor_read_catalog_entry(
 		}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	}
+	if( safe_store_block_list_offset > (uint64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid store block list offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( safe_store_header_offset > (uint64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid store header offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( safe_store_block_range_list_offset > (uint64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid store block range list offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( safe_store_bitmap_offset > (uint64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid store bitmap offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( safe_store_previous_bitmap_offset > (uint64_t) INT64_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid store previous bitmap offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	store_descriptor->store_block_list_offset       = (off64_t) safe_store_block_list_offset;
+	store_descriptor->store_header_offset           = (off64_t) safe_store_header_offset;
+	store_descriptor->store_block_range_list_offset = (off64_t) safe_store_block_range_list_offset;
+	store_descriptor->store_bitmap_offset           = (off64_t) safe_store_bitmap_offset;
+	store_descriptor->store_previous_bitmap_offset  = (off64_t) safe_store_previous_bitmap_offset;
+
 #if defined( HAVE_LIBVSHADOW_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     store_descriptor->read_write_lock,
