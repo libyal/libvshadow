@@ -108,11 +108,6 @@ struct vshadow_store_information
 	 * Consists of 4 bytes
 	 */
 	uint8_t attribute_flags[ 4 ];
-
-	/* Unknown
-	 * Consists of 4 bytes
-	 */
-	uint8_t unknown10[ 4 ];
 };
 
 typedef struct vshadow_store_block_header vshadow_store_block_header_t;
