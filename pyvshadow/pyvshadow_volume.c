@@ -298,6 +298,15 @@ void pyvshadow_volume_free(
 
 		return;
 	}
+	if( pyvshadow_volume->file_io_handle != NULL )
+	{
+		if( pyvshadow_volume_close(
+		     pyvshadow_volume,
+		     NULL ) == NULL )
+		{
+			return;
+		}
+	}
 	if( pyvshadow_volume->volume != NULL )
 	{
 		Py_BEGIN_ALLOW_THREADS
