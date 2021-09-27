@@ -308,10 +308,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libvshadow\libvshadow_libfdata.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libvshadow\libvshadow_libfdatetime.h"
 				>
 			</File>
