@@ -946,7 +946,7 @@ int libvshadow_store_descriptor_read_store_header(
 		 function,
 		 store_block->record_type );
 
-		return( -1 );
+		goto on_error;
 	}
 	store_header_data = &( store_block->data[ sizeof( vshadow_store_header_t ) ] );
 
@@ -1084,7 +1084,8 @@ int libvshadow_store_descriptor_read_store_header(
 		 function,
 		 value_32bit );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	store_header_data_offset = sizeof( vshadow_store_information_t );
 
 	byte_stream_copy_to_uint16_little_endian(
@@ -1093,149 +1094,166 @@ int libvshadow_store_descriptor_read_store_header(
 
 	store_header_data_offset += 2;
 
-	if( ( store_header_data_offset + store_descriptor->operating_machine_string_size ) > store_block->data_size )
+	if( store_descriptor->operating_machine_string_size > 0 )
+	{
+		if( store_descriptor->operating_machine_string_size > ( store_block->data_size - sizeof( vshadow_store_header_t ) - store_header_data_offset ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid operating machine string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+		store_descriptor->operating_machine_string = (uint8_t *) memory_allocate(
+		                                                          sizeof( uint8_t ) * store_descriptor->operating_machine_string_size );
+
+		if( store_descriptor->operating_machine_string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create operating machine string.",
+			 function );
+
+			goto on_error;
+		}
+		if( memory_copy(
+		     store_descriptor->operating_machine_string,
+		     &( store_header_data[ store_header_data_offset ] ),
+		     (size_t) store_descriptor->operating_machine_string_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy operating machine string.",
+			 function );
+
+			goto on_error;
+		}
+		store_header_data_offset += store_descriptor->operating_machine_string_size;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			if( libvshadow_debug_print_utf16_string_value(
+			     function,
+			     "operating machine string\t",
+			     store_descriptor->operating_machine_string,
+			     (size_t) store_descriptor->operating_machine_string_size,
+			     LIBUNA_ENDIAN_LITTLE,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print UTF-16 string value.",
+				 function );
+
+				goto on_error;
+			}
+		}
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+	}
+	if( store_header_data_offset > ( store_block->data_size - sizeof( vshadow_store_header_t ) - 2 ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: operating machine string size value out of bounds.",
+		 "%s: invalid store header data size value out of bounds.",
 		 function );
 
 		goto on_error;
 	}
-	store_descriptor->operating_machine_string = (uint8_t *) memory_allocate(
-	                                                          sizeof( uint8_t ) * store_descriptor->operating_machine_string_size );
-
-	if( store_descriptor->operating_machine_string == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create operating machine string.",
-		 function );
-
-		goto on_error;
-	}
-	if( memory_copy(
-	     store_descriptor->operating_machine_string,
-	     &( store_header_data[ store_header_data_offset ] ),
-	     (size_t) store_descriptor->operating_machine_string_size ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy operating machine string.",
-		 function );
-
-		goto on_error;
-	}
-	store_header_data_offset += store_descriptor->operating_machine_string_size;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		if( libvshadow_debug_print_utf16_string_value(
-		     function,
-		     "operating machine string\t",
-		     store_descriptor->operating_machine_string,
-		     (size_t) store_descriptor->operating_machine_string_size,
-		     LIBUNA_ENDIAN_LITTLE,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print UTF-16 string value.",
-			 function );
-
-			goto on_error;
-		}
-	}
-#endif
 	byte_stream_copy_to_uint16_little_endian(
 	 &( store_header_data[ store_header_data_offset ] ),
 	 store_descriptor->service_machine_string_size );
 
 	store_header_data_offset += 2;
 
-	if( ( store_header_data_offset + store_descriptor->service_machine_string_size ) > store_block->data_size )
+	if( store_descriptor->service_machine_string_size > 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: operating machine string size value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	store_descriptor->service_machine_string = (uint8_t *) memory_allocate(
-	                                                        sizeof( uint8_t ) * store_descriptor->service_machine_string_size );
-
-	if( store_descriptor->service_machine_string == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create service machine string.",
-		 function );
-
-		goto on_error;
-	}
-	if( memory_copy(
-	     store_descriptor->service_machine_string,
-	     &( store_header_data[ store_header_data_offset ] ),
-	     (size_t) store_descriptor->service_machine_string_size ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy service machine string.",
-		 function );
-
-		goto on_error;
-	}
-	store_header_data_offset += store_descriptor->service_machine_string_size;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		if( libvshadow_debug_print_utf16_string_value(
-		     function,
-		     "service machine string\t",
-		     store_descriptor->service_machine_string,
-		     (size_t) store_descriptor->service_machine_string_size,
-		     LIBUNA_ENDIAN_LITTLE,
-		     error ) != 1 )
+		if( store_descriptor->service_machine_string_size > ( store_block->data_size - sizeof( vshadow_store_header_t ) - store_header_data_offset ) )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print UTF-16 string value.",
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid operating machine string size value out of bounds.",
 			 function );
 
 			goto on_error;
 		}
+		store_descriptor->service_machine_string = (uint8_t *) memory_allocate(
+		                                                        sizeof( uint8_t ) * store_descriptor->service_machine_string_size );
+
+		if( store_descriptor->service_machine_string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create service machine string.",
+			 function );
+
+			goto on_error;
+		}
+		if( memory_copy(
+		     store_descriptor->service_machine_string,
+		     &( store_header_data[ store_header_data_offset ] ),
+		     (size_t) store_descriptor->service_machine_string_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy service machine string.",
+			 function );
+
+			goto on_error;
+		}
+		store_header_data_offset += store_descriptor->service_machine_string_size;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			if( libvshadow_debug_print_utf16_string_value(
+			     function,
+			     "service machine string\t",
+			     store_descriptor->service_machine_string,
+			     (size_t) store_descriptor->service_machine_string_size,
+			     LIBUNA_ENDIAN_LITTLE,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print UTF-16 string value.",
+				 function );
+
+				goto on_error;
+			}
+		}
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	}
-#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( store_header_data_offset < store_block->data_size )
+		if( store_header_data_offset < ( store_block->data_size - sizeof( vshadow_store_header_t ) ) )
 		{
 			libcnotify_printf(
 			 "%s: trailing data:\n",
 			 function );
 			libcnotify_print_data(
 			 &( store_header_data[ store_header_data_offset ] ),
-			 store_block->data_size - store_header_data_offset,
+			 store_block->data_size - sizeof( vshadow_store_header_t ) - store_header_data_offset,
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
 	}
