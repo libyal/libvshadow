@@ -264,10 +264,13 @@ int libvshadow_store_block_read_header_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libvshadow_store_block_read_header_data";
+	static char *function         = "libvshadow_store_block_read_header_data";
+	uint64_t safe_next_offset     = 0;
+	uint64_t safe_offset          = 0;
+	uint64_t safe_relative_offset = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
+	uint64_t value_64bit          = 0;
 #endif
 
 	if( store_block == NULL )
@@ -292,24 +295,14 @@ int libvshadow_store_block_read_header_data(
 
 		return( -1 );
 	}
-	if( data_size < sizeof( vshadow_store_block_header_t ) )
+	if( ( data_size < sizeof( vshadow_store_block_header_t ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_size > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -350,15 +343,15 @@ int libvshadow_store_block_read_header_data(
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (vshadow_store_block_header_t *) data )->relative_offset,
-	 store_block->relative_offset );
+	 safe_relative_offset );
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (vshadow_store_block_header_t *) data )->offset,
-	 store_block->offset );
+	 safe_offset );
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (vshadow_store_block_header_t *) data )->next_offset,
-	 store_block->next_offset );
+	 safe_next_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -422,7 +415,8 @@ int libvshadow_store_block_read_header_data(
 		 72,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( store_block->version != 1 )
 	{
 		libcerror_error_set(
@@ -435,6 +429,10 @@ int libvshadow_store_block_read_header_data(
 
 		return( -1 );
 	}
+	store_block->relative_offset = (off64_t) safe_relative_offset;
+	store_block->offset          = (off64_t) safe_offset;
+	store_block->next_offset     = (off64_t) safe_next_offset;
+
 	return( 1 );
 }
 

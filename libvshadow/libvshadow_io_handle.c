@@ -510,7 +510,7 @@ int libvshadow_io_handle_read_volume_header_data(
 
 		return( -1 );
 	}
-	*catalog_offset = safe_catalog_offset;
+	*catalog_offset = (off64_t) safe_catalog_offset;
 
 	return( 1 );
 }
