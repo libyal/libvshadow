@@ -1995,6 +1995,7 @@ int libvshadow_store_descriptor_read_block_descriptors(
 		if( libvshadow_block_tree_initialize(
 		     &( store_descriptor->forward_block_tree ),
 		     store_descriptor->volume_size,
+		     0x4000,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -2009,6 +2010,7 @@ int libvshadow_store_descriptor_read_block_descriptors(
 		if( libvshadow_block_tree_initialize(
 		     &( store_descriptor->reverse_block_tree ),
 		     store_descriptor->volume_size,
+		     0x4000,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -2172,13 +2174,14 @@ int libvshadow_store_descriptor_get_block_range_at_offset(
 	libvshadow_block_descriptor_t *safe_block_descriptor    = NULL;
 	static char *function                                   = "libvshadow_store_descriptor_get_block_range_at_offset";
 	size_t safe_block_size                                  = 0;
+	off64_t block_offset                                    = 0;
 	off64_t overlay_block_offset                            = 0;
 	off64_t safe_block_descriptor_offset                    = 0;
 	uint32_t overlay_bitmap                                 = 0;
 	uint32_t relative_block_offset                          = 0;
 	uint8_t bit_count                                       = 0;
 	int result                                              = 0;
-	int safe_in_block_descriptor_list = 0;
+	int safe_in_block_descriptor_list                       = 0;
 
 	if( store_descriptor == NULL )
 	{
@@ -2249,6 +2252,7 @@ int libvshadow_store_descriptor_get_block_range_at_offset(
 		          store_descriptor->forward_block_tree,
 		          offset,
 		          &safe_block_descriptor,
+		          &block_offset,
 		          error );
 
 		if( result == -1 )
@@ -2406,6 +2410,7 @@ int libvshadow_store_descriptor_get_reverse_block_range_at_offset(
 	static char *function                                   = "libvshadow_store_descriptor_get_reverse_block_range_at_offset";
 	size64_t block_range_size                               = 0;
 	size64_t previous_block_range_size                      = 0;
+	off64_t block_offset                                    = 0;
 	off64_t block_range_offset                              = 0;
 	off64_t previous_block_range_offset                     = 0;
 	int result                                              = 0;
@@ -2471,6 +2476,7 @@ int libvshadow_store_descriptor_get_reverse_block_range_at_offset(
 			  store_descriptor->reverse_block_tree,
 			  offset,
 			  &reverse_block_descriptor,
+			  &block_offset,
 			  error );
 
 		if( result == -1 )

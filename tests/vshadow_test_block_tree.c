@@ -61,6 +61,7 @@ int vshadow_test_block_tree_initialize(
 	result = libvshadow_block_tree_initialize(
 	          &block_tree,
 	          0x800000000UL,
+	          0x4000,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -99,6 +100,7 @@ int vshadow_test_block_tree_initialize(
 	result = libvshadow_block_tree_initialize(
 	          NULL,
 	          0x800000000UL,
+	          0x4000,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -118,6 +120,7 @@ int vshadow_test_block_tree_initialize(
 	result = libvshadow_block_tree_initialize(
 	          &block_tree,
 	          0x800000000UL,
+	          0x4000,
 	          &error );
 
 	block_tree = NULL;
@@ -147,6 +150,7 @@ int vshadow_test_block_tree_initialize(
 		result = libvshadow_block_tree_initialize(
 		          &block_tree,
 		          0x800000000UL,
+		          0x4000,
 		          &error );
 
 		if( vshadow_test_malloc_attempts_before_fail != -1 )
@@ -191,6 +195,7 @@ int vshadow_test_block_tree_initialize(
 		result = libvshadow_block_tree_initialize(
 		          &block_tree,
 		          0x800000000UL,
+		          0x4000,
 		          &error );
 
 		if( vshadow_test_memset_attempts_before_fail != -1 )
@@ -283,6 +288,421 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libvshadow_block_tree_get_block_descriptor_by_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_tree_get_block_descriptor_by_offset(
+     void )
+{
+	libcerror_error_t *error                        = NULL;
+	libvshadow_block_descriptor_t *block_descriptor = NULL;
+	libvshadow_block_tree_t *block_tree             = NULL;
+	off64_t block_offset                            = 0;
+	int result                                      = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_tree_initialize(
+	          &block_tree,
+	          0x800000000UL,
+	          0x4000,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_tree",
+	 block_tree );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_tree_get_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          &block_descriptor,
+	          &block_offset,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_tree_get_block_descriptor_by_offset(
+	          NULL,
+	          0,
+	          &block_descriptor,
+	          &block_offset,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_tree_get_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          NULL,
+	          &block_offset,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_tree_get_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          &block_descriptor,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_tree_free(
+	          &block_tree,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_tree",
+	 block_tree );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_tree != NULL )
+	{
+		libvshadow_block_tree_free(
+		 &block_tree,
+		 NULL,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_block_tree_insert_block_descriptor_by_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_block_tree_insert_block_descriptor_by_offset(
+     void )
+{
+	libcerror_error_t *error                                 = NULL;
+	libvshadow_block_descriptor_t *block_descriptor          = NULL;
+	libvshadow_block_descriptor_t *existing_block_descriptor = NULL;
+	libvshadow_block_tree_t *block_tree                      = NULL;
+	libvshadow_block_tree_node_t *leaf_block_tree_node       = NULL;
+	int leaf_value_index                                     = 0;
+	int result                                               = 0;
+
+	/* Initialize test
+	 */
+	result = libvshadow_block_tree_initialize(
+	          &block_tree,
+	          0x800000000UL,
+	          0x4000,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_tree",
+	 block_tree );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_block_descriptor_initialize(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "block_descriptor",
+	 block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          block_descriptor,
+	          &leaf_value_index,
+	          &leaf_block_tree_node,
+	          &existing_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "leaf_value_index",
+	 leaf_value_index,
+	 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "leaf_block_tree_node",
+	 leaf_block_tree_node );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "existing_block_descriptor",
+	 existing_block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          NULL,
+	          &leaf_value_index,
+	          &leaf_block_tree_node,
+	          &existing_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "leaf_value_index",
+	 leaf_value_index,
+	 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "leaf_block_tree_node",
+	 leaf_block_tree_node );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "existing_block_descriptor",
+	 existing_block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          NULL,
+	          0,
+	          block_descriptor,
+	          &leaf_value_index,
+	          &leaf_block_tree_node,
+	          &existing_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          block_descriptor,
+	          NULL,
+	          &leaf_block_tree_node,
+	          &existing_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          block_descriptor,
+	          &leaf_value_index,
+	          NULL,
+	          &existing_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          block_tree,
+	          0,
+	          block_descriptor,
+	          &leaf_value_index,
+	          &leaf_block_tree_node,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libvshadow_block_descriptor_free(
+	          &block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_descriptor",
+	 block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_block_tree_free(
+	          &block_tree,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "block_tree",
+	 block_tree );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &block_descriptor,
+		 NULL );
+	}
+	if( block_tree != NULL )
+	{
+		libvshadow_block_tree_free(
+		 &block_tree,
+		 NULL,
+		 NULL );
+	}
+	return( 0 );
+}
+
 /* Tests the libvshadow_block_tree_insert function
  * Returns 1 if successful or 0 if not
  */
@@ -300,6 +720,7 @@ int vshadow_test_block_tree_insert(
 	result = libvshadow_block_tree_initialize(
 	          &forward_block_tree,
 	          0x800000000UL,
+	          0x4000,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -318,6 +739,7 @@ int vshadow_test_block_tree_insert(
 	result = libvshadow_block_tree_initialize(
 	          &reverse_block_tree,
 	          0x800000000UL,
+	          0x4000,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(
@@ -918,6 +1340,16 @@ int main(
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_tree_free",
 	 vshadow_test_block_tree_free );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_tree_get_block_descriptor_by_offset",
+	 vshadow_test_block_tree_get_block_descriptor_by_offset );
+
+	VSHADOW_TEST_RUN(
+	 "libvshadow_block_tree_insert_block_descriptor_by_offset",
+	 vshadow_test_block_tree_insert_block_descriptor_by_offset );
+
+        /* TODO add tests for libvshadow_block_tree_remove_block_descriptor_by_offset */
 
 	VSHADOW_TEST_RUN(
 	 "libvshadow_block_tree_insert",

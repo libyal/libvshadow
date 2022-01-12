@@ -86,6 +86,17 @@ int libvshadow_block_tree_node_initialize(
 
 		return( -1 );
 	}
+	if( leaf_value_size == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid leaf value size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	*block_tree_node = memory_allocate_structure(
 	                    libvshadow_block_tree_node_t );
 
@@ -432,6 +443,7 @@ int libvshadow_block_tree_node_get_leaf_value_at_offset(
      libvshadow_block_tree_node_t *block_tree_node,
      off64_t offset,
      libvshadow_block_descriptor_t **block_descriptor,
+     off64_t *block_offset,
      libcerror_error_t **error )
 {
 	static char *function    = "libvshadow_block_tree_node_get_leaf_value_at_offset";
@@ -471,6 +483,17 @@ int libvshadow_block_tree_node_get_leaf_value_at_offset(
 
 		return( -1 );
 	}
+	if( block_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block offset.",
+		 function );
+
+		return( -1 );
+	}
 	leaf_value_index = ( offset - block_tree_node->start_offset ) / block_tree_node->sub_node_size;
 
 	if( ( leaf_value_index < 0 )
@@ -501,6 +524,8 @@ int libvshadow_block_tree_node_get_leaf_value_at_offset(
 
 		return( -1 );
 	}
+	*block_offset = offset - ( leaf_value_index * block_tree_node->sub_node_size );
+
 	return( 1 );
 }
 

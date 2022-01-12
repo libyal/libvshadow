@@ -49,6 +49,7 @@ struct libvshadow_block_tree
 int libvshadow_block_tree_initialize(
      libvshadow_block_tree_t **block_tree,
      size64_t volume_size,
+     size64_t leaf_value_size,
      libcerror_error_t **error );
 
 int libvshadow_block_tree_free(
@@ -62,6 +63,7 @@ int libvshadow_block_tree_get_block_descriptor_by_offset(
      libvshadow_block_tree_t *block_tree,
      off64_t offset,
      libvshadow_block_descriptor_t **block_descriptor,
+     off64_t *block_offset,
      libcerror_error_t **error );
 
 int libvshadow_block_tree_insert_block_descriptor_by_offset(

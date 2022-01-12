@@ -38,7 +38,8 @@
  */
 int libvshadow_block_tree_initialize(
      libvshadow_block_tree_t **block_tree,
-     size64_t volume_size,
+     size64_t size,
+     size64_t leaf_value_size,
      libcerror_error_t **error )
 {
 	static char *function = "libvshadow_block_tree_initialize";
@@ -101,8 +102,8 @@ int libvshadow_block_tree_initialize(
 	if( libvshadow_block_tree_node_initialize(
 	     &( ( *block_tree )->root_node ),
 	     0,
-	     volume_size,
-	     0x4000,
+	     size,
+	     leaf_value_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -114,7 +115,7 @@ int libvshadow_block_tree_initialize(
 
 		goto on_error;
 	}
-	( *block_tree )->leaf_value_size = 0x4000;
+	( *block_tree )->leaf_value_size = leaf_value_size;
 
 	return( 1 );
 
@@ -184,11 +185,13 @@ int libvshadow_block_tree_get_block_descriptor_by_offset(
      libvshadow_block_tree_t *block_tree,
      off64_t offset,
      libvshadow_block_descriptor_t **block_descriptor,
+     off64_t *block_offset,
      libcerror_error_t **error )
 {
 	libvshadow_block_descriptor_t *safe_block_descriptor = NULL;
 	libvshadow_block_tree_node_t *block_tree_node        = NULL;
 	static char *function                                = "libvshadow_block_tree_get_block_descriptor_by_offset";
+	off64_t safe_block_offset                            = 0;
 
 	if( block_tree == NULL )
 	{
@@ -208,6 +211,17 @@ int libvshadow_block_tree_get_block_descriptor_by_offset(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid block descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( block_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block offset.",
 		 function );
 
 		return( -1 );
@@ -242,6 +256,7 @@ int libvshadow_block_tree_get_block_descriptor_by_offset(
 	     block_tree_node,
 	     offset,
 	     &safe_block_descriptor,
+	     &safe_block_offset,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -260,6 +275,7 @@ int libvshadow_block_tree_get_block_descriptor_by_offset(
 		return( 0 );
 	}
 	*block_descriptor = safe_block_descriptor;
+	*block_offset     = safe_block_offset;
 
 	return( 1 );
 }
@@ -281,6 +297,7 @@ int libvshadow_block_tree_insert_block_descriptor_by_offset(
 	libvshadow_block_tree_node_t *safe_block_tree_node   = NULL;
 	libvshadow_block_tree_node_t *sub_block_tree_node    = NULL;
 	static char *function                                = "libvshadow_block_tree_insert_block_descriptor_by_offset";
+	off64_t block_offset                                 = 0;
 	off64_t sub_node_index                               = 0;
 	off64_t sub_node_offset                              = 0;
 
@@ -400,6 +417,7 @@ int libvshadow_block_tree_insert_block_descriptor_by_offset(
 	     safe_block_tree_node,
 	     offset,
 	     &safe_block_descriptor,
+	     &block_offset,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -462,6 +480,7 @@ int libvshadow_block_tree_remove_block_descriptor_by_offset(
 	libvshadow_block_descriptor_t *safe_block_descriptor = NULL;
 	libvshadow_block_tree_node_t *block_tree_node        = NULL;
 	static char *function                                = "libvshadow_block_tree_remove_block_descriptor_by_offset";
+	off64_t block_offset                                 = 0;
 
 	if( block_tree == NULL )
 	{
@@ -504,6 +523,7 @@ int libvshadow_block_tree_remove_block_descriptor_by_offset(
 	     block_tree_node,
 	     offset,
 	     &safe_block_descriptor,
+	     &block_offset,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -557,6 +577,7 @@ int libvshadow_block_tree_insert(
 	libvshadow_block_descriptor_t *reverse_block_descriptor  = NULL;
 	libvshadow_block_tree_node_t *leaf_block_tree_node       = NULL;
 	static char *function                                    = "libvshadow_block_tree_insert";
+	off64_t block_offset                                     = 0;
 	off64_t new_original_offset                              = 0;
 	int result                                               = 0;
 
@@ -620,6 +641,7 @@ int libvshadow_block_tree_insert(
 			  reverse_block_tree,
 			  block_descriptor->original_offset,
 			  &reverse_block_descriptor,
+			  &block_offset,
 			  error );
 
 		if( result == -1 )
