@@ -24,7 +24,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libvshadow_io_handle.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcerror.h"
 #include "libvshadow_libcnotify.h"
@@ -347,7 +346,7 @@ int libvshadow_ntfs_volume_header_read_data(
 		 mft_cluster_block_number );
 
 		libcnotify_printf(
-		 "%s: mirror MFT cluster block number: %" PRIu64 "\n",
+		 "%s: mirror MFT cluster block number\t: %" PRIu64 "\n",
 		 function,
 		 mirror_mft_cluster_block_number );
 
