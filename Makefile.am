@@ -35,7 +35,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libvshadow.install \
 	dpkg/libvshadow-dev.install \
-	dpkg/libvshadow-python.install \
 	dpkg/libvshadow-python3.install \
 	dpkg/libvshadow-tools.install \
 	dpkg/source/format
