@@ -1324,13 +1324,12 @@ int libvshadow_store_descriptor_read_store_bitmap(
      libcerror_error_t **error )
 {
 	libvshadow_store_block_t *store_block = NULL;
-	uint8_t *block_data                   = NULL;
 	static char *function                 = "libvshadow_store_descriptor_read_store_bitmap";
+	size_t block_data_offset              = 0;
 	off64_t safe_bitmap_offset            = 0;
 	off64_t safe_next_offset              = 0;
 	off64_t start_offset                  = 0;
 	uint32_t value_32bit                  = 0;
-	uint16_t block_size                   = 0;
 	uint8_t bit_index                     = 0;
 	int result                            = 0;
 
@@ -1415,8 +1414,7 @@ int libvshadow_store_descriptor_read_store_bitmap(
 	}
 	safe_next_offset = store_block->next_offset;
 
-	block_data = &( store_block->data[ sizeof( vshadow_store_block_header_t ) ] );
-	block_size = (uint16_t) ( store_block->data_size - sizeof( vshadow_store_block_header_t ) );
+	block_data_offset = sizeof( vshadow_store_block_header_t );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1426,17 +1424,17 @@ int libvshadow_store_descriptor_read_store_bitmap(
 		 function,
 		 store_descriptor->index );
 		libcnotify_print_data(
-		 block_data,
-		 block_size,
+		 &( store_block->data[ block_data_offset ] ),
+		 store_block->data_size - sizeof( vshadow_store_block_header_t ),
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	start_offset = -1;
 
-	while( block_size > 0 )
+	while( block_data_offset < store_block->data_size )
 	{
 		byte_stream_copy_to_uint32_little_endian(
-		 block_data,
+		 &( store_block->data[ block_data_offset ] ),
 		 value_32bit );
 
 		for( bit_index = 0;
@@ -1493,8 +1491,7 @@ int libvshadow_store_descriptor_read_store_bitmap(
 
 			value_32bit >>= 1;
 		}
-		block_data += 4;
-		block_size -= 4;
+		block_data_offset += 4;
 	}
 	if( start_offset >= 0 )
 	{
@@ -1577,11 +1574,10 @@ int libvshadow_store_descriptor_read_store_block_list(
      off64_t *next_offset,
      libcerror_error_t **error )
 {
-	libvshadow_store_block_t *store_block           = NULL;
 	libvshadow_block_descriptor_t *block_descriptor = NULL;
-	uint8_t *block_data                             = NULL;
+	libvshadow_store_block_t *store_block           = NULL;
 	static char *function                           = "libvshadow_store_descriptor_read_store_block_list";
-	uint16_t block_size                             = 0;
+	size_t block_data_offset                        = 0;
 	int result                                      = 0;
 
 	if( store_descriptor == NULL )
@@ -1651,10 +1647,9 @@ int libvshadow_store_descriptor_read_store_block_list(
 	}
 	*next_offset = store_block->next_offset;
 
-	block_data = &( store_block->data[ sizeof( vshadow_store_block_header_t ) ] );
-	block_size = (uint16_t) ( store_block->data_size - sizeof( vshadow_store_block_header_t ) );
+	block_data_offset = sizeof( vshadow_store_block_header_t );
 
-	while( block_size >= sizeof( vshadow_store_block_list_entry_t ) )
+	while( block_data_offset <= ( store_block->data_size - sizeof( vshadow_store_block_list_entry_t ) ) )
 	{
 		if( libvshadow_block_descriptor_initialize(
 		     &block_descriptor,
@@ -1671,8 +1666,8 @@ int libvshadow_store_descriptor_read_store_block_list(
 		}
 		result = libvshadow_block_descriptor_read_data(
 			  block_descriptor,
-			  block_data,
-			  block_size,
+		          &( store_block->data[ block_data_offset ] ),
+			  store_block->data_size - block_data_offset,
 			  store_descriptor->index,
 			  error );
 
@@ -1740,8 +1735,7 @@ int libvshadow_store_descriptor_read_store_block_list(
 			}
 			block_descriptor = NULL;
 		}
-		block_data += sizeof( vshadow_store_block_list_entry_t );
-		block_size -= sizeof( vshadow_store_block_list_entry_t );
+		block_data_offset += sizeof( vshadow_store_block_list_entry_t );
 	}
 	if( libvshadow_store_block_free(
 	     &store_block,
@@ -1785,11 +1779,10 @@ int libvshadow_store_descriptor_read_store_block_range_list(
      off64_t *next_offset,
      libcerror_error_t **error )
 {
-	libvshadow_store_block_t *store_block                       = NULL;
 	libvshadow_block_range_descriptor_t *block_range_descriptor = NULL;
-	uint8_t *block_data                                         = NULL;
+	libvshadow_store_block_t *store_block                       = NULL;
 	static char *function                                       = "libvshadow_store_descriptor_read_store_block_range_list";
-	uint16_t block_size                                         = 0;
+	size_t block_data_offset                                    = 0;
 	int result                                                  = 0;
 
 	if( store_descriptor == NULL )
@@ -1859,10 +1852,9 @@ int libvshadow_store_descriptor_read_store_block_range_list(
 	}
 	*next_offset = store_block->next_offset;
 
-	block_data = &( store_block->data[ sizeof( vshadow_store_block_header_t ) ] );
-	block_size = (uint16_t) ( store_block->data_size - sizeof( vshadow_store_block_header_t ) );
+	block_data_offset = sizeof( vshadow_store_block_header_t );
 
-	while( block_size >= sizeof( vshadow_store_block_list_entry_t ) )
+	while( block_data_offset <= ( store_block->data_size - sizeof( vshadow_store_block_range_list_entry_t ) ) )
 	{
 		if( libvshadow_block_range_descriptor_initialize(
 		     &block_range_descriptor,
@@ -1879,8 +1871,8 @@ int libvshadow_store_descriptor_read_store_block_range_list(
 		}
 		result = libvshadow_block_range_descriptor_read_data(
 			  block_range_descriptor,
-			  block_data,
-			  block_size,
+		          &( store_block->data[ block_data_offset ] ),
+			  store_block->data_size - block_data_offset,
 			  store_descriptor->index,
 			  error );
 
@@ -1918,8 +1910,7 @@ int libvshadow_store_descriptor_read_store_block_range_list(
 			}
 			block_range_descriptor = NULL;
 		}
-		block_data += sizeof( vshadow_store_block_range_list_entry_t );
-		block_size -= sizeof( vshadow_store_block_range_list_entry_t );
+		block_data_offset += sizeof( vshadow_store_block_range_list_entry_t );
 	}
 	if( libvshadow_store_block_free(
 	     &store_block,
@@ -1957,12 +1948,14 @@ on_error:
  */
 int libvshadow_store_descriptor_read_block_descriptors(
      libvshadow_store_descriptor_t *store_descriptor,
+     libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function      = "libvshadow_store_descriptor_read_block_descriptors";
-	off64_t bitmap_offset      = 0;
-	off64_t store_block_offset = 0;
+	libvshadow_block_tree_t *store_block_tree = NULL;
+	static char *function                     = "libvshadow_store_descriptor_read_block_descriptors";
+	off64_t bitmap_offset                     = 0;
+	off64_t store_block_offset                = 0;
 
 	if( store_descriptor == NULL )
 	{
@@ -1971,6 +1964,17 @@ int libvshadow_store_descriptor_read_block_descriptors(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid store descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -2022,11 +2026,43 @@ int libvshadow_store_descriptor_read_block_descriptors(
 
 			goto on_error;
 		}
+		if( libvshadow_block_tree_initialize(
+		     &store_block_tree,
+		     io_handle->volume_size,
+		     io_handle->block_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create store block tree.",
+			 function );
+
+			goto on_error;
+		}
 		bitmap_offset      = 0;
 		store_block_offset = store_descriptor->store_bitmap_offset;
 
 		while( store_block_offset != 0 )
 		{
+			if( libvshadow_io_handle_check_if_block_first_read(
+			     io_handle,
+			     store_block_tree,
+			     store_block_offset,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GENERIC,
+				 "%s: unable to check if first read of store bitmap block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+				 function,
+				 store_block_offset,
+				 store_block_offset );
+
+				goto on_error;
+			}
 			if( libvshadow_store_descriptor_read_store_bitmap(
 			     store_descriptor,
 			     file_io_handle,
@@ -2051,6 +2087,23 @@ int libvshadow_store_descriptor_read_block_descriptors(
 
 		while( store_block_offset != 0 )
 		{
+			if( libvshadow_io_handle_check_if_block_first_read(
+			     io_handle,
+			     store_block_tree,
+			     store_block_offset,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GENERIC,
+				 "%s: unable to check if first read of store previous bitmap block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+				 function,
+				 store_block_offset,
+				 store_block_offset );
+
+				goto on_error;
+			}
 			if( libvshadow_store_descriptor_read_store_bitmap(
 			     store_descriptor,
 			     file_io_handle,
@@ -2074,6 +2127,23 @@ int libvshadow_store_descriptor_read_block_descriptors(
 
 		while( store_block_offset != 0 )
 		{
+			if( libvshadow_io_handle_check_if_block_first_read(
+			     io_handle,
+			     store_block_tree,
+			     store_block_offset,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GENERIC,
+				 "%s: unable to check if first read of store block list block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+				 function,
+				 store_block_offset,
+				 store_block_offset );
+
+				goto on_error;
+			}
 			if( libvshadow_store_descriptor_read_store_block_list(
 			     store_descriptor,
 			     file_io_handle,
@@ -2095,6 +2165,23 @@ int libvshadow_store_descriptor_read_block_descriptors(
 
 		while( store_block_offset != 0 )
 		{
+			if( libvshadow_io_handle_check_if_block_first_read(
+			     io_handle,
+			     store_block_tree,
+			     store_block_offset,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GENERIC,
+				 "%s: unable to check if first read of store block range list block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+				 function,
+				 store_block_offset,
+				 store_block_offset );
+
+				goto on_error;
+			}
 			if( libvshadow_store_descriptor_read_store_block_range_list(
 			     store_descriptor,
 			     file_io_handle,
@@ -2111,6 +2198,20 @@ int libvshadow_store_descriptor_read_block_descriptors(
 
 				goto on_error;
 			}
+		}
+		if( libvshadow_block_tree_free(
+		     &store_block_tree,
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free store block tree.",
+			 function );
+
+			goto on_error;
 		}
 		store_descriptor->block_descriptors_read = 1;
 	}
@@ -2134,6 +2235,13 @@ int libvshadow_store_descriptor_read_block_descriptors(
 on_error:
 	if( store_descriptor->block_descriptors_read == 0 )
 	{
+		if( store_block_tree != NULL )
+		{
+			libvshadow_block_tree_free(
+			 &store_block_tree,
+			 (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
+			 NULL );
+		}
 		if( store_descriptor->reverse_block_tree != NULL )
 		{
 			libvshadow_block_tree_free(
@@ -2591,6 +2699,7 @@ int libvshadow_store_descriptor_get_reverse_block_range_at_offset(
  */
 ssize_t libvshadow_store_descriptor_read_buffer(
          libvshadow_store_descriptor_t *store_descriptor,
+         libvshadow_io_handle_t *io_handle,
          libbfio_handle_t *file_io_handle,
          uint8_t *buffer,
          size_t buffer_size,
@@ -2637,6 +2746,7 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 	 */
 	if( libvshadow_store_descriptor_read_block_descriptors(
 	     store_descriptor,
+	     io_handle,
 	     file_io_handle,
 	     error ) != 1 )
 	{
@@ -2815,6 +2925,7 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 #endif
 				read_count = libvshadow_store_descriptor_read_buffer(
 					      store_descriptor->next_store_descriptor,
+					      io_handle,
 					      file_io_handle,
 					      &( buffer[ buffer_offset ] ),
 					      read_size,
@@ -2888,6 +2999,7 @@ ssize_t libvshadow_store_descriptor_read_buffer(
 #endif
 				read_count = libvshadow_store_descriptor_read_buffer(
 					      store_descriptor->next_store_descriptor,
+					      io_handle,
 					      file_io_handle,
 					      &( buffer[ buffer_offset ] ),
 					      read_size,
@@ -3541,6 +3653,7 @@ int libvshadow_store_descriptor_get_attribute_flags(
  */
 int libvshadow_store_descriptor_get_number_of_blocks(
      libvshadow_store_descriptor_t *store_descriptor,
+     libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      int *number_of_blocks,
      libcerror_error_t **error )
@@ -3574,6 +3687,7 @@ int libvshadow_store_descriptor_get_number_of_blocks(
 	 */
 	if( libvshadow_store_descriptor_read_block_descriptors(
 	     store_descriptor,
+	     io_handle,
 	     file_io_handle,
 	     error ) != 1 )
 	{
@@ -3638,6 +3752,7 @@ int libvshadow_store_descriptor_get_number_of_blocks(
  */
 int libvshadow_store_descriptor_get_block_descriptor_by_index(
      libvshadow_store_descriptor_t *store_descriptor,
+     libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      int block_index,
      libvshadow_block_descriptor_t **block_descriptor,
@@ -3672,6 +3787,7 @@ int libvshadow_store_descriptor_get_block_descriptor_by_index(
 	 */
 	if( libvshadow_store_descriptor_read_block_descriptors(
 	     store_descriptor,
+	     io_handle,
 	     file_io_handle,
 	     error ) != 1 )
 	{

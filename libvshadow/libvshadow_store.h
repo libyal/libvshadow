@@ -41,13 +41,13 @@ typedef struct libvshadow_internal_store libvshadow_internal_store_t;
 
 struct libvshadow_internal_store
 {
-	/* The file IO handle
-	 */
-	libbfio_handle_t *file_io_handle;
-
 	/* The IO handle
 	 */
 	libvshadow_io_handle_t *io_handle;
+
+	/* The file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
 
 	/* The internal volume
 	 */
@@ -74,8 +74,8 @@ struct libvshadow_internal_store
 
 int libvshadow_store_initialize(
      libvshadow_store_t **store,
-     libbfio_handle_t *file_io_handle,
      libvshadow_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      libvshadow_internal_volume_t *internal_volume,
      int store_descriptor_index,
      libcerror_error_t **error );

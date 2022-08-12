@@ -991,6 +991,20 @@ int libvshadow_volume_open_read(
 		return( -1 );
 	}
 #endif
+	if( libbfio_handle_get_size(
+	     file_io_handle,
+	     &( internal_volume->io_handle->volume_size ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file size.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -1525,8 +1539,8 @@ int libvshadow_volume_get_store(
 #endif
 	if( libvshadow_store_initialize(
 	     store,
-	     internal_volume->file_io_handle,
 	     internal_volume->io_handle,
+	     internal_volume->file_io_handle,
 	     internal_volume,
 	     store_index,
 	     error ) != 1 )

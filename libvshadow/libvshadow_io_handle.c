@@ -24,6 +24,9 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libvshadow_block_descriptor.h"
+#include "libvshadow_block_tree.h"
+#include "libvshadow_block_tree_node.h"
 #include "libvshadow_debug.h"
 #include "libvshadow_definitions.h"
 #include "libvshadow_io_handle.h"
@@ -183,6 +186,95 @@ int libvshadow_io_handle_clear(
 	io_handle->block_size = 0x4000;
 
 	return( 1 );
+}
+
+/* Checks if this is the first time the block is being read
+ * Returns 1 if successful or -1 on error
+ */
+int libvshadow_io_handle_check_if_block_first_read(
+     libvshadow_io_handle_t *io_handle,
+     libvshadow_block_tree_t *block_tree,
+     off64_t block_offset,
+     libcerror_error_t **error )
+{
+	libvshadow_block_descriptor_t *existing_block_descriptor = NULL;
+	libvshadow_block_descriptor_t *new_block_descriptor      = NULL;
+	libvshadow_block_tree_node_t *leaf_block_tree_node       = NULL;
+	static char *function                                    = "libvshadow_io_handle_check_if_block_first_read";
+	int leaf_value_index                                     = 0;
+	int result                                               = 0;
+
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libvshadow_block_descriptor_initialize(
+	     &new_block_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create block descriptor.",
+		 function );
+
+		goto on_error;
+	}
+	new_block_descriptor->offset = block_offset;
+
+	result = libvshadow_block_tree_insert_block_descriptor_by_offset(
+	          block_tree,
+	          block_offset,
+	          new_block_descriptor,
+	          &leaf_value_index,
+	          &leaf_block_tree_node,
+	          &existing_block_descriptor,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+		 "%s: unable to insert block descriptor in block tree.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid block offset: %" PRIi64 " (0x%08" PRIx64 ") value already exists.",
+		 function,
+		 block_offset,
+		 block_offset );
+
+		goto on_error;
+	}
+	new_block_descriptor = NULL;
+
+	return( 1 );
+
+on_error:
+	if( new_block_descriptor != NULL )
+	{
+		libvshadow_block_descriptor_free(
+		 &new_block_descriptor,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Reads the volume header
@@ -526,13 +618,15 @@ int libvshadow_io_handle_read_catalog(
      libcdata_array_t *store_descriptors_array,
      libcerror_error_t **error )
 {
+	libvshadow_block_tree_t *catalog_block_tree          = NULL;
 	libvshadow_store_descriptor_t *last_store_descriptor = NULL;
 	libvshadow_store_descriptor_t *store_descriptor      = NULL;
 	uint8_t *catalog_block_data                          = NULL;
 	static char *function                                = "libvshadow_io_handle_read_catalog";
-	off64_t next_offset                                  = 0;
+	size64_t safe_volume_size                            = 0;
 	size_t catalog_block_offset                          = 0;
 	ssize_t read_count                                   = 0;
+	off64_t next_offset                                  = 0;
 	uint64_t catalog_entry_type                          = 0;
 	int result                                           = 0;
 	int store_descriptor_index                           = 0;
@@ -573,6 +667,21 @@ int libvshadow_io_handle_read_catalog(
 
 		goto on_error;
 	}
+	if( libvshadow_block_tree_initialize(
+	     &catalog_block_tree,
+	     io_handle->volume_size,
+	     io_handle->block_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create catalog block tree.",
+		 function );
+
+		goto on_error;
+	}
 	do
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -585,6 +694,23 @@ int libvshadow_io_handle_read_catalog(
 			 file_offset );
 		}
 #endif
+		if( libvshadow_io_handle_check_if_block_first_read(
+		     io_handle,
+		     catalog_block_tree,
+		     file_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to check if first read of catalog block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 file_offset,
+			 file_offset );
+
+			goto on_error;
+		}
 		read_count = libbfio_handle_read_buffer_at_offset(
 			      file_io_handle,
 			      catalog_block_data,
@@ -678,22 +804,22 @@ int libvshadow_io_handle_read_catalog(
 
 					goto on_error;
 				}
-				if( ( *volume_size == 0 )
+				if( ( safe_volume_size == 0 )
 				 && ( store_descriptor_index == 0 ) )
 				{
-					*volume_size = store_descriptor->volume_size;
+					safe_volume_size = store_descriptor->volume_size;
 				}
 #if defined( HAVE_DEBUG_OUTPUT )
 				else if( libcnotify_verbose != 0 )
 				{
-					if( *volume_size != store_descriptor->volume_size )
+					if( safe_volume_size != store_descriptor->volume_size )
 					{
 						libcnotify_printf(
 						 "%s: store descriptor: %d - mismatch in volume size: %" PRIu64 " (expected: %" PRIu64 ").",
 						 function,
 						 store_descriptor_index,
 						 store_descriptor->volume_size,
-						 *volume_size );
+						 safe_volume_size );
 					}
 				}
 #endif
@@ -768,8 +894,24 @@ int libvshadow_io_handle_read_catalog(
 			goto on_error;
 		}
 	}
+	if( libvshadow_block_tree_free(
+	     &catalog_block_tree,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free catalog block tree.",
+		 function );
+
+		goto on_error;
+	}
 	memory_free(
 	 catalog_block_data );
+
+	*volume_size = safe_volume_size;
 
 	return( 1 );
 
@@ -778,6 +920,13 @@ on_error:
 	{
 		libvshadow_store_descriptor_free(
 		 &store_descriptor,
+		 NULL );
+	}
+	if( catalog_block_tree != NULL )
+	{
+		libvshadow_block_tree_free(
+		 &catalog_block_tree,
+		 (int (*)(intptr_t **, libcerror_error_t **)) &libvshadow_block_descriptor_free,
 		 NULL );
 	}
 	if( catalog_block_data != NULL )

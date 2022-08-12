@@ -41,8 +41,8 @@
  */
 int libvshadow_store_initialize(
      libvshadow_store_t **store,
-     libbfio_handle_t *file_io_handle,
      libvshadow_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      libvshadow_internal_volume_t *internal_volume,
      int store_descriptor_index,
      libcerror_error_t **error )
@@ -69,6 +69,17 @@ int libvshadow_store_initialize(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid store value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -351,6 +362,7 @@ ssize_t libvshadow_internal_store_read_buffer_from_file_io_handle(
 	}
 	read_count = libvshadow_store_descriptor_read_buffer(
 		      internal_store->store_descriptor,
+		      internal_store->io_handle,
 		      file_io_handle,
 		      (uint8_t *) buffer,
 		      buffer_size,
@@ -1253,6 +1265,7 @@ int libvshadow_store_get_number_of_blocks(
 	}
 	if( libvshadow_store_descriptor_get_number_of_blocks(
 	     internal_store->store_descriptor,
+	     internal_store->io_handle,
 	     internal_store->file_io_handle,
 	     number_of_blocks,
 	     error ) != 1 )
@@ -1331,6 +1344,7 @@ int libvshadow_store_get_block_by_index(
 	}
 	if( libvshadow_store_descriptor_get_block_descriptor_by_index(
 	     internal_store->store_descriptor,
+	     internal_store->io_handle,
 	     internal_store->file_io_handle,
 	     block_index,
 	     &block_descriptor,

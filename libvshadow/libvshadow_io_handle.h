@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libvshadow_block_tree.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
@@ -39,6 +40,10 @@ typedef struct libvshadow_io_handle libvshadow_io_handle_t;
 
 struct libvshadow_io_handle
 {
+	/* The volume size
+	 */
+	size64_t volume_size;
+
 	/* The block size
 	 */
 	size_t block_size;
@@ -58,6 +63,12 @@ int libvshadow_io_handle_free(
 
 int libvshadow_io_handle_clear(
      libvshadow_io_handle_t *io_handle,
+     libcerror_error_t **error );
+
+int libvshadow_io_handle_check_if_block_first_read(
+     libvshadow_io_handle_t *io_handle,
+     libvshadow_block_tree_t *block_tree,
+     off64_t block_offset,
      libcerror_error_t **error );
 
 int libvshadow_io_handle_read_volume_header(

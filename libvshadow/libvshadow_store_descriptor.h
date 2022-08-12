@@ -27,6 +27,7 @@
 
 #include "libvshadow_block_descriptor.h"
 #include "libvshadow_block_tree.h"
+#include "libvshadow_io_handle.h"
 #include "libvshadow_libbfio.h"
 #include "libvshadow_libcdata.h"
 #include "libvshadow_libcerror.h"
@@ -217,11 +218,13 @@ int libvshadow_store_descriptor_read_store_block_range_list(
 
 int libvshadow_store_descriptor_read_block_descriptors(
      libvshadow_store_descriptor_t *store_descriptor,
+     libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
 ssize_t libvshadow_store_descriptor_read_buffer(
          libvshadow_store_descriptor_t *store_descriptor,
+         libvshadow_io_handle_t *io_handle,
          libbfio_handle_t *file_io_handle,
          uint8_t *buffer,
          size_t buffer_size,
@@ -264,12 +267,14 @@ int libvshadow_store_descriptor_get_attribute_flags(
 
 int libvshadow_store_descriptor_get_number_of_blocks(
      libvshadow_store_descriptor_t *store_descriptor,
+     libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      int *number_of_blocks,
      libcerror_error_t **error );
 
 int libvshadow_store_descriptor_get_block_descriptor_by_index(
      libvshadow_store_descriptor_t *store_descriptor,
+     libvshadow_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      int block_index,
      libvshadow_block_descriptor_t **block_descriptor,
