@@ -672,7 +672,7 @@ int mount_file_entry_get_number_of_sub_file_entries(
 			return( -1 );
 		}
 		if( ( number_of_stores < 0 )
-		 || ( number_of_stores > 99 ) )
+		 || ( number_of_stores > 999 ) )
 		{
 			libcerror_error_set(
 			 error,
