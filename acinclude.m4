@@ -1,6 +1,6 @@
 dnl Checks for required headers and functions
 dnl
-dnl Version: 20230213
+dnl Version: 20200713
 
 dnl Function to detect if libvshadow dependencies are available
 AC_DEFUN([AX_LIBVSHADOW_CHECK_LOCAL],
