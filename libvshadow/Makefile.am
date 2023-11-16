@@ -79,11 +79,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libvshadow_definitions.h
-	/bin/rm -f libvshadow.rc
-	/bin/rm -f Makefile
+	-rm -f libvshadow_definitions.h
+	-rm -f libvshadow.rc
+	-rm -f Makefile
 
-splint:
+sources-local: $(BUILT_SOURCES)
+
+splint-local:
 	@echo "Running splint on libvshadow ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libvshadow_la_SOURCES)
 

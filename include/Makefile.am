@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libvshadow.h
-	/bin/rm -f libvshadow/definitions.h
-	/bin/rm -f libvshadow/features.h
-	/bin/rm -f libvshadow/types.h
-	/bin/rm -f Makefile
+	-rm -f libvshadow.h
+	-rm -f libvshadow/definitions.h
+	-rm -f libvshadow/features.h
+	-rm -f libvshadow/types.h
+	-rm -f Makefile
 

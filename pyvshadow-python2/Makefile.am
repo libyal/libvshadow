@@ -70,8 +70,8 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 clean-local:
-	/bin/rm -f pyvshadow*.[ch]
+	-rm -f pyvshadow*.[ch]
 
 distclean: clean
-	/bin/rm -f Makefile
+	-rm -f Makefile
 
