@@ -18,8 +18,6 @@ SUBDIRS = \
 	libvshadow \
 	vshadowtools \
 	pyvshadow \
-	pyvshadow-python2 \
-	pyvshadow-python3 \
 	po \
 	manuals \
 	tests \
