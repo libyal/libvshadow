@@ -1,7 +1,7 @@
 /*
  * Block range descriptor functions
  *
- * Copyright (C) 2011-2023, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2024, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
