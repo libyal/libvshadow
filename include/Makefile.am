@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libvshadow/features.h.in \
 	libvshadow/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libvshadow.h \
+	libvshadow/definitions.h \
+	libvshadow/features.h \
+	libvshadow/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libvshadow.h
-	-rm -f libvshadow/definitions.h
-	-rm -f libvshadow/features.h
-	-rm -f libvshadow/types.h
-	-rm -f Makefile
 

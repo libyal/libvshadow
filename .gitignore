@@ -134,6 +134,7 @@ stamp-h[1-9]
 /vshadowtools/vshadowmount
 /tests/*.exe
 /tests/input
+/tests/notify_stream.log
 /tests/tmp*
 /tests/vshadow_test_block
 /tests/vshadow_test_block_descriptor

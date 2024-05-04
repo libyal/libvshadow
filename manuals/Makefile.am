@@ -8,9 +8,7 @@ EXTRA_DIST = \
 	vshadowmount.1 \
 	libvshadow.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 
