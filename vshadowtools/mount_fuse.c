@@ -44,7 +44,7 @@
 
 extern mount_handle_t *vshadowmount_mount_handle;
 
-#if defined( HAVE_LIBFUSE ) || defined( HAVE_LIBOSXFUSE )
+#if defined( HAVE_LIBFUSE ) || defined( HAVE_LIBFUSE3 ) || defined( HAVE_LIBOSXFUSE )
 
 #if ( SIZEOF_OFF_T != 8 ) && ( SIZEOF_OFF_T != 4 )
 #error Size of off_t not supported
@@ -255,11 +255,20 @@ int mount_fuse_filldir(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBFUSE3 )
+	if( filler(
+	     buffer,
+	     name,
+	     stat_info,
+	     0,
+	     0 ) == 1 )
+#else
 	if( filler(
 	     buffer,
 	     name,
 	     stat_info,
 	     0 ) == 1 )
+#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -655,12 +664,22 @@ on_error:
 /* Reads a directory
  * Returns 0 if successful or a negative errno value otherwise
  */
+#if defined( HAVE_LIBFUSE3 )
+int mount_fuse_readdir(
+     const char *path,
+     void *buffer,
+     fuse_fill_dir_t filler,
+     off_t offset VSHADOWTOOLS_ATTRIBUTE_UNUSED,
+     struct fuse_file_info *file_info VSHADOWTOOLS_ATTRIBUTE_UNUSED,
+     enum fuse_readdir_flags flags VSHADOWTOOLS_ATTRIBUTE_UNUSED )
+#else
 int mount_fuse_readdir(
      const char *path,
      void *buffer,
      fuse_fill_dir_t filler,
      off_t offset VSHADOWTOOLS_ATTRIBUTE_UNUSED,
      struct fuse_file_info *file_info VSHADOWTOOLS_ATTRIBUTE_UNUSED )
+#endif
 {
 	struct stat *stat_info                = NULL;
 	libcerror_error_t *error              = NULL;
@@ -674,6 +693,10 @@ int mount_fuse_readdir(
 	int sub_file_entry_index              = 0;
 
 	VSHADOWTOOLS_UNREFERENCED_PARAMETER( offset )
+
+#if defined( HAVE_LIBFUSE3 )
+	VSHADOWTOOLS_UNREFERENCED_PARAMETER( flags )
+#endif
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1026,21 +1049,7 @@ int mount_fuse_releasedir(
 	}
 	if( file_info->fh != (uint64_t) NULL )
 	{
-		if( mount_file_entry_free(
-		     (mount_file_entry_t **) &( file_info->fh ),
-		     &error ) != 1 )
-		{
-			libcerror_error_set(
-			 &error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free file entry.",
-			 function );
-
-			result = -ENOENT;
-
-			goto on_error;
-		}
+		file_info->fh = (uint64_t) NULL;
 	}
 	return( 0 );
 
@@ -1058,9 +1067,16 @@ on_error:
 /* Retrieves the file stat info
  * Returns 0 if successful or a negative errno value otherwise
  */
+#if defined( HAVE_LIBFUSE3 )
+int mount_fuse_getattr(
+     const char *path,
+     struct stat *stat_info,
+     struct fuse_file_info *file_info VSHADOWTOOLS_ATTRIBUTE_UNUSED )
+#else
 int mount_fuse_getattr(
      const char *path,
      struct stat *stat_info )
+#endif
 {
 	libcerror_error_t *error       = NULL;
 	mount_file_entry_t *file_entry = NULL;
@@ -1071,6 +1087,10 @@ int mount_fuse_getattr(
 	uint64_t modification_time     = 0;
 	uint16_t file_mode             = 0;
 	int result                     = 0;
+
+#if defined( HAVE_LIBFUSE3 )
+	VSHADOWTOOLS_UNREFERENCED_PARAMETER( file_info )
+#endif
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1301,19 +1321,6 @@ void mount_fuse_destroy(
 #endif
 	if( vshadowmount_mount_handle != NULL )
 	{
-		if( mount_handle_close(
-		     vshadowmount_mount_handle,
-		     &error ) != 0 )
-		{
-			libcerror_error_set(
-			 &error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close mount handle.",
-			 function );
-
-			goto on_error;
-		}
 		if( mount_handle_free(
 		     &vshadowmount_mount_handle,
 		     &error ) != 1 )
@@ -1341,5 +1348,5 @@ on_error:
 	return;
 }
 
-#endif /* defined( HAVE_LIBFUSE ) || defined( HAVE_LIBOSXFUSE ) */
+#endif /* defined( HAVE_LIBFUSE ) || defined( HAVE_LIBFUSE3 ) || defined( HAVE_LIBOSXFUSE ) */
 

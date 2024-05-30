@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Windows NT Volume Shadow Snapshot (VSS) volume
+ * Shows information obtained from a Windows NT Volume Shadow Snapshot (VSS) volume.
  *
  * Copyright (C) 2011-2024, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -51,7 +51,7 @@
 info_handle_t *vshadowinfo_info_handle = NULL;
 int vshadowinfo_abort                  = 0;
 
-/* Prints the executable usage information
+/* Prints usage information
  */
 void usage_fprint(
       FILE *stream )
@@ -142,7 +142,7 @@ int main( int argc, char * const argv[] )
 	 1 );
 
 	if( libclocale_initialize(
-             "vshadowtools",
+	     "vshadowtools",
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -151,9 +151,9 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-        if( vshadowtools_output_initialize(
-             _IONBF,
-             &error ) != 1 )
+	if( vshadowtools_output_initialize(
+	     _IONBF,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
