@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libvshadow],
-  [20251207],
+  [20251220],
   [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
