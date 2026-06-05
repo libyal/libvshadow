@@ -1218,9 +1218,9 @@ int libvshadow_store_descriptor_read_store_header(
 
 			goto on_error;
 		}
+#if defined( HAVE_DEBUG_OUTPUT )
 		store_header_data_offset += store_descriptor->service_machine_string_size;
 
-#if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			if( libvshadow_debug_print_utf16_string_value(
@@ -1367,7 +1367,6 @@ int libvshadow_store_descriptor_read_store_bitmap(
 		return( -1 );
 	}
 	safe_bitmap_offset = *bitmap_offset;
-	safe_next_offset   = *next_offset;
 
 	if( libvshadow_store_block_initialize(
 	     &store_block,

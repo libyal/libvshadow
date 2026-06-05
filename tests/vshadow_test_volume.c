@@ -788,6 +788,10 @@ int vshadow_test_volume_open_file_io_handle(
 	size_t string_length             = 0;
 	int result                       = 0;
 
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "source",
+	 source );
+
 	/* Initialize test
 	 */
 	result = libbfio_file_initialize(

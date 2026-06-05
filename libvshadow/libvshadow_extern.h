@@ -24,21 +24,28 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBVSHADOW_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBVSHADOW_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBVSHADOW_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBVSHADOW for local use of libvshadow
  */
 #if !defined( HAVE_LOCAL_LIBVSHADOW )
 
 #include <libvshadow/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBVSHADOW_EXTERN_VARIABLE	extern
-#else
-#define LIBVSHADOW_EXTERN_VARIABLE	LIBVSHADOW_EXTERN
-#endif
-
 #else
 #define LIBVSHADOW_EXTERN		/* extern */
-#define LIBVSHADOW_EXTERN_VARIABLE	extern
+#define LIBVSHADOW_EXTERN_VARIABLE	LIBVSHADOW_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBVSHADOW ) */
 

@@ -31,14 +31,17 @@
  */
 #if defined( LIBVSHADOW_DLL_EXPORT )
 #define LIBVSHADOW_EXTERN __declspec(dllexport)
+#define LIBVSHADOW_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBVSHADOW_DLL_IMPORT )
-#define LIBVSHADOW_EXTERN extern __declspec(dllimport)
+#define LIBVSHADOW_EXTERN __declspec(dllimport)
+#define LIBVSHADOW_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBVSHADOW_EXTERN extern
+#define LIBVSHADOW_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBVSHADOW_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBVSHADOW_EXTERN_H ) */
 
