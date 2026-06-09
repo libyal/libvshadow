@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tests library functions and types.
 #
-# Version: 20260531
+# Version: 20260608
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -78,7 +78,7 @@ run_test_with_input()
 
 		local TEST_SET_DIRECTORY=$(get_test_set_directory "${TEST_PROFILE_DIRECTORY}" "${TEST_SET_INPUT_DIRECTORY}");
 
-		local INPUT_FILES=()
+		INPUT_FILES=()
 
 		if test -f "${TEST_SET_DIRECTORY}/files";
 		then
@@ -92,7 +92,10 @@ run_test_with_input()
 		else
 			for FILENAME in ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB};
 			do
-				INPUT_FILES+=("${FILENAME}")
+				if test -e "${FILENAME}";
+				then
+					INPUT_FILES+=("${FILENAME}")
+				fi
 			done
 		fi
 		for INPUT_FILE in "${INPUT_FILES[@]}";
