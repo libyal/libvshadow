@@ -219,7 +219,7 @@ void vshadowtools_getopt_wrapped_fprint(
 
 	while( line_offset < text_length )
 	{
-		while( ( next_word_offset - line_offset ) < maximum_line_length )
+		while( ( next_word_offset - line_offset ) < (size_t) maximum_line_length )
 		{
 			while( next_word_offset < text_length )
 			{
@@ -352,7 +352,7 @@ void vshadowtools_getopt_usage_fprint(
 		string_length = 8 + narrow_string_length(
 		                     option->name );
 
-		if( ( line_length - string_length ) > maximum_line_length )
+		if( ( line_length + string_length ) > maximum_line_length )
 		{
 			fprintf(
 			 stream,
@@ -376,7 +376,7 @@ void vshadowtools_getopt_usage_fprint(
 	{
 		string_length += 6 + number_of_options_without_name;
 
-		if( ( line_length - string_length ) > maximum_line_length )
+		if( ( line_length + string_length ) > maximum_line_length )
 		{
 			fprintf(
 			 stream,

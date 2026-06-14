@@ -12,6 +12,11 @@ If (-Not (Test-Path ${TestInputDirectory}))
 {
 	New-Item -Name ${TestInputDirectory} -ItemType "directory" | Out-Null
 }
+If (-Not (Test-Path "${TestInputDirectory}\.vshadowinfo"))
+{
+	New-Item -Name "${TestInputDirectory}\.vshadowinfo" -ItemType "directory" | Out-Null
+	Write-Output "-a" | Out-File -Encoding ascii -FilePath "${TestInputDirectory}\.vshadowinfo\options"
+}
 If (-Not (Test-Path "${TestInputDirectory}\${TestSet}"))
 {
 	New-Item -Name "${TestInputDirectory}\${TestSet}" -ItemType "directory" | Out-Null

@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -132,9 +132,20 @@ stamp-h[1-9]
 /vshadowtools/vshadowdebug
 /vshadowtools/vshadowinfo
 /vshadowtools/vshadowmount
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/input
 /tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
+/tests/test_python_module
+/tests/test_tools
 /tests/tmp*
 /tests/vshadow_test_block
 /tests/vshadow_test_block_descriptor
