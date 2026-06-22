@@ -853,7 +853,7 @@ int libvshadow_io_handle_read_catalog(
 						goto on_error;
 					}
 				}
-/* TODO look for the last store decriptor ? */
+/* TODO look for the last store descriptor ? */
 				if( last_store_descriptor != NULL )
 				{
 					last_store_descriptor->store_block_list_offset       = store_descriptor->store_block_list_offset;

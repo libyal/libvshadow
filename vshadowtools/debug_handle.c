@@ -514,7 +514,7 @@ int debug_handle_open_input(
 }
 
 /* Closes the debug handle
- * Returns the 0 if succesful or -1 on error
+ * Returns the 0 if successful or -1 on error
  */
 int debug_handle_close(
      debug_handle_t *debug_handle,
