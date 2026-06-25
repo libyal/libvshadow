@@ -12,7 +12,8 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@
 
 bin_PROGRAMS = \
-	volume_fuzzer
+	volume_fuzzer \
+	read_fuzzer
 
 volume_fuzzer_SOURCES = \
 	ossfuzz_libbfio.h \
@@ -20,6 +21,24 @@ volume_fuzzer_SOURCES = \
 	volume_fuzzer.cc
 
 volume_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libvshadow/libvshadow.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
+
+read_fuzzer_SOURCES = \
+	ossfuzz_libbfio.h \
+	ossfuzz_libvshadow.h \
+	read_fuzzer.cc
+
+read_fuzzer_LDADD = \
 	@LIB_FUZZING_ENGINE@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
@@ -40,4 +59,3 @@ DISTCLEANFILES = \
 splint-local:
 	@echo "Running splint on volume_fuzzer ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(volume_fuzzer_SOURCES)
-
