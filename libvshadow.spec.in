@@ -1,7 +1,7 @@
 Name: libvshadow
 Version: @VERSION@
 Release: 1
-Summary: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
+Summary: Library to access the Volume Shadow Snapshot (VSS) format
 Group: System Environment/Libraries
 License: LGPL-3.0-or-later
 Source: %{name}-%{version}.tar.gz
@@ -10,10 +10,10 @@ URL: https://github.com/libyal/libvshadow
 BuildRequires: gcc @ax_libbfio_spec_build_requires@ @ax_libcdata_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcnotify_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcsplit_spec_build_requires@ @ax_libcthreads_spec_build_requires@ @ax_libfdatetime_spec_build_requires@ @ax_libfguid_spec_build_requires@ @ax_libuna_spec_build_requires@
 
 %description -n libvshadow
-Library to access the Windows NT Volume Shadow Snapshot (VSS) format
+Library to access the Volume Shadow Snapshot (VSS) format
 
 %package -n libvshadow-static
-Summary: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
+Summary: Library to access the Volume Shadow Snapshot (VSS) format
 Group: Development/Libraries
 Requires: libvshadow = %{version}-%{release}
 
@@ -38,13 +38,13 @@ BuildRequires: python3-devel python3-setuptools
 Python 3 bindings for libvshadow
 
 %package -n libvshadow-tools
-Summary: Several tools for reading Windows NT Volume Shadow Snapshots (VSS)
+Summary: Several tools for reading Volume Shadow Snapshots (VSS)
 Group: Applications/System
 Requires: libvshadow = %{version}-%{release} @ax_libfuse_spec_requires@
 @libvshadow_spec_tools_build_requires@ @ax_libfuse_spec_build_requires@
 
 %description -n libvshadow-tools
-Several tools for reading Windows NT Volume Shadow Snapshots (VSS)
+Several tools for reading Volume Shadow Snapshots (VSS)
 
 %prep
 %setup -q

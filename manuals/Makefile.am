@@ -4,9 +4,7 @@ man_MANS = \
 	libvshadow.3
 
 EXTRA_DIST = \
-	vshadowinfo.1 \
-	vshadowmount.1 \
-	libvshadow.3
+	$(man_MANS)
 
 DISTCLEANFILES = \
 	Makefile \

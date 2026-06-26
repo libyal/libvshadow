@@ -13,8 +13,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libvshadow1
 Replaces: libvshadow1
 Suggests: libvshadow-dbg
-Description: Library to access the Windows NT Volume Shadow Snapshot (VSS) format
- libvshadow is a library to access the Windows NT Volume Shadow Snapshot (VSS) format.
+Description: Library to access the Volume Shadow Snapshot (VSS) format
+ libvshadow is a library to access the Volume Shadow Snapshot (VSS) format.
 
 Package: libvshadow-dbg
 Architecture: any
@@ -36,8 +36,8 @@ Architecture: any
 Depends: libvshadow (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libvshadow-utils
 Replaces: libvshadow-utils
-Description: Several tools for reading Windows NT Volume Shadow Snapshots (VSS)
- Several tools for reading Windows NT Volume Shadow Snapshots (VSS).
+Description: Several tools for reading Volume Shadow Snapshots (VSS)
+ Several tools for reading Volume Shadow Snapshots (VSS).
 
 Package: libvshadow-tools-dbg
 Section: debug

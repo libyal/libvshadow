@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Windows NT Volume Shadow Snapshot (VSS) volume.
+ * Shows information obtained from a Volume Shadow Snapshot (VSS) volume.
  *
  * Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,11 +20,9 @@
  */
 
 #include <common.h>
-#include <memory.h>
+#include <file_stream.h>
 #include <system_string.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if defined( HAVE_FCNTL_H ) || defined( WINAPI )
 #include <fcntl.h>
@@ -54,29 +52,6 @@
 
 info_handle_t *vshadowinfo_info_handle = NULL;
 int vshadowinfo_abort                  = 0;
-
-/* Prints usage information
- */
-void usage_fprint(
-      FILE *stream )
-{
-	if( stream == NULL )
-	{
-		return;
-	}
-	fprintf( stream, "Use vshadowinfo to determine information about a Windows NT Volume Shadow\n"
-	                 "Snapshot (VSS) volume\n\n" );
-
-	fprintf( stream, "Usage: vshadowinfo [ -o offset ] [ -ahvV ] source\n\n" );
-
-	fprintf( stream, "\tsource: the source file or device\n\n" );
-
-	fprintf( stream, "\t-a:     shows allocation information\n" );
-	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-o:     specify the volume offset in bytes\n" );
-	fprintf( stream, "\t-v:     verbose output to stderr\n" );
-	fprintf( stream, "\t-V:     print version\n" );
-}
 
 /* Signal handler for vshadowinfo
  */
@@ -130,14 +105,28 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error                 = NULL;
-	system_character_t *option_volume_offset = NULL;
-	system_character_t *source               = NULL;
-	char *program                            = "vshadowinfo";
-	system_integer_t option                  = 0;
-	uint8_t show_allocation_information      = 0;
-	int result                               = 0;
-	int verbose                              = 0;
+	const char *description = \
+		"Use vshadowinfo to determine information about a Volume Shadow Snapshot (VSS) volume.";
+
+	vshadowtools_option_t options[ ] = {
+		{ 'a', NULL, "shows allocation information" },
+		{ 'h', NULL, "shows this help" },
+		{ 'o', "offset", "specify the volume offset in bytes" },
+		{ 'v', NULL, "verbose output to stderr" },
+		{ 'V', NULL, "print version" },
+		{ 0, "source", "the source volume" },
+	};
+	system_character_t options_string[ 32 ];
+
+	libvshadow_error_t *error           = NULL;
+	system_character_t *option_offset   = NULL;
+	system_character_t *source          = NULL;
+	char *program                       = "vshadowinfo";
+	system_integer_t option             = 0;
+	uint8_t show_allocation_information = 0;
+	int number_of_options               = (int) ( sizeof( options ) / sizeof( vshadowtools_option_t ) );
+	int result                          = 0;
+	int verbose                         = 0;
 
 #if defined( __MINGW32__ ) && defined( HAVE_MINGW_BINMODE )
 	_setmode( _fileno( stdout ), _O_BINARY );
@@ -174,10 +163,22 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
+	if( vshadowtools_getopt_get_options_string(
+	     options,
+	     number_of_options,
+	     options_string,
+	     32 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to determine options string.\n" );
+
+		goto on_error;
+	}
 	while( ( option = vshadowtools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "aho:vV" ) ) ) != (system_integer_t) -1 )
+	                   options_string ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -188,8 +189,12 @@ int main( int argc, char * const argv[] )
 				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
-				usage_fprint(
-				 stdout );
+				vshadowtools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_FAILURE );
 
@@ -199,13 +204,17 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'h':
-				usage_fprint(
-				 stdout );
+				vshadowtools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_SUCCESS );
 
 			case (system_integer_t) 'o':
-				option_volume_offset = optarg;
+				option_offset = optarg;
 
 				break;
 
@@ -225,10 +234,14 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Missing source file or device.\n" );
+		 "Missing source volume.\n" );
 
-		usage_fprint(
-		 stdout );
+		vshadowtools_getopt_usage_fprint(
+		 stdout,
+		 program,
+		 description,
+		 options,
+		 number_of_options );
 
 		return( EXIT_FAILURE );
 	}
@@ -255,11 +268,11 @@ int main( int argc, char * const argv[] )
 #if defined( __clang_analyzer__ )
 	__builtin_assume( vshadowinfo_info_handle != NULL );
 #endif
-	if( option_volume_offset != NULL )
+	if( option_offset != NULL )
 	{
 		if( info_handle_set_volume_offset(
 		     vshadowinfo_info_handle,
-		     option_volume_offset,
+		     option_offset,
 		     &error ) != 1 )
 		{
 			libcnotify_print_error_backtrace(

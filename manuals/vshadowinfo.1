@@ -1,9 +1,9 @@
-.Dd March  5, 2019
-.Dt vshadowinfo
-.Os libvshadow
+.Dd June 26, 2026
+.Dt VSHADOWINFO 1
+.Os
 .Sh NAME
 .Nm vshadowinfo
-.Nd determines information about a Windows NT Volume Shadow Snapshot (VSS) volume
+.Nd determines information about a Volume Shadow Snapshot (VSS) volume
 .Sh SYNOPSIS
 .Nm vshadowinfo
 .Op Fl o Ar offset
@@ -11,17 +11,18 @@
 .Ar source
 .Sh DESCRIPTION
 .Nm vshadowinfo
-is a utility to determine information about a Windows NT Volume Shadow Snapshot (VSS) volume
+is a utility to determine information about a Volume Shadow Snapshot (VSS) \
+volume
 .Pp
 .Nm vshadowinfo
 is part of the
 .Nm libvshadow
 package.
 .Nm libvshadow
-is a library to access the Windows NT Volume Shadow Snapshot (VSS) format
+is a library to access the Volume Shadow Snapshot (VSS) format
 .Pp
 .Ar source
-is the source file.
+is the source volume.
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
@@ -43,11 +44,11 @@ None
 .Sh EXAMPLES
 .Bd -literal
 # vshadowinfo /dev/sda1
-vshadowinfo 20130130
-
+vshadowinfo 20260626
+.sp
 Volume Shadow Snapshot information:
 	Number of stores:	2
-
+.sp
 Store: 1
 	Identifier		: 93db9c47-bb19-4004-836d-c3c835550b9a
 	Shadow copy set ID	: 8bc68d0b-9df4-49e0-be4b-725dceaaefc8
@@ -55,7 +56,7 @@ Store: 1
 	Shadow copy ID		: 04057e11-d2d5-4d9c-8914-aeba832e467b
 	Volume size		: 30002905088 bytes
 	Attribute flags		: 0x00420009
-
+.sp
 Store: 2
 	Identifier		: 93db9c47-bb19-4004-836d-c3c835550b9a
 	Shadow copy set ID	: 90e19848-7436-4309-8899-4bbecf05a566
@@ -65,15 +66,19 @@ Store: 2
 	Attribute flags		: 0x00420009
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
+.Sh SEE ALSO
+.Xr vshadowmount 1
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
 .Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libvshadow/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libvshadow/issues
 .Sh COPYRIGHT
 Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-.Sh SEE ALSO
-.Xr bdemount 1
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.
