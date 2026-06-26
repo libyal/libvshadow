@@ -49,6 +49,7 @@ int LLVMFuzzerTestOneInput(
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	libvshadow_volume_t *volume      = NULL;
+	int number_of_stores             = 0;
 
 	if( libbfio_memory_range_initialize(
 	     &file_io_handle,
@@ -74,6 +75,13 @@ int LLVMFuzzerTestOneInput(
 	     volume,
 	     file_io_handle,
 	     LIBVSHADOW_OPEN_READ,
+	     NULL ) != 1 )
+	{
+		goto on_error_libvshadow;
+	}
+	if( libvshadow_volume_get_number_of_stores(
+	     volume,
+	     &number_of_stores,
 	     NULL ) != 1 )
 	{
 		goto on_error_libvshadow;
