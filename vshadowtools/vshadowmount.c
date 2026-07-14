@@ -507,6 +507,9 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
+	fuse_unmount(
+	 vshadowmount_fuse_handle );
+
 	fuse_destroy(
 	 vshadowmount_fuse_handle );
 
