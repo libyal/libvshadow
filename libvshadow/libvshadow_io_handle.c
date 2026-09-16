@@ -432,7 +432,7 @@ int libvshadow_io_handle_read_volume_header_data(
 	if( memory_compare(
 	     ( (vshadow_volume_header_t *) data )->identifier,
 	     vshadow_vss_identifier,
-	     8 ) != 0 )
+	     16 ) != 0 )
 	{
 		libcerror_error_set(
 		 error,

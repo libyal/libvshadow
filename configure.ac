@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libvshadow],
-  [20260903],
+  [20260916],
   [https://github.com/libyal/libvshadow/issues])
 
 AC_CONFIG_SRCDIR(
