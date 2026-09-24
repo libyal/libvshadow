@@ -150,10 +150,10 @@ struct vshadow_store_block_header
 	 */
 	uint8_t next_offset[ 8 ];
 
-	/* Unknown
+	/* The store information size
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown1[ 8 ];
+	uint8_t store_information_size[ 8 ];
 
 	/* Unknown
 	 * Consists of 72 bytes

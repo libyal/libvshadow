@@ -400,10 +400,10 @@ int libvshadow_store_block_read_header_data(
 		 store_block->next_offset );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (vshadow_store_block_header_t *) data )->unknown1,
+		 ( (vshadow_store_block_header_t *) data )->store_information_size,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t: %" PRIu64 "\n",
+		 "%s: store information size\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
 
