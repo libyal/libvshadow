@@ -55,6 +55,14 @@ int libvshadow_volume_open_file_io_handle(
      int access_flags,
      libvshadow_error_t **error );
 
+LIBVSHADOW_EXTERN \
+ssize_t libvshadow_store_read_buffer_from_file_io_handle(
+         libvshadow_store_t *store,
+         libbfio_handle_t *file_io_handle,
+         void *buffer,
+         size_t buffer_size,
+         libvshadow_error_t **error );
+
 #endif /* !defined( LIBVSHADOW_HAVE_BFIO ) */
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
@@ -199,15 +207,18 @@ int vshadow_test_volume_close_source(
 int vshadow_test_store_initialize(
      void )
 {
-	libcerror_error_t *error        = NULL;
-	libvshadow_store_t *store       = NULL;
-	libvshadow_volume_t *volume     = NULL;
-	int result                      = 0;
+	libcerror_error_t *error                        = NULL;
+	libvshadow_internal_volume_t *internal_volume   = NULL;
+	libvshadow_store_descriptor_t *store_descriptor = NULL;
+	libvshadow_store_t *store                       = NULL;
+	libvshadow_volume_t *volume                     = NULL;
+	int entry_index                                 = 0;
+	int result                                      = 0;
 
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 1;
-	int number_of_memset_fail_tests = 1;
-	int test_number                 = 0;
+	int number_of_malloc_fail_tests                 = 2;
+	int number_of_memset_fail_tests                 = 1;
+	int test_number                                 = 0;
 #endif
 
 	/* Initialize test
@@ -229,16 +240,49 @@ int vshadow_test_store_initialize(
 	 "error",
 	 error );
 
-#ifdef TODO
-/* TODO: add store descriptor for testing */
+	internal_volume = (libvshadow_internal_volume_t *) volume;
+
+	result = libvshadow_store_descriptor_initialize(
+	          &store_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "store_descriptor",
+	 store_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libcdata_array_append_entry(
+	          internal_volume->store_descriptors_array,
+	          &entry_index,
+	          (intptr_t *) store_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	store_descriptor = NULL;
 
 	/* Test store initialization
 	 */
 	result = libvshadow_store_initialize(
 	          &store,
+	          internal_volume->io_handle,
 	          NULL,
-	          NULL,
-	          (libvshadow_internal_volume_t *) volume,
+	          internal_volume,
 	          0,
 	          &error );
 
@@ -272,15 +316,13 @@ int vshadow_test_store_initialize(
 	 "error",
 	 error );
 
-#endif /* TODO */
-
 	/* Test error cases
 	 */
 	result = libvshadow_store_initialize(
 	          NULL,
+	          internal_volume->io_handle,
 	          NULL,
-	          NULL,
-	          (libvshadow_internal_volume_t *) volume,
+	          internal_volume,
 	          0,
 	          &error );
 
@@ -300,9 +342,9 @@ int vshadow_test_store_initialize(
 
 	result = libvshadow_store_initialize(
 	          &store,
+	          internal_volume->io_handle,
 	          NULL,
-	          NULL,
-	          (libvshadow_internal_volume_t *) volume,
+	          internal_volume,
 	          0,
 	          &error );
 
@@ -324,6 +366,26 @@ int vshadow_test_store_initialize(
 	          &store,
 	          NULL,
 	          NULL,
+	          internal_volume,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_store_initialize(
+	          &store,
+	          internal_volume->io_handle,
+	          NULL,
 	          NULL,
 	          0,
 	          &error );
@@ -340,8 +402,26 @@ int vshadow_test_store_initialize(
 	libcerror_error_free(
 	 &error );
 
-#ifdef TODO
-/* TODO: add store descriptor for testing */
+	result = libvshadow_store_initialize(
+	          &store,
+	          internal_volume->io_handle,
+	          NULL,
+	          internal_volume,
+	          -1,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
 
 	for( test_number = 0;
@@ -354,9 +434,9 @@ int vshadow_test_store_initialize(
 
 		result = libvshadow_store_initialize(
 		          &store,
+		          internal_volume->io_handle,
 		          NULL,
-		          NULL,
-		          (libvshadow_internal_volume_t *) volume,
+		          internal_volume,
 		          0,
 		          &error );
 
@@ -400,9 +480,9 @@ int vshadow_test_store_initialize(
 
 		result = libvshadow_store_initialize(
 		          &store,
+		          internal_volume->io_handle,
 		          NULL,
-		          NULL,
-		          (libvshadow_internal_volume_t *) volume,
+		          internal_volume,
 		          0,
 		          &error );
 
@@ -437,7 +517,6 @@ int vshadow_test_store_initialize(
 		}
 	}
 #endif /* defined( HAVE_VSHADOW_TEST_MEMORY ) */
-#endif /* TODO */
 
 	/* Clean up
 	 */
@@ -470,6 +549,12 @@ on_error:
 	{
 		libvshadow_store_free(
 		 &store,
+		 NULL );
+	}
+	if( store_descriptor != NULL )
+	{
+		libvshadow_store_descriptor_free(
+		 &store_descriptor,
 		 NULL );
 	}
 	if( volume != NULL )
@@ -586,9 +671,73 @@ int vshadow_test_store_read_buffer(
 		VSHADOW_TEST_ASSERT_IS_NULL(
 		 "error",
 		 error );
+
+		/* Read 0 bytes
+		 */
+		read_count = libvshadow_store_read_buffer(
+		              store,
+		              buffer,
+		              0,
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 0 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		/* Read on size boundary
+		 */
+		offset = libvshadow_store_seek_offset(
+		          store,
+		          (off64_t) ( size - 8 ),
+		          SEEK_SET,
+		          &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT64(
+		 "offset",
+		 offset,
+		 (int64_t) ( size - 8 ) );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		read_count = libvshadow_store_read_buffer(
+		              store,
+		              buffer,
+		              16,
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 8 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		/* Read beyond size boundary
+		 */
+		read_count = libvshadow_store_read_buffer(
+		              store,
+		              buffer,
+		              16,
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 0 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
 	}
-/* TODO read on size boundary */
-/* TODO read beyond size boundary */
 
 	/* Reset offset to 0
 	 */
@@ -835,6 +984,24 @@ int vshadow_test_store_seek_offset(
 	          store,
 	          (off64_t) ( -1 * ( size + 1 ) ),
 	          SEEK_END,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	offset = libvshadow_store_seek_offset(
+	          store,
+	          0,
+	          -1,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT64(
@@ -1564,6 +1731,633 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libvshadow_store_has_in_volume_data function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_store_has_in_volume_data(
+     libvshadow_store_t *store )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libvshadow_store_has_in_volume_data(
+	          store,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_store_has_in_volume_data(
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_store_read_buffer_from_file_io_handle function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_store_read_buffer_from_file_io_handle(
+     libvshadow_store_t *store,
+     libbfio_handle_t *file_io_handle )
+{
+	uint8_t buffer[ 16 ];
+
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	ssize_t read_count       = 0;
+	off64_t offset           = 0;
+	int result               = 0;
+
+	/* Determine size
+	 */
+	result = libvshadow_store_get_volume_size(
+	          store,
+	          &size,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libvshadow_store_seek_offset(
+	          store,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	if( size > 16 )
+	{
+		read_count = libvshadow_store_read_buffer_from_file_io_handle(
+		              store,
+		              file_io_handle,
+		              buffer,
+		              16,
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 16 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Reset offset to 0
+	 */
+	offset = libvshadow_store_seek_offset(
+	          store,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	read_count = libvshadow_store_read_buffer_from_file_io_handle(
+	              NULL,
+	              file_io_handle,
+	              buffer,
+	              16,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libvshadow_store_read_buffer_from_file_io_handle(
+	              store,
+	              file_io_handle,
+	              NULL,
+	              16,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libvshadow_store_read_buffer_from_file_io_handle(
+	              store,
+	              file_io_handle,
+	              buffer,
+	              (size_t) SSIZE_MAX + 1,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_store_read_buffer_at_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_store_read_buffer_at_offset(
+     libvshadow_store_t *store )
+{
+	uint8_t buffer[ 16 ];
+
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	ssize_t read_count       = 0;
+	off64_t offset           = 0;
+	int result               = 0;
+
+	/* Determine size
+	 */
+	result = libvshadow_store_get_volume_size(
+	          store,
+	          &size,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	if( size > 16 )
+	{
+		read_count = libvshadow_store_read_buffer_at_offset(
+		              store,
+		              buffer,
+		              16,
+		              0,
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 16 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		read_count = libvshadow_store_read_buffer_at_offset(
+		              store,
+		              buffer,
+		              16,
+		              (off64_t) ( size - 8 ),
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 8 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		read_count = libvshadow_store_read_buffer_at_offset(
+		              store,
+		              buffer,
+		              16,
+		              (off64_t) size,
+		              &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 0 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Reset offset to 0
+	 */
+	offset = libvshadow_store_seek_offset(
+	          store,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	read_count = libvshadow_store_read_buffer_at_offset(
+	              NULL,
+	              buffer,
+	              16,
+	              0,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libvshadow_store_read_buffer_at_offset(
+	              store,
+	              NULL,
+	              16,
+	              0,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libvshadow_store_read_buffer_at_offset(
+	              store,
+	              buffer,
+	              (size_t) SSIZE_MAX + 1,
+	              0,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libvshadow_store_read_buffer_at_offset(
+	              store,
+	              buffer,
+	              16,
+	              -1,
+	              &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_store_get_attribute_flags function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_store_get_attribute_flags(
+     libvshadow_store_t *store )
+{
+	libcerror_error_t *error = NULL;
+	uint32_t attribute_flags = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libvshadow_store_get_attribute_flags(
+	          store,
+	          &attribute_flags,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libvshadow_store_get_attribute_flags(
+	          NULL,
+	          &attribute_flags,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_store_get_attribute_flags(
+	          store,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libvshadow_store_get_block_by_index function
+ * Returns 1 if successful or 0 if not
+ */
+int vshadow_test_store_get_block_by_index(
+     libvshadow_store_t *store )
+{
+	libcerror_error_t *error  = NULL;
+	libvshadow_block_t *block = NULL;
+	int number_of_blocks      = 0;
+	int result                = 0;
+
+	/* Determine number of blocks
+	 */
+	result = libvshadow_store_get_number_of_blocks(
+	          store,
+	          &number_of_blocks,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	if( number_of_blocks > 0 )
+	{
+		result = libvshadow_store_get_block_by_index(
+		          store,
+		          0,
+		          &block,
+		          &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "block",
+		 block );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		/* Test error case where *block is already set
+		 */
+		result = libvshadow_store_get_block_by_index(
+		          store,
+		          0,
+		          &block,
+		          &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libvshadow_block_free(
+		          &block,
+		          &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "block",
+		 block );
+
+		VSHADOW_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Test error cases
+	 */
+	result = libvshadow_store_get_block_by_index(
+	          NULL,
+	          0,
+	          &block,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_store_get_block_by_index(
+	          store,
+	          -1,
+	          &block,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_store_get_block_by_index(
+	          store,
+	          0,
+	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block != NULL )
+	{
+		libvshadow_block_free(
+		 &block,
+		 NULL );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1786,27 +2580,31 @@ int main(
 			 "error",
 			 error );
 
-			/* TODO add tests for libvshadow_store_has_in_volume_data */
-
-			/* TODO add tests for libvshadow_internal_store_read_buffer_from_file_io_handle */
+			VSHADOW_TEST_RUN_WITH_ARGS(
+			 "libvshadow_store_has_in_volume_data",
+			 vshadow_test_store_has_in_volume_data,
+			 store );
 
 			VSHADOW_TEST_RUN_WITH_ARGS(
 			 "libvshadow_store_read_buffer",
 			 vshadow_test_store_read_buffer,
 			 store );
 
-			/* TODO add tests for libvshadow_store_read_buffer_from_file_io_handle */
+			VSHADOW_TEST_RUN_WITH_ARGS(
+			 "libvshadow_store_read_buffer_from_file_io_handle",
+			 vshadow_test_store_read_buffer_from_file_io_handle,
+			 store,
+			 file_io_handle );
 
-			/* TODO add tests for libvshadow_store_read_buffer_at_offset */
-
-			/* TODO add tests for libvshadow_internal_store_seek_offset */
+			VSHADOW_TEST_RUN_WITH_ARGS(
+			 "libvshadow_store_read_buffer_at_offset",
+			 vshadow_test_store_read_buffer_at_offset,
+			 store );
 
 			VSHADOW_TEST_RUN_WITH_ARGS(
 			 "libvshadow_store_seek_offset",
 			 vshadow_test_store_seek_offset,
 			 store );
-
-#if defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT )
 
 			VSHADOW_TEST_RUN_WITH_ARGS(
 			 "libvshadow_store_get_offset",
@@ -1843,16 +2641,20 @@ int main(
 			 vshadow_test_store_get_copy_set_identifier,
 			 store );
 
-			/* TODO add tests for libvshadow_store_get_attribute_flags */
+			VSHADOW_TEST_RUN_WITH_ARGS(
+			 "libvshadow_store_get_attribute_flags",
+			 vshadow_test_store_get_attribute_flags,
+			 store );
 
 			VSHADOW_TEST_RUN_WITH_ARGS(
 			 "libvshadow_store_get_number_of_blocks",
 			 vshadow_test_store_get_number_of_blocks,
 			 store );
 
-			/* TODO add tests for libvshadow_store_get_block_by_index */
-
-#endif /* defined( __GNUC__ ) && !defined( LIBVSHADOW_DLL_IMPORT ) */
+			VSHADOW_TEST_RUN_WITH_ARGS(
+			 "libvshadow_store_get_block_by_index",
+			 vshadow_test_store_get_block_by_index,
+			 store );
 
 			result = libvshadow_store_free(
 			          &store,

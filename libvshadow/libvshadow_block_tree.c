@@ -454,7 +454,18 @@ int libvshadow_block_tree_insert_block_descriptor_by_offset(
 
 		goto on_error;
 	}
-	*leaf_value_index = (int) ( offset / block_tree->leaf_value_size );
+	if( ( offset / block_tree->leaf_value_size ) > (off64_t) INT_MAX )
+	{
+		/* A negative value is used to indicate that a block descriptor is not stored in the block tree.
+		 * Make sure to not store a negative value as it would be indistinguishable from a block
+		 * descriptor that is not stored in the block tree.
+		 */
+		*leaf_value_index = INT_MAX;
+	}
+	else
+	{
+		*leaf_value_index = (int) ( offset / block_tree->leaf_value_size );
+	}
 
 	return( 1 );
 
@@ -932,7 +943,36 @@ int libvshadow_block_tree_insert(
 				 "%s: invalid existing overlay block descriptor.",
 				 function );
 
+				new_block_descriptor = NULL;
+
 				goto on_error;
+			}
+			if( existing_block_descriptor->reverse_index != -1 )
+			{
+				/* The existing block descriptor is about to become an overlay block descriptor,
+				 * i.e. it becomes owned by the new block descriptor.
+				 * Remove the existing block descriptor from the reverse block tree to prevent
+				 * it from being (double) freed by a later reverse block tree operation.
+				 */
+				if( libvshadow_block_tree_remove_block_descriptor_by_offset(
+				     reverse_block_tree,
+				     existing_block_descriptor->relative_offset,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_REMOVE_FAILED,
+					 "%s: unable to remove existing block descriptor: %" PRIi64 " (0x%08" PRIx64 ") from reverse block tree node.",
+					 function,
+					 existing_block_descriptor->relative_offset,
+					 existing_block_descriptor->relative_offset );
+
+					new_block_descriptor = NULL;
+
+					goto on_error;
+				}
+				existing_block_descriptor->reverse_index = -1;
 			}
 			new_block_descriptor->overlay = existing_block_descriptor;
 		}
@@ -964,6 +1004,8 @@ int libvshadow_block_tree_insert(
 					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 					 "%s: unable to free existing block descriptor.",
 					 function );
+
+					new_block_descriptor = NULL;
 
 					goto on_error;
 				}

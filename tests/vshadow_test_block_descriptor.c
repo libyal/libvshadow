@@ -452,7 +452,7 @@ int vshadow_test_block_descriptor_clone(
 #if defined( OPTIMIZATION_DISABLED )
 	int number_of_memcpy_fail_tests                             = 1;
 #endif
-	int number_of_malloc_fail_tests                             = 1;
+	int number_of_malloc_fail_tests                             = 2;
 	int test_number                                             = 0;
 #endif
 
@@ -515,6 +515,64 @@ int vshadow_test_block_descriptor_clone(
 	result = libvshadow_block_descriptor_clone(
 	          &destination_block_descriptor,
 	          NULL,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "destination_block_descriptor",
+	 destination_block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test cloning with an overlay block descriptor
+	 */
+	result = libvshadow_block_descriptor_initialize(
+	          &( source_block_descriptor->overlay ),
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "source_block_descriptor->overlay",
+	 source_block_descriptor->overlay );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_block_descriptor_clone(
+	          &destination_block_descriptor,
+	          source_block_descriptor,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "destination_block_descriptor",
+	 destination_block_descriptor );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "destination_block_descriptor->overlay",
+	 destination_block_descriptor->overlay );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_block_descriptor_free(
+	          &destination_block_descriptor,
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(

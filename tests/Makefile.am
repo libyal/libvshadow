@@ -120,6 +120,8 @@ vshadow_test_error_LDADD = \
 
 vshadow_test_io_handle_SOURCES = \
 	vshadow_test_io_handle.c \
+	vshadow_test_libbfio.h \
+	vshadow_test_libcdata.h \
 	vshadow_test_libcerror.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
@@ -127,6 +129,14 @@ vshadow_test_io_handle_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_io_handle_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 
@@ -190,6 +200,8 @@ vshadow_test_store_block_LDADD = \
 	@LIBCERROR_LIBADD@
 
 vshadow_test_store_descriptor_SOURCES = \
+	vshadow_test_libbfio.h \
+	vshadow_test_libcdata.h \
 	vshadow_test_libcerror.h \
 	vshadow_test_libvshadow.h \
 	vshadow_test_macros.h \
@@ -198,6 +210,14 @@ vshadow_test_store_descriptor_SOURCES = \
 	vshadow_test_unused.h
 
 vshadow_test_store_descriptor_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libvshadow/libvshadow.la \
 	@LIBCERROR_LIBADD@
 

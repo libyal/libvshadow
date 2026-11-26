@@ -274,6 +274,10 @@ int libvshadow_block_descriptor_clone(
 
 		goto on_error;
 	}
+	( *destination_block_descriptor )->overlay       = NULL;
+	( *destination_block_descriptor )->index         = -1;
+	( *destination_block_descriptor )->reverse_index = -1;
+
 	if( source_block_descriptor->overlay != NULL )
 	{
 		if( libvshadow_block_descriptor_clone(
@@ -291,9 +295,6 @@ int libvshadow_block_descriptor_clone(
 			goto on_error;
 		}
 	}
-	( *destination_block_descriptor )->index         = -1;
-	( *destination_block_descriptor )->reverse_index = -1;
-
 	return( 1 );
 
 on_error:

@@ -278,6 +278,22 @@ int vshadow_test_check_volume_signature(
 	libcerror_error_free(
 	 &error );
 
+	result = libvshadow_check_volume_signature(
+	          "nonexistent_vshadow_test_file",
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	if( source != NULL )
 	{
 #if defined( HAVE_VSHADOW_TEST_MEMORY )
@@ -388,6 +404,22 @@ int vshadow_test_check_volume_signature_wide(
 
 	result = libvshadow_check_volume_signature_wide(
 	          L"",
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libvshadow_check_volume_signature_wide(
+	          L"nonexistent_vshadow_test_file",
 	          &error );
 
 	VSHADOW_TEST_ASSERT_EQUAL_INT(

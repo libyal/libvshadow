@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
@@ -467,6 +468,95 @@ int vshadow_test_store_block_read(
 	libcerror_error_free(
 	 &error );
 
+	/* Test error case where store_block->data is NULL
+	 */
+	{
+		uint8_t *saved_data = store_block->data;
+
+		store_block->data = NULL;
+
+		result = libvshadow_store_block_read(
+		          store_block,
+		          file_io_handle,
+		          0,
+		          &error );
+
+		store_block->data = saved_data;
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test error case where store block header is invalid
+	 */
+	result = libbfio_handle_close(
+	          file_io_handle,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_memory_range_set(
+	          file_io_handle,
+	          vshadow_test_store_block_error_header_data,
+	          128,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_open(
+	          file_io_handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	VSHADOW_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libvshadow_store_block_read(
+	          store_block,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	VSHADOW_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	/* Clean up
 	 */
 	result = libvshadow_store_block_free(
@@ -680,7 +770,36 @@ int vshadow_test_store_block_read_header_data(
 	libcerror_error_free(
 	 &error );
 
-/* TODO test unsupported version */
+	/* Test error case where the version is unsupported
+	 */
+	{
+		uint8_t unsupported_version_data[ 128 ];
+
+		memory_copy(
+		 unsupported_version_data,
+		 vshadow_test_store_block_header_data,
+		 128 );
+
+		unsupported_version_data[ 16 ] = 0x02;
+
+		result = libvshadow_store_block_read_header_data(
+		          store_block,
+		          unsupported_version_data,
+		          128,
+		          &error );
+
+		VSHADOW_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		VSHADOW_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
 
 	/* Clean up
 	 */
